@@ -1,4 +1,4 @@
-define(["core.js", "Data.js"], function(core, data) {
+define(["core", "Data"], function(core, data) {
 
     var dom = {};
 
@@ -6,13 +6,14 @@ define(["core.js", "Data.js"], function(core, data) {
         visitor(dom_tree);
         var children = dom_tree.children;
         for (var i=0; i < children.length; i++) {
-            res.traverse(children[i], visitor);
+            dom.traverse(children[i], visitor);
         }
     };
 
     dom.parentIndex = function(node) {
         var parent = node.parentNode;
-        var index = core.indexOf(parent.children, node);
+        var index = core.indexOf(parent.childNodes, node);
+        console.log(index);
         return [parent, index];
     };
 

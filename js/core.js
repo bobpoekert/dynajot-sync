@@ -1,30 +1,29 @@
 // https://github.com/jquery/jquery/blob/7877c4fa73120bc6d21a5fcd302a896f03b23876/src/core.js
 /** @license jQuery v1.10.2 | (c) 2005, 2013 jQuery Foundation, Inc. | jquery.org/license */
-define(function() {
+define(["underscore"], function(underscore) {
 
-    var res = {};
+    var inherit;
+    if (Object.create) {
+        inerit = Object.create;
+    } else {
+        var extender = function(){};
+        inherit = function(obj) {
+            extender.prototype = obj;
+            var res = new extender();
+            extender.prototype = null;
+            return res;
+        };
+    }
 
-    res.isFunction = function(fn) {
-        return typeof(fn) === 'function';
-    };
+    var res = inherit(underscore);
 
-    res.isUndefined = function(o) {
-        return typeof(o) == 'undefined';
-    };
-
-    res.isArray = Array.isArray;
-
-    res.isString = function(obj) {
-        return typeof(obj) === 'string';
-    };
+    res.inherit = inherit;
 
     res.isWindow = function(obj) {
         return obj != null && obj === obj.window;
     };
 
-    res.isNumeric = function(obj) {
-        return !isNaN( parseFloat(obj) ) && isFinite( obj );
-    };
+    res.isNumeric = res.isNumber;
 
     res.isPlainObject = function(obj) {
         if (typeof(obj) !== 'object' || obj.nodeType || res.isWindow(obj)) {
@@ -63,14 +62,8 @@ define(function() {
         }
     };
 
-    res.dictIsEmpty = function(obj) {
-        for (var k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                return false;
-            }
-        }
-        return true;
-    };
+    res.dictIsEmpty = res.isEmpty;
+    res.dictIsEqual = res.isEqual;
 
     res.dictIsEqual = function(a, b) {
         if (typeof(a) != 'object' || typeof(a) != typeof(b)) {
@@ -109,7 +102,7 @@ define(function() {
             return !res.dictIsEmpty(obj);
         }
         if (res.isNumeric(obj)) {
-            return obj != 0;
+            return obj !== 0;
         }
         if (res.isFunction(obj)) {
             return true;
@@ -135,33 +128,60 @@ define(function() {
     };
 
     res.reduce = function(fn, arr, init) {
-        if (res.isFunction(arr.reduce)) {
-            return arr.reduce(fn, init);
-        }
-        if (arr.length < 1) {
-            return fn();
-        }
+        if (res.isArray(arr)) {
+            if (res.isFunction(arr.reduce)) {
+                return arr.reduce(fn, init);
+            }
+            if (arr.length < 1) {
+                return fn();
+            }
 
-        if (arr.length < 2) {
-            return fn(arr[0]);
-        }
+            if (arr.length < 2) {
+                return fn(arr[0]);
+            }
 
-        var idx = 0;
-        var acc;
-        if (res.isUndefined(init)) {
-            acc = fn(arr[0], arr[1]);
-            idx = 2;
+            var idx = 0;
+            var acc;
+            if (res.isUndefined(init)) {
+                acc = fn(arr[0], arr[1]);
+                idx = 2;
+            } else {
+                acc = init;
+            }
+
+            while (idx < arr.length) {
+                acc = fn(acc, arr[idx]);
+                idx++;
+            }
+
+            return acc;
         } else {
-            acc = init;
+            var done_first = false
+            var got_first_val = !res.isUndefined(init);
+            var first_val = init;
+            var acc = init;
+            for (var k in arr) {
+                if (done_first) {
+                    acc = fn(acc, arr[k]);
+                } else {
+                    if (got_first_val) {
+                        acc = fn(first_val, arr[k]);
+                        done_first = true;
+                        first_val = null;
+                    } else {
+                        first_val = arr[k];
+                        got_first_val = true;
+                    }
+                }
+            }
+            return acc;
         }
-
-        while (idx < arr.length) {
-            acc = fn(acc, arr[idx]);
-            idx++;
-        }
-
-        return acc;
     };
+
+    var rdashAlpha = /-([\da-z])/gi;
+    var fcamelCase = function( all, letter ) {
+		return letter.toUpperCase();
+	};
 
     res.camelCase = function(string) {
         return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
@@ -174,28 +194,25 @@ define(function() {
         };
     };
 
-    if (Array.prototype.indexOf) {
-        res.indexOf = function(arr, el) {
+    res.indexOf = function(arr, el) {
+        if (arr.indexOf) {
             return arr.indexOf(el);
-        };
-    } else {
-        res.indexOf = function(arr, el) {
-            for (var i=0; i < arr.length; i++) {
-                if (arr[i] == el) {
-                    return i;
-                }
+        }
+        for (var i=0; i < arr.length; i++) {
+            if (arr[i] == el) {
+                return i;
             }
-            return -1;
-        };
+        }
+        return -1;
     };
 
     var sentence_splitter = /(<[^>]*>|[^\w\s]+)/;
     res.sentenceSplit = function(s) {
         var parts = s.split(sentence_splitter);
         var res = [];
-        for (var i; i < parts.length; i++) {
+        for (var i=0; i < parts.length; i++) {
             var part = parts[i];
-            if (i % 2 == 0) {
+            if (i % 2 === 0) {
                 res.push(part);
             } else {
                 res[res.length-1] = res[res.length-1] + part;
@@ -274,4 +291,6 @@ define(function() {
             // Return the modified object
             return target;
         };
+
+    return res;
 });

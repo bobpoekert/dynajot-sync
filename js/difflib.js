@@ -28,7 +28,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 DAMAGE.
 ***/
 /* Author: Chas Emerick <cemerick@snowtide.com> */
-define(function() {
+define([], function() {
 var __whitespace = {" ":true, "\t":true, "\n":true, "\f":true, "\r":true};
 
 return {

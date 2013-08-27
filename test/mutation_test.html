@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src="/js/require.js"></script>
+        <style>
+            #edits {
+                width: 300px;
+                position: absolute;
+                height: 100%;
+                top: 0;
+                left: 0;
+                border-right: 1px solid black;
+            }
+            #edit-target {
+                position: absolute;
+                top: 0;
+                left: 300px;
+                width: 100%;
+                height: 100%;
+                padding-left: 10px;
+            }
+        </style>
+        <title>mutation test</title>
+    </head>
+    <body>
+        <div id="edits"></div>
+        <div id="edit-target" contenteditable="true"></div>
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+            requirejs(["change"], function(change) {
+                var edits = document.getElementById('edits');
+                change.changes(document.getElementById('edit-target'), function(delta) {
+                    var node = document.createElement('pre');
+                    node.innerHTML = JSON.stringify(delta);
+                    edits.insertBefore(node, node.children[0]);
+                });
+            });
+        </script>
+    </body>
+</html>

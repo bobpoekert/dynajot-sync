@@ -3,37 +3,47 @@
 * Event types: attributes, characterData, subtree
 *
 * */
-define(function() {
+define(['dom'], function(dom) {
 
-    if (MutationObserver) {
+    var res = {};
 
-        return function(node, events, callback) {
+    res.onChange = function(node, callback) {
+        /* callback gets called with changed nodes in the subtree rooted at the given node.
+        * NOTE: callback may be called when there isn't actually a change.
+        * It's the caller's responsibility to check before doing anything.
+        * Not checking before modifying the dom may result in infinite recursion!
+        */
+        if (MutationObserver) {
             var observer = new MutationObserver(function(changes) {
-
+                for (var i=0; i < changes.length; i++) {
+                    var change = changes[i];
+                    if (change.type == 'childList') {
+                        dom.traverse(change.target, callback);
+                    } else {
+                        callback(change.target);
+                    }
+                }
             });
+            observer.observe(node, {
+                'childList':true,
+                'attributes':true,
+                'characterData':true,
+                'subtree':true
+            });
+        } else {
+            node.addEventListener('DOMSubtreeModified', function(evt) {
+                dom.traverse(evt.target || node, callback);
+            });
+            
+            // DOMSubtreeModified doesn't work for new nodes in IE9,
+            // so we still have to poll.
+            // (also DOMSubtreeModified isn't supported at all in IE8)
+            setInterval(function() {
+                dom.traverse(node, callback);
+            }, 500);
+        }
+    };
 
-            var config = {};
-            for (var i=0; i < events.length; i++) {
-                config[events[i]] = true;
-            }
-            observer.observe(node, config);
-            return function() {
-                observer.disconnect();
-            };
-        };
-
-    } else {
-
-        var event_mapping = {
-            'attributes':'DOMAttrModified',
-            'characterData':'DOMCharacterDataModified',
-            'subtree':'DOMSubtreeModified'
-        };
-
-
-        return function(node, events, callback) {
-
-        };
-    }
+    return res;
 
 });

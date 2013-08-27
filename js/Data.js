@@ -1,5 +1,5 @@
 define([
-    "../core",
+    "core",
 ], function(core) {
 
 var rnotwhite = /\S/;
@@ -17,9 +17,17 @@ function Data() {
 	this.expando = Math.random();
 }
 
-
-
 Data.uid = 1;
+Data.accepts = function(owner) {
+    // Accepts only:
+	//  - Node
+	//    - Node.ELEMENT_NODE
+	//    - Node.DOCUMENT_NODE
+	//  - Object
+	//    - Any
+	return owner.nodeType ?
+		owner.nodeType === 1 || owner.nodeType === 9 : true;
+};
 
 Data.prototype = {
 
@@ -185,96 +193,6 @@ Data.prototype = {
 	}
 };
 
-var data_user = new Data();
-var data_priv = new Data();
-
-return {
-	data: function( elem, key, value ) {
-		var attrs, name,
-			i = 0,
-			data = null;
-
-		// Gets all values
-		if ( key === undefined ) {
-            data = data_user.get( elem );
-
-            if ( elem.nodeType === 1 && !data_priv.get( elem, "hasDataAttrs" ) ) {
-                attrs = elem.attributes;
-                for ( ; i < attrs.length; i++ ) {
-                    name = attrs[ i ].name;
-
-                    if ( name.indexOf( "data-" ) === 0 ) {
-                        name = core.camelCase( name.slice(5) );
-                        dataAttr( elem, name, data[ name ] );
-                    }
-                }
-                data_priv.set( elem, "hasDataAttrs", true );
-			}
-
-			return data;
-		}
-
-		// Sets multiple values
-		if ( typeof key === "object" ) {
-            data_user.set( elem, key );
-		}
-
-		return (function( value ) {
-			var data,
-				camelKey = core.camelCase( key );
-
-			// The calling jQuery object (element matches) is not empty
-			// (and therefore has an element appears at this[ 0 ]) and the
-			// `value` parameter was not undefined. An empty jQuery object
-			// will result in `undefined` for elem = this[ 0 ] which will
-			// throw an exception if an attempt to read a data cache is made.
-			if ( elem && value === undefined ) {
-				// Attempt to get data from the cache
-				// with the key as-is
-				data = data_user.get( elem, key );
-				if ( data !== undefined ) {
-					return data;
-				}
-
-				// Attempt to get data from the cache
-				// with the key camelized
-				data = data_user.get( elem, camelKey );
-				if ( data !== undefined ) {
-					return data;
-				}
-
-				// Attempt to "discover" the data in
-				// HTML5 custom data-* attrs
-				data = dataAttr( elem, camelKey, undefined );
-				if ( data !== undefined ) {
-					return data;
-				}
-
-				// We tried really hard, but the data doesn't exist.
-				return;
-			}
-
-            // First, attempt to store a copy or reference of any
-            // data that might've been store with a camelCased key.
-            var data = data_user.get( element, camelKey );
-
-            // For HTML5 data-* attribute interop, we have to
-            // store property names with dashes in a camelCase form.
-            // This might not apply to all properties...*
-            data_user.set( element, camelKey, value );
-
-            // *... In the case of properties that might _actually_
-            // have dashes, we need to also store a copy of that
-            // unchanged property.
-            if ( key.indexOf("-") !== -1 && data !== undefined ) {
-                data_user.set( element  , key, value );
-            }
-		}());
-	},
-
-	removeData: function( node, key ) {
-        data_user.remove( node, key );
-	}
-};
+return new Data();
 
 });

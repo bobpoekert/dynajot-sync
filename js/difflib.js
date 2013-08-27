@@ -28,10 +28,11 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 DAMAGE.
 ***/
 /* Author: Chas Emerick <cemerick@snowtide.com> */
-define([], function() {
+define(["core"], function(core) {
 var __whitespace = {" ":true, "\t":true, "\n":true, "\f":true, "\r":true};
 
-return {
+var difflib;
+difflib = {
 	defaultJunkFunction: function (c) {
 		return __whitespace.hasOwnProperty(c);
 	},
@@ -405,5 +406,7 @@ return {
 		this.a = this.b = null;
 		this.set_seqs(a, b);
 	}
-}
+};
+
+return difflib;
 });

@@ -13,7 +13,6 @@ define(["core", "Data"], function(core, data) {
     dom.parentIndex = function(node) {
         var parent = node.parentNode;
         var index = core.indexOf(parent.childNodes, node);
-        console.log(index);
         return [parent, index];
     };
 

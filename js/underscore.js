@@ -5,7 +5,7 @@
      Underscore may be freely distributed under the MIT license.
 */
 
-define(function() {
+define([], function() {
 
   // Baseline setup
   // --------------

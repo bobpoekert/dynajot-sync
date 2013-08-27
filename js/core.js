@@ -4,7 +4,9 @@ define(["underscore"], function(underscore) {
 
     var inherit;
     if (Object.create) {
-        inerit = Object.create;
+        inherit = function(o) {
+            return Object.create(o);
+        };
     } else {
         var extender = function(){};
         inherit = function(obj) {
@@ -48,134 +50,65 @@ define(["underscore"], function(underscore) {
 		return true;
     };
 
-    res.each = function(obj, fn) {
-        if (res.isArray(obj)) {
-            for (var i=0; i < obj.length; i++) {
-                fn(obj[i]);
-            }
-        } else {
-            for (var k in obj) {
-                if (obj.hasOwnProperty(k)) {
-                    fn(obj[k]);
-                }
-            }
+    res.mapAll = function(arrs, fn, context) {
+        var results = [];
+        if (arrs == null) return results;
+        var max_length = 0;
+        var i;
+        for (i=0; i < arrs.length; i++) {
+            var l = arrs[i].length;
+            if (l > max_length) max_length = l;
         }
+        for (i=0; i < l; i++) {
+            var round = [];
+            for (var j=0; j < arrs.length; j++) {
+                round.push(arrs[j][i]);
+            }
+            results.push(fn.apply(context, round));
+        }
+        return results;
+    };
+
+    res.gattr = function(k) {
+        return function(o) {
+            return o[k];
+        }
+    };
+
+    res.splat = function(fn) {
+        return function(arr) {
+            return fn.apply(this, arr);
+        };
     };
 
     res.dictIsEmpty = res.isEmpty;
     res.dictIsEqual = res.isEqual;
 
-    res.dictIsEqual = function(a, b) {
-        if (typeof(a) != 'object' || typeof(a) != typeof(b)) {
-            return false;
-        }
-        for (var k in a) {
-            if (a[k] != b[k]) {
-                return false;
-            }
-        }
-        for (var k in b) {
-            if (a[k] != b[k]) {
-                return false;
-            }
-        }
-        return true;
-    };
-
-    res.arrayIsEqual = function(a, b) {
-        if (a.length != b.length) {
-            return false;
-        }
-        for (var i=0; i < a.length; i++) {
-            if (a[i] != b[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
-
     res.truthiness = function(obj) {
+        switch(obj) {
+            case 0:
+            case false:
+            case null:
+            case undefined:
+                return false;
+            case true:
+                return true;
+        }
+        if (res.isNumeric(obj)) {
+            return true;
+        }
         if (obj.length !== undefined) {
             return obj.length > 0;
         }
         if (res.isPlainObject(obj)) {
-            return !res.dictIsEmpty(obj);
-        }
-        if (res.isNumeric(obj)) {
-            return obj !== 0;
-        }
-        if (res.isFunction(obj)) {
-            return true;
-        }
-    };
-
-    res.map = function(obj, fn) {
-        var arr = [];
-        res.each(obj, function(el) {
-            arr.push(fn(el));
-        });
-        return arr;
-    };
-
-    res.filter = function(obj, fn) {
-        var arr = [];
-        res.each(function(el) {
-            if (fn(el) === true) {
-                arr.push(el);
-            }
-        });
-        return arr;
-    };
-
-    res.reduce = function(fn, arr, init) {
-        if (res.isArray(arr)) {
-            if (res.isFunction(arr.reduce)) {
-                return arr.reduce(fn, init);
-            }
-            if (arr.length < 1) {
-                return fn();
-            }
-
-            if (arr.length < 2) {
-                return fn(arr[0]);
-            }
-
-            var idx = 0;
-            var acc;
-            if (res.isUndefined(init)) {
-                acc = fn(arr[0], arr[1]);
-                idx = 2;
-            } else {
-                acc = init;
-            }
-
-            while (idx < arr.length) {
-                acc = fn(acc, arr[idx]);
-                idx++;
-            }
-
-            return acc;
-        } else {
-            var done_first = false
-            var got_first_val = !res.isUndefined(init);
-            var first_val = init;
-            var acc = init;
-            for (var k in arr) {
-                if (done_first) {
-                    acc = fn(acc, arr[k]);
-                } else {
-                    if (got_first_val) {
-                        acc = fn(first_val, arr[k]);
-                        done_first = true;
-                        first_val = null;
-                    } else {
-                        first_val = arr[k];
-                        got_first_val = true;
-                    }
+            for (var k in obj) {
+                if (obj.hasOwnProperty(k)) {
+                    return true;
                 }
             }
-            return acc;
+            return false;
         }
+        return true;
     };
 
     var rdashAlpha = /-([\da-z])/gi;

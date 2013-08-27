@@ -9,6 +9,9 @@ define([
     var change = {};
 
     change.serializeNode = function(node) {
+        if (!node) {
+            return {};
+        }
         var res = {};
         if (node.nodeType == Node.TEXT_NODE) {
             return change.serializeNode(node.parent);
@@ -143,10 +146,12 @@ define([
             };
         } else {
             var res = {};
-            if (!core.dictIsEqual(cur.position, old.position)) {
+
+    
+            if (!core.isEqual(cur.position, old.position)) {
                 delta.position = cur.position;
             }
-            if (!core.dictIsEqual(cur.attrs, old.attrs)) {
+            if (!core.isEqual(cur.attrs, old.attrs)) {
                 res.attrs = {
                     '+': {},
                     '-': {}
@@ -164,6 +169,39 @@ define([
                     }
                 }
             }
+            if (!core.isEqual(cur.children, old.children)) {
+                var serializer = function(val) {
+                    return val.kind+':'+val.data;
+                };
+                var matcher = new difflib.SequenceMatcher(
+                    core.map(cur.children, serializer),
+                    core.map(old.children, serializer));
+                var opcodes = matcher.get_opcodes();
+
+
+                res.children = core.map(
+                    opcodes, core.splat(function(opcode, i1, i2, j1, j2) {
+
+                        switch(opcode) {
+                            case 'insert':
+                            case 'replace':
+                                return {
+                                   start: i1,
+                                   end: i2,
+                                   value: cur.children.slice(j1, j2)
+                                };
+                            case 'delete':
+                                return {
+                                    start: i1,
+                                    end: i2,
+                                    value: []
+                                };
+                        }
+
+                    })
+                );
+            }
+
             return res;
         }
     };
@@ -173,7 +211,6 @@ define([
         mutation.onChange(tree, function(node) {
             var prev_state = data.get(node, 'state');
             var cur_state = change.serializeNode(node);
-            console.log([prev_state, cur_state]);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta)) {

@@ -1,4 +1,4 @@
-define(["core", "Data"], function(core, data) {
+define(["core", "Data", "ids"], function(core, data, ids) {
 
     var dom = {};
 
@@ -16,8 +16,14 @@ define(["core", "Data"], function(core, data) {
         return [parent, index];
     };
 
-    dom.node_id = function(node) {
-        return data.get(node, 'node_id');
+    dom.node_id = function(node, document_id) {
+        var res = data.get(node, 'node_id');
+        if (res) {
+            return res;
+        }
+        var new_id = ids.node_id(document_id);
+        data.set(node, 'node_id', new_id);
+        return new_id;
     };
 
     return dom;

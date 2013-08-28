@@ -1,7 +1,4 @@
 /* Cross-browser dom mutation events 
-*
-* Event types: attributes, characterData, subtree
-*
 * */
 define(['dom'], function(dom) {
 

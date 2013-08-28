@@ -100,14 +100,12 @@ define(["underscore"], function(underscore) {
         if (obj.length !== undefined) {
             return obj.length > 0;
         }
-        if (res.isPlainObject(obj)) {
-            for (var k in obj) {
-                if (obj.hasOwnProperty(k)) {
-                    return true;
-                }
+        for (var k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                return true;
             }
-            return false;
         }
+        return false;
         return true;
     };
 
@@ -159,6 +157,10 @@ define(["underscore"], function(underscore) {
         }
 
         return [res, offsets];
+    };
+
+    res.isTextNode = function(node) {
+        return !!(node && node.nodeType === 3);
     };
 
     res.extend = function() {

@@ -9,6 +9,7 @@
                 top: 0;
                 left: 0;
                 border-right: 1px solid black;
+                overflow: auto;
             }
             #edit-target {
                 position: absolute;
@@ -30,10 +31,10 @@
             });
             requirejs(["change"], function(change) {
                 var edits = document.getElementById('edits');
-                change.changes(document.getElementById('edit-target'), function(delta) {
+                change.changes(document.getElementById('edit-target'), 'foobar', function(delta) {
                     var node = document.createElement('pre');
                     node.innerHTML = JSON.stringify(delta);
-                    edits.insertBefore(node, node.children[0]);
+                    edits.insertBefore(node, edits.firstChild);
                 });
             });
         </script>

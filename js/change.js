@@ -3,18 +3,18 @@ define([
     "Data",
     "dom",
     "difflib",
-    "mutation"
+    "mutation",
 ], function(core, data, dom, difflib, mutation) {
 
     var change = {};
 
-    change.serializeNode = function(node) {
+    change.serializeNode = function(node, document_id) {
         if (!node) {
             return {};
         }
         var res = {};
-        if (node.nodeType == Node.TEXT_NODE) {
-            return change.serializeNode(node.parent);
+        if (core.isTextNode(node)) {
+            return change.serializeNode(node.parent, document_id);
         } else {
             res.attrs = {};
             if (node.hasAttributes()) {
@@ -24,7 +24,7 @@ define([
             }
             res.name = node.tagName;
             res.children = core.map(node.childNodes, function(node) {
-                if (node.nodeType == Node.TEXT_NODE) {
+                if (core.isTextNode(node)) {
                     return {
                         kind: 'text',
                         value: node.data
@@ -32,13 +32,13 @@ define([
                 } else {
                     return {
                         kind: 'id',
-                        value: dom.node_id(node)
+                        value: dom.node_id(node, document_id)
                     };
                 }
             });
         }
         res.position = {
-            parent: dom.node_id(node.parentNode),
+            parent: dom.node_id(node.parentNode, document_id),
             index: dom.parentIndex(node)[1]
         };
         return res;
@@ -131,25 +131,11 @@ define([
         }
         if (old.name != cur.name) {
             return {}; // tags can't change names, so this should never execute
-        } else if (old.name == '<TEXT') {
-            if (old.value == cur.value) {
-                return {};
-            }
-            var old_parts = core.sentenceSplit(old.value);
-            var cur_parts = core.sentenceSplit(cur.value);
-            var matcher = new difflib.SequenceMatcher(
-                old_parts[0],
-                cur_parts[0]);
-            var opcodes = matcher.get_opcodes();
-            return {
-                value: opcodes
-            };
         } else {
             var res = {};
 
-    
             if (!core.isEqual(cur.position, old.position)) {
-                delta.position = cur.position;
+                res.position = cur.position;
             }
             if (!core.isEqual(cur.attrs, old.attrs)) {
                 res.attrs = {
@@ -170,18 +156,19 @@ define([
                 }
             }
             if (!core.isEqual(cur.children, old.children)) {
+                res.children = cur.children;
+
+                if (false) {
                 var serializer = function(val) {
-                    return val.kind+':'+val.data;
+                    return val.kind+':'+val.value;
                 };
                 var matcher = new difflib.SequenceMatcher(
                     core.map(cur.children, serializer),
                     core.map(old.children, serializer));
                 var opcodes = matcher.get_opcodes();
 
-
                 res.children = core.map(
                     opcodes, core.splat(function(opcode, i1, i2, j1, j2) {
-
                         switch(opcode) {
                             case 'insert':
                             case 'replace':
@@ -200,22 +187,27 @@ define([
 
                     })
                 );
+                }
             }
 
             return res;
         }
     };
 
-
-    change.changes = function(tree, delta_callback) {
+    change.changes = function(tree, document_id, delta_callback) {
         mutation.onChange(tree, function(node) {
+            if (core.isTextNode(node)) {
+                node = node.parentNode;
+            }
             var prev_state = data.get(node, 'state');
-            var cur_state = change.serializeNode(node);
+            var cur_state = change.serializeNode(node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta)) {
                     delta_callback(delta);
                 }
+            } else {
+                delta_callback({"create":cur_state});
             }
             data.set(node, 'state', cur_state);
         });

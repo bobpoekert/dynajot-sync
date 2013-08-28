@@ -7,6 +7,38 @@ define([
 ], function(core, data, dom, difflib, mutation) {
 
     var change = {};
+    
+    var attr_blacklist = {
+        "onclick":true,
+        "ondblclick":true,
+        "onmousedown":true,
+        "onmouseup":true,
+        "onmouseover":true,
+        "onmousemove":true,
+        "onmouseout":true,
+        "ondragstart":true,
+        "ondrag":true,
+        "ondragenter":true,
+        "ondragleave":true,
+        "ondragover":true,
+        "ondrop":true,
+        "ondragend":true,
+        "onkeydown":true,
+        "onkeypress":true,
+        "onkeyup":true,
+        "onload":true,
+        "onunload":true,
+        "onabort":true,
+        "onerror":true,
+        "onresize":true,
+        "onscroll":true,
+        "onselect":true,
+        "onchange":true,
+        "onsubmit":true,
+        "onreset":true,
+        "onfocus":true,
+        "onblur":true
+    };
 
     change.serializeNode = function(node, document_id) {
         if (!node) {
@@ -19,20 +51,24 @@ define([
             res.attrs = {};
             if (node.hasAttributes()) {
                 for (var i=0; i < node.attributes.length; i++) {
+                    var attr = node.attributes[i].name;
+                    if (attr_blacklist.hasOwnProperty(attr.toLowerCase())) {
+                        continue;
+                    }
                     res.attrs[node.attributes[i].name] = node.attributes[i].value;
                 }
             }
-            res.name = node.tagName;
-            res.children = core.map(node.childNodes, function(node) {
-                if (core.isTextNode(node)) {
+            res.name = node.tagName.toLowerCase();
+            res.children = core.map(node.childNodes, function(inner) {
+                if (core.isTextNode(inner)) {
                     return {
                         kind: 'text',
-                        value: node.data
+                        value: inner.data
                     };
                 } else {
                     return {
                         kind: 'id',
-                        value: dom.node_id(node, document_id)
+                        value: dom.node_id(inner, document_id)
                     };
                 }
             });
@@ -156,9 +192,6 @@ define([
                 }
             }
             if (!core.isEqual(cur.children, old.children)) {
-                res.children = cur.children;
-
-                if (false) {
                 var serializer = function(val) {
                     return val.kind+':'+val.value;
                 };
@@ -167,7 +200,7 @@ define([
                     core.map(old.children, serializer));
                 var opcodes = matcher.get_opcodes();
 
-                res.children = core.map(
+                res.children = core.clean(core.map(
                     opcodes, core.splat(function(opcode, i1, i2, j1, j2) {
                         switch(opcode) {
                             case 'insert':
@@ -184,11 +217,11 @@ define([
                                     value: []
                                 };
                         }
-
                     })
-                );
-                }
+                ));
             }
+
+            res.id = cur.id;
 
             return res;
         }
@@ -203,10 +236,11 @@ define([
             var cur_state = change.serializeNode(node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
-                if (core.truthiness(delta)) {
+                if (core.truthiness(delta) && !core.isEqual(core.keys(delta), ['id'])) {
+                    delta.id = dom.node_id(node, document_id);
                     delta_callback(delta);
                 }
-            } else {
+            } else if (node !== tree) {
                 delta_callback({"create":cur_state});
             }
             data.set(node, 'state', cur_state);

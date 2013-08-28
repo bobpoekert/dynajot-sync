@@ -109,6 +109,10 @@ define(["underscore"], function(underscore) {
         return true;
     };
 
+    res.clean = function(arr) {
+        return res.filter(arr, res.truthiness);
+    };
+
     var rdashAlpha = /-([\da-z])/gi;
     var fcamelCase = function( all, letter ) {
 		return letter.toUpperCase();

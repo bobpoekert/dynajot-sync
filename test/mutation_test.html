@@ -25,7 +25,53 @@
     <body>
         <div id="edits"></div>
         <div id="edit-target" contenteditable="true"></div>
+        <script src="data.js"></script>
         <script>
+            var playActions = function () {
+                var valid_action_key = {
+                    "position": true,
+                    "children": true,
+                    "create": true
+                };
+                var action, i, key, dom_id;
+
+                // create, read, update, delete
+                i = data_JSON["actions"].length;
+                while (i--) {
+                    action = data_JSON["actions"][i];
+                    uid = action["id"];
+
+                    if (action.attrs) {
+                        // + or -  // TODO
+                    }
+                    if (action.create) {
+                        // create, and maybe insert a new node
+                    }
+                    if (action.position) {
+                        // move me - for text nodes (at this position, insert)
+                            // my position relative to the parent
+                            // console.log(dom_id);
+                    }
+                    if (action.children) {
+                        document.body.querySelector("."+uid);
+                        
+
+                        // move somebody else
+                            // position for the children of this node
+
+                            // replace the range (start-end) with "value" nodes
+                                // text - document.createTextNode
+                                // element - references an id - !!! we need to make the browser index our own id's - classes
+                                    // lookup the element by id
+                                        // if already in the dom, remove & add as a child in this position
+                                        // if not already in the dom, skip remove & add (insertBefore / insertAfter)
+
+                            // console.log(dom_id);
+                    }
+
+                }
+            };
+           
             requirejs.config({
                 baseUrl: '/js'
             });

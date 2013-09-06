@@ -47,7 +47,7 @@
                             return function () {
                                 action = data_JSON["actions"][i];
                                 $("#edits ul").append("<div>dynajot-"+action.id+"</div>");
-                                enact.apply_delta(action);
+                                enact.applyDelta(action);
                             }
                         })(i), delay);
                         delay += 75;

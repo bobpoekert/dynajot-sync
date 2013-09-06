@@ -2,9 +2,13 @@ define(["core"], function(core) {
     
     var enact = {};
 
-    enact.apply_delta = function (delta) {
+    enact.getNode = function (id) {
+        return document.body.querySelector(".dynajot-"+id);
+    };
+
+    enact.applyDelta = function (delta) {
         
-        var newNode, disnode;
+        var newNode, disnode, parent;
 
         if (delta.attrs) {
             // + or -  // TODO
@@ -19,7 +23,7 @@ define(["core"], function(core) {
             }
 
             if (disnode.position) {
-                var parent = document.body.querySelector(".dynajot-"+disnode.position.parent);
+                parent = document.body.querySelector(".dynajot-"+disnode.position.parent);
                 parent.insertBefore(newNode, parent.children[disnode.position.index]); // handle the index properly?
             }
             // {
@@ -34,16 +38,20 @@ define(["core"], function(core) {
             // }
         }
         if (delta.position) {
+            // {"position":{"parent":"7843297729268670-foobar-11","index":2},"id":"7843297729268670-foobar-10"}
+            // disnode = enact.getNode(delta.id);
+            // parent = enact.getNode(delta.position.parent);
+            // parent.insertBefore(disnode, parent.children[delta.position.parent]);
+
             // move me - for text nodes (at this position, insert)
                 // my position relative to the parent
-                // console.log(dom_id);
         }
         if (delta.children) {
             // move somebody else
                 // position for the children of this node
-            disnode = document.body.querySelector(".dynajot-"+delta.id);
-            
             var start, end, kind, value, kount, child;
+
+            disnode = enact.getNode(delta.id);
             child = delta.children[0];
             start = child.start; // can be more than one child?
             end = child.end;

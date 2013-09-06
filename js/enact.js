@@ -4,23 +4,23 @@ define(["core"], function(core) {
 
     enact.apply_delta = function (delta) {
         
-        var newNode;
+        var newNode, disnode;
 
         if (delta.attrs) {
-                        // + or -  // TODO
+            // + or -  // TODO
         }
         if (delta.create) {
             // create, and maybe insert a new node
-            manode = delta.create;
-            newNode = document.createElement(manode.name);
-            newNode.className = manode.attrs["class"]; // manode.attrs -> hash;
-            if (manode.children.length > 0) {
+            disnode = delta.create;
+            newNode = document.createElement(disnode.name);
+            newNode.className = disnode.attrs["class"]; // disnode.attrs -> hash;
+            if (disnode.children.length > 0) {
                 // newNode.appendChild(); // console.log("adding children");
             }
 
-            if (manode.position) {
-                var parent = document.body.querySelector(".dynajot-"+manode.position.parent);
-                parent.insertBefore(newNode, parent.children[manode.position.index]); // handle the index properly?
+            if (disnode.position) {
+                var parent = document.body.querySelector(".dynajot-"+disnode.position.parent);
+                parent.insertBefore(newNode, parent.children[disnode.position.index]); // handle the index properly?
             }
             // {
             //     "create":
@@ -41,7 +41,7 @@ define(["core"], function(core) {
         if (delta.children) {
             // move somebody else
                 // position for the children of this node
-            manode = document.body.querySelector(".dynajot-"+delta.id);
+            disnode = document.body.querySelector(".dynajot-"+delta.id);
             
             var start, end, kind, value, kount, child;
             child = delta.children[0];
@@ -53,10 +53,10 @@ define(["core"], function(core) {
                 if (newNode.kind === 'text') {
                     // replace the range (start-end) with "value" nodes
                     for (var l=start; l < end; l++) {
-                        // manode.
+                        // disnode.
                     }
                     // alert(newNode.value);
-                    manode.innerHTML = newNode.value; // text - document.createTextNode
+                    disnode.innerHTML = newNode.value; // text - document.createTextNode
                 } else if (newNode.kind === 'element') {
                     // lookup the element by id
                         // if already in the dom, remove & add as a child in this position

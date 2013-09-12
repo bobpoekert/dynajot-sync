@@ -23,6 +23,12 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
         var new_id = ids.node_id(document_id);
         data.set(node, 'node_id', new_id);
+        var oldClass = node.getAttribute("class");
+        var newClass = "dynajot-"+new_id;
+        if (oldClass !== null) {
+            newClass += " " + oldClass;
+        }
+        node.className = newClass;
         return new_id;
     };
 

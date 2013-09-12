@@ -55,6 +55,9 @@ define([
                     if (attr_blacklist.hasOwnProperty(attr.toLowerCase())) {
                         continue;
                     }
+                    if (i === 'class') {
+                        attr = attr.replace(/dynajot-.*?(\s|$)/g, '');
+                    }
                     res.attrs[node.attributes[i].name] = node.attributes[i].value;
                 }
             }
@@ -186,7 +189,7 @@ define([
                 }
                 for (var k in cur.attrs) {
                     if (cur.attrs.hasOwnProperty(k) &&
-                        cur.attrs[k] != old.attrs[k]) {
+                        !core.whitespaceEqual(cur.attrs[k], old.attrs[k])) {
                         res.attrs['+'][k] = cur.attrs[k];
                     }
                 }

@@ -106,7 +106,14 @@ define(["underscore"], function(underscore) {
             }
         }
         return false;
-        return true;
+    };
+
+    res.removeWhitespace = function(s) {
+        return s.replace(/\s/g, '');
+    };
+
+    res.whitespaceEqual = function(a, b) {
+        return res.removeWhitespace(a) == res.removeWhitespace(b);
     };
 
     res.future = function() {

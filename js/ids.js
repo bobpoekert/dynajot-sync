@@ -6,7 +6,7 @@ define(["storage"], function(storage) {
     if (old_sid) {
         ids.session_id = old_sid;
     } else {
-        ids.session_id = Math.random().toString();
+        ids.session_id = Math.floor(Math.random() * 10000000000000000).toString();
         storage.put('session_id', ids.session_id);
     }
 

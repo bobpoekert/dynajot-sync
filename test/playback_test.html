@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <script src="/js/require.js"></script>
+        <style>
+            #edits {
+                width: 24%;
+                position: absolute;
+                height: 100%;
+                top: 0;
+                left: 0;
+                border-right: 1px solid black;
+                overflow: auto;
+            }
+            #edit-target {
+                position: absolute;
+                top: 0;
+                left: 24%;
+                width: 75%;
+                height: 100%;
+                padding-left: 10px;
+            }
+        </style>
+        <title>test - playback</title>
+    </head>
+    <body>
+        <div id="edits">
+            <ul></ul>
+        </div>
+        <!--first div must be the id of the first delta-->
+        <div id="edit-target">
+            <div class="dynajot-7843297729268670-foobar-5"></div>
+        </div>
+        <script src="data.js"></script>
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["enact", "jquery"], function(enact, $) {
+                var playActions = function () {
+                    var action, i, key, manode, action_data;
+                    i = data_JSON["actions"].length;
+                    var delay = 500;
+
+                    while (i--) {
+                        setTimeout((function (i) {
+                            return function () {
+                                action = data_JSON["actions"][i];
+                                $("#edits ul").append("<div>dynajot-"+action.id+"</div>");
+                                enact.applyDelta(action);
+                            }
+                        })(i), delay);
+                        delay += 75;
+                    }
+                };
+
+                playActions();
+            });
+        </script>
+    </body>
+</html>

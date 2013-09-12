@@ -3,7 +3,7 @@
         <script src="/js/require.js"></script>
         <style>
             #edits {
-                width: 24%;
+                width: 75%;
                 position: absolute;
                 height: 100%;
                 top: 0;
@@ -14,8 +14,8 @@
             #edit-target {
                 position: absolute;
                 top: 0;
-                left: 24%;
-                width: 75%;
+                left: 75%;
+                width: 24%;
                 height: 100%;
                 padding-left: 10px;
             }
@@ -29,11 +29,11 @@
             requirejs.config({
                 baseUrl: '/js'
             });
-            requirejs(["change"], function(change) {
+            requirejs(["change", "json"], function(change, json) {
                 var edits = document.getElementById('edits');
                 change.changes(document.getElementById('edit-target'), 'foobar', function(delta) {
                     var node = document.createElement('pre');
-                    node.innerHTML = JSON.stringify(delta);
+                    node.innerHTML = json.stringify(delta);
                     edits.insertBefore(node, edits.firstChild);
                 });
             });

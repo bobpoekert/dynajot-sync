@@ -109,6 +109,40 @@ define(["underscore"], function(underscore) {
         return true;
     };
 
+    res.future = function() {
+        var success_callbacks = [];
+        var failure_callbacks = [];
+        var failed = false;
+        var fired = false;
+        var data = null
+        var await = function(success, fail) {
+            if (fired) {
+                (failed ? fail : success).apply(data[0], data[1]);
+            } else {
+                success_callbacks.push(success);
+                failure_callbacks.push(fail);
+            }
+        };
+        await.fail = function() {
+            if (fired) return;
+            data = [this, res.toArray(arguments)];
+            fired = true;
+            failed = true;
+            while(failure_callbacks.length > 0) {
+                failure_callbacks.shift().apply(this, arguments);
+            }
+        };
+        await.fire = function() {
+            if (fired) return;
+            data = [this, res.toArray(arguments)];
+            fired = true;
+            while(success_callbacks.length > 0) {
+                success_callbacks.shift().apply(this, arguments);
+            }
+        };
+        return await;
+    };
+
     res.clean = function(arr) {
         return res.filter(arr, res.truthiness);
     };
@@ -120,13 +154,6 @@ define(["underscore"], function(underscore) {
 
     res.camelCase = function(string) {
         return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
-    };
-
-    res.partial = function(fn) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        return function() {
-            return fn.apply(this, args.concat(arguments));
-        };
     };
 
     res.indexOf = function(arr, el) {

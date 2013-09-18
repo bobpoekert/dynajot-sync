@@ -474,7 +474,7 @@ var requirejs, require, define;
                 name: normalizedName,
                 parentMap: parentModuleMap,
                 unnormalized: !!suffix,
-                url: url,
+                url: url+'?cb='+Math.random().toString(),
                 originalName: originalName,
                 isDefine: isDefine,
                 id: (prefix ?

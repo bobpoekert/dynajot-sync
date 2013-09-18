@@ -201,6 +201,56 @@ define(["underscore"], function(underscore) {
         return !!(node && node.nodeType === 3);
     };
 
+    res.logsErrors = function(fn) {
+        if (console) {
+            return function() {
+                var e;
+                try {
+                    return fn.apply(this, arguments);
+                } catch(e) {
+                    console.error(e);
+                    throw e;
+                }
+            };
+        } else {
+            return fn;
+        }
+    };
+
+    res.yankNode = function(node) {
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
+    };
+
+    res.spliceNodes = res.logsErrors(function(target, start, end, replacement) {
+        var children = res.toArray(target.childNodes);
+        var insertion_point = children[end];
+        var i;
+        var e;
+        for (i=start; i < end; i++) {
+            try {
+                target.removeChild(children[i]);
+            } catch(e) {
+                // Node is not in dom. Maybe write a check for this?
+            }
+        }
+        if (insertion_point) {
+            for (i=replacement.length; i > 0; i--) {
+                insertion_point = target.insertBefore(replacement[i], insertion_point);
+            }
+        } else {
+            for (i=0; i < replacement.length; i++) {
+                target.appendChild(replacement[i]);
+            }
+        }
+    });
+
+    res.insertNodeAt = function(parent, child, index) {
+        var after = parent.children[index];
+        after.insertBefore(parent, child);
+    };
+
     res.extend = function() {
         var options, name, src, copy, copyIsArray, clone,
                 target = arguments[0] || {},

@@ -184,7 +184,7 @@ define([
                 for (var k in old.attrs) {
                     if (old.attrs.hasOwnProperty(k) &&
                         !cur.attrs.hasOwnProperty(k)) {
-                        res.attrs['-'][k] = old.attrs[k];
+                        res.attrs['-'][k] = null;
                     }
                 }
                 for (var k in cur.attrs) {

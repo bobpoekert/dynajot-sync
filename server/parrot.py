@@ -1,34 +1,53 @@
 import tornado.websocket as websocket
 import tornado.web as web
 from functools import partial
+import os, hashlib
+
+base_path = os.path.dirname(os.path.abspath(__file__))
+def relpath(p):
+    return os.path.join(base_path, p)
+
+def random_id():
+    return hashlib.sha1(os.urandom(20)).hexdigest()
 
 documents = {}
 
 class ParrotHandler(websocket.WebSocketHandler):
 
     def open(self, document):
-        if documents[document]:
+        if not document:
+            new_id = None
+            while (not new_id) or (new_id in documents):
+                new_id = random_id()
+            document = new_id
+            self.write_message({'document_id':document})
+        if document in documents:
             documents[document].add(self)
         else:
             documents[document] = set([self])
         self.document = document
+        self.peers = documents[document]
 
-    def onmessage(self, message):
-        for recipient in documents[self.document]:
+    def on_message(self, message):
+        print message
+        for recipient in self.peers:
             if recipient != self:
                 recipient.write_message(message)
 
     def on_close(self):
-        documents[self.document].remove(self)
-        if not documents[self.document]:
+        self.peers.remove(self)
+        if not self.peers:
             del documents[self.document]
 
-app = web.Appliction([
-    ('/doc/(.*)', ParrotHandler)
-])
+app = web.Application([
+    ('/doc/(.*)', ParrotHandler),
+    ('/(.*)', web.StaticFileHandler, {'path':relpath('..')})
+], debug=True)
 
 if __name__ == '__main__':
-    import sys
+    import os
     from tornado.ioloop import IOLoop
-    app.listen(int(sys.env.get('PORT', 5000)))
+    port = int(os.environ.get('PORT', 5000))
+    app.listen(port)
+    print port
     IOLoop.instance().start()

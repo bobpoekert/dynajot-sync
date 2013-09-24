@@ -1,5 +1,0 @@
-
-
-TODO:
-
-* model integration with Angular and ember

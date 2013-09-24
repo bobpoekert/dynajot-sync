@@ -230,21 +230,44 @@ define([
         }
     };
 
+    change.nodeMarkDirty = function(node) {
+        data.set(node, 'dirty', true);
+    };
+
+    change.nodeMarkClean = function(node) {
+        data.set(node, 'state', change.serializeNode(node));
+        data.set(node, 'dirty', false);
+    };
+
+    change.nodeTransaction = function(node, fn) {
+        data.set(node, 'dirty', true);
+        data.set(node, 'state', fn(data.get(node, 'state'), node) || change.serializeNode(node));
+        data.set(node, 'dirty', false);
+    };
+
     change.changes = function(tree, document_id, delta_callback) {
+        var node_id = function(node) {
+            if (node == tree) {
+                return '_root';
+            } else {
+                return dom.node_id(node, document_id);
+            }
+        };
         mutation.onChange(tree, function(node) {
             if (core.isTextNode(node)) {
                 node = node.parentNode;
             }
+            if (data.get(node, 'dirty')) return;
             var prev_state = data.get(node, 'state');
             var cur_state = change.serializeNode(node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta) && !core.isEqual(core.keys(delta), ['id'])) {
-                    delta.id = dom.node_id(node, document_id);
+                    delta.id = node_id(node);
                     delta_callback(delta);
                 }
             } else if (node !== tree) {
-                delta_callback({"create":cur_state, "id":dom.node_id(node, document_id)});
+                delta_callback({"create":cur_state, "id":node_id(node)});
             }
             data.set(node, 'state', cur_state);
         });

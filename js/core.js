@@ -94,6 +94,9 @@ define(["underscore"], function(underscore) {
             case true:
                 return true;
         }
+        if (typeof(obj) === 'string') {
+            return /[^\s]/.test(obj);
+        }
         if (res.isNumeric(obj)) {
             return true;
         }
@@ -113,6 +116,9 @@ define(["underscore"], function(underscore) {
     };
 
     res.whitespaceEqual = function(a, b) {
+        if (!(res.truthiness(a) === res.truthiness(b))) {
+            return false;
+        }
         return res.removeWhitespace(a) == res.removeWhitespace(b);
     };
 
@@ -148,6 +154,44 @@ define(["underscore"], function(underscore) {
             }
         };
         return await;
+    };
+
+    res.pipe = function() {
+
+        var buffer = [];
+        var callbacks = [];
+
+        return {
+            addReader: function(fn) {
+                var idx = callbacks.length;
+                callbacks.push(fn);
+                if (idx === 0) {
+                    while(buffer.length > 0) {
+                        fn(buffer.shift());
+                    }
+                }
+                return idx;
+            },
+            removeReader: function(idx) {
+                callbacks[idx] = null;
+            },
+            write: function(datum) {
+                if (res.some(callbacks)) {
+                    for (var i=0; i < callbacks.length; i++) {
+                        var cb = callbacks[i];
+                        if (cb) {
+                            cb(datum);
+                        }
+                    }
+                } else {
+                    buffer.push(datum);
+                }
+            }
+        };
+    };
+
+    res.maybe_function = function(val) {
+        return typeof(val) === 'function' ? val : function() { return val; };
     };
 
     res.clean = function(arr) {
@@ -202,6 +246,7 @@ define(["underscore"], function(underscore) {
     };
 
     res.logsErrors = function(fn) {
+        return fn;
         if (console) {
             return function() {
                 var e;
@@ -224,7 +269,6 @@ define(["underscore"], function(underscore) {
     };
 
     res.spliceNodes = res.logsErrors(function(target, start, end, replacement) {
-        if (!target) console.trace();
         var children = res.toArray(target.childNodes);
         var insertion_point = children[end];
         var i;

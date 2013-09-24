@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>test - sync</title>
+        <style>
+            #target {
+                position: absolute;
+                width: 640px;
+                height: 480px;
+                left: 50%;
+                top: 50%;
+                margin-left: -322px;
+                margin-top: -242px;
+                border: 2px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <div contenteditable="true" id="target"></div>
+        <script src="/js/require.js"></script>
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["sync"], function(sync) {
+                sync.sync(document.getElementById('target'));
+            });
+        </script>
+    </body>
+</html>

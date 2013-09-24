@@ -1,4 +1,4 @@
-define(["core"], function(core) {
+define(["core", "dom"], function(core, dom) {
     
     var enact = {};
 
@@ -6,11 +6,31 @@ define(["core"], function(core) {
         return document.body.querySelector(".dynajot-"+id);
     };
 
+    enact.reHydrateNode = function(inp) {
+        if (inp.kind === 'text') {
+            return document.createTextNode(inp.value);
+        } else {
+            var res = document.createElement(inp.name);
+            var attrs = inp.attrs || {};
+            core.each(inp.attrs, function(v, k) {
+                res.setAttribute(k, v);
+            });
+            dom.setIdClass(res, inp.id);
+            if (inp.children) {
+                core.each(inp.children, function(c) {
+                    res.appendChild(enact.reHydrateNode(c));
+                });
+            }
+            return res;
+        }
+    };
+
     enact.applyDelta = function(delta) {
         var node;
-        
         if (delta.create) {
-            node = document.createElement(delta.name);
+            console.log(delta);
+            delta.create.id = delta.id;
+            node = enact.reHydrateNode(delta.create);
         } else {
             node = enact.getNode(delta.id);
         }
@@ -32,7 +52,6 @@ define(["core"], function(core) {
 
         if (delta.children) {
             core.each(delta.children, function(slice) {
-                console.log(slice);
                 var new_nodes = core.map(slice.value, function(node) {
                     if (node.kind == 'text') {
                         return document.createTextNode(node.value);

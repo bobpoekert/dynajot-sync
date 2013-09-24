@@ -15,6 +15,21 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         var index = core.indexOf(parent.childNodes, node);
         return [parent, index];
     };
+    
+    dom.setIdClass = function(node, id) {
+        var prev = node.getAttribute('class');
+        var res = null;
+        if (prev) {
+            res = prev.replace((new RegExp('dynajot-(?!'+id+').*?\s*(\s|$)')), '');
+        } else {
+            res = '';
+        }
+        var repl = 'dynajot-'+id;
+        if (res.indexOf(repl) === -1) {
+            res += ' ' + repl;
+        }
+        node.setAttribute('class', res);
+    };
 
     dom.node_id = function(node, document_id) {
         var res = data.get(node, 'node_id');
@@ -23,14 +38,10 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
         var new_id = ids.node_id(document_id);
         data.set(node, 'node_id', new_id);
-        var oldClass = node.getAttribute("class");
-        var newClass = "dynajot-"+new_id;
-        if (oldClass !== null) {
-            newClass += " " + oldClass;
-        }
-        node.className = newClass;
+        dom.setIdClass(node, new_id);
         return new_id;
     };
+
 
     return dom;
 });

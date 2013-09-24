@@ -224,6 +224,7 @@ define(["underscore"], function(underscore) {
     };
 
     res.spliceNodes = res.logsErrors(function(target, start, end, replacement) {
+        if (!target) console.trace();
         var children = res.toArray(target.childNodes);
         var insertion_point = children[end];
         var i;

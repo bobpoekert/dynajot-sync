@@ -1,12 +1,20 @@
 define(["core", "msgpack"], function(core, msgpack) {
 
+    return {
+        get: function(k) { localStorage.getItem(k); },
+        put: function(k, v) { localStorage.setItem(k, v); },
+        del: function(k) { localStorage.removeItem(k); }
+    };
+
     var storage = {};
+
 
     var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
 
     var prefix = 5050;
 
     var key = function(k) {
+        return prefix.toString()+k;
         return msgpack.pack([prefix, k]);
     };
 
@@ -28,8 +36,8 @@ define(["core", "msgpack"], function(core, msgpack) {
         return localStorage.removeItem(key(k));
     };
 
-    if (typeof(storage.get(10)) == 'undefined') {
-        storage.put(10, '0');
+    if (typeof(get(10)) == 'undefined') {
+        put(10, '0');
     }
 
     var idx_for_key = function(k) {

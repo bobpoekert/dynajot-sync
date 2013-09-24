@@ -244,7 +244,7 @@ define([
                     delta_callback(delta);
                 }
             } else if (node !== tree) {
-                delta_callback({"create":cur_state});
+                delta_callback({"create":cur_state, "id":dom.node_id(node, document_id)});
             }
             data.set(node, 'state', cur_state);
         });

@@ -13,8 +13,8 @@ define(["storage"], function(storage) {
     ids.session_id += '-' + Math.floor(Math.random() * 1000);
 
     ids.counter = function(key) {
-        var ctr = parseInt(storage.get(key) || 0, 10);
-        storage.put(key, (ctr+1).toString());
+        var ctr = parseInt(localStorage.getItem(key) || 0, 10);
+        localStorage.setItem(key, (ctr+1));
         return ctr;
     };
 

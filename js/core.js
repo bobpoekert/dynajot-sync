@@ -194,6 +194,29 @@ define(["underscore"], function(underscore) {
         return typeof(val) === 'function' ? val : function() { return val; };
     };
 
+    res.uniqueDebounce = function(fn, interval) {
+        if (!interval) interval = 100;
+        var locked = false;
+        var arg_set = [];
+
+        var debounceUnlock = function() {
+            while(arg_set.length > 0) {
+                fn(arg_set.shift());
+            }
+            locked = false;
+        };
+
+        return function(arg) {
+            if (!locked) {
+                fn(arg);
+                locked = true;
+                setTimeout(debounceUnlock, interval);
+            } else if (!res.contains(arg_set, arg)) {
+                arg_set.push(arg);
+            }
+        };
+    };
+
     res.clean = function(arr) {
         return res.filter(arr, res.truthiness);
     };

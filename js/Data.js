@@ -25,8 +25,13 @@ Data.accepts = function(owner) {
 	//    - Node.DOCUMENT_NODE
 	//  - Object
 	//    - Any
-	return owner.nodeType ?
-		owner.nodeType === 1 || owner.nodeType === 9 : true;
+    var e;
+    try {
+        return owner.nodeType ?
+            owner.nodeType === 1 || owner.nodeType === 9 : true;
+    } catch(e) {
+        console.error(owner);
+    }
 };
 
 Data.prototype = {

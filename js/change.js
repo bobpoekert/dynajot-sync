@@ -240,6 +240,10 @@ define([
     };
 
     change.nodeTransaction = function(node, fn) {
+        if (!node.parentNode) { // node not in dom yet
+            fn({}, node);
+            return;
+        }
         data.set(node, 'dirty', true);
         data.set(node, 'state', fn(data.get(node, 'state'), node) || change.serializeNode(node));
         data.set(node, 'dirty', false);

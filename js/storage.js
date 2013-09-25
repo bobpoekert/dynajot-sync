@@ -8,7 +8,6 @@ define(["core", "msgpack"], function(core, msgpack) {
 
     var storage = {};
 
-
     var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
 
     var prefix = 5050;

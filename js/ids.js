@@ -10,6 +10,8 @@ define(["storage"], function(storage) {
         storage.put('session_id', ids.session_id);
     }
 
+    ids.session_id += '-' + Math.floor(Math.random() * 1000);
+
     ids.counter = function(key) {
         var ctr = parseInt(storage.get(key) || 0, 10);
         storage.put(key, (ctr+1).toString());
@@ -28,7 +30,8 @@ define(["storage"], function(storage) {
     };
 
     ids.node_ctr = function() {
-        return ids.counter('node_ctr');
+        var res = ids.counter('node_ctr');
+        return res;
     };
 
     ids.message_ctr = function(document_id) {

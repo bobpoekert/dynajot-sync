@@ -1,16 +1,19 @@
 /* Cross-browser dom mutation events 
 * */
-define(['dom'], function(dom) {
+define(['dom', 'core'], function(dom, core) {
 
     var res = {};
 
-    res.onChange = function(node, callback) {
+    res.onChange = function(node, callback, interval) {
         /* callback gets called with changed nodes in the subtree rooted at the given node.
         * NOTE: callback may be called when there isn't actually a change.
         * It's the caller's responsibility to check before doing anything.
         * Not checking before modifying the dom may result in infinite recursion!
         */
-        if (MutationObserver) {
+
+        callback = core.uniqueDebounce(callback, interval);
+
+        if (typeof(MutationObserver) !== 'undefined') {
             var observer = new MutationObserver(function(changes) {
                 for (var i=0; i < changes.length; i++) {
                     var change = changes[i];

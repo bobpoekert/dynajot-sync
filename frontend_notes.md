@@ -83,6 +83,6 @@ N/A, not used anywhere but would let you inject swf's.
 ### sync.js
 The main API js file. Check or create the URL hash of a page, and use that to connect to a particular document socket
  	
-
+We should offer sample pasteable code for when the developer is already using the hash that reads/assembles a query string in the hash
 
  	

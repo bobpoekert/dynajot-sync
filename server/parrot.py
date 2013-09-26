@@ -1,7 +1,9 @@
 import tornado.websocket as websocket
 import tornado.web as web
 from functools import partial
+
 import os, hashlib
+import json
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 def relpath(p):
@@ -28,8 +30,9 @@ class ParrotHandler(websocket.WebSocketHandler):
         self.document = document
         self.peers = documents[document]
 
-    def on_message(self, message):
-        print message
+    def on_message(self, blob):
+        print blob
+        message = json.loads(blob)
         for recipient in self.peers:
             if recipient != self:
                 recipient.write_message({'kind': 'message', 'value': message})

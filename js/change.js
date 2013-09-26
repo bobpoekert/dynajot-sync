@@ -240,6 +240,7 @@ define([
     };
 
     change.nodeTransaction = function(node, fn) {
+        // console.trace();
         if (!node.parentNode) { // node not in dom yet
             fn({}, node);
             return;

@@ -5,7 +5,7 @@ define(["core", "socket", "change", "enact"], function(core, socket, change, ena
     sync.sync = function(node, document_id) {
 
         var frag = window.location.hash.slice(1).trim();
-        if (!document_id && frag) {
+        if (!document_id && core.truthiness(frag)) {
             document_id = frag;
         }
        
@@ -19,29 +19,27 @@ define(["core", "socket", "change", "enact"], function(core, socket, change, ena
             }
         });
 
-        var setup = function() {
-            var from_network = core.pipe();
-            conn.onMessage(from_network.write);
-            from_network.addReader(core.partial(enact.applyDelta, node));
-            change.changes(node, document_id, conn.send);
+        var manifold = {
+            "document_id": core.pipe(),
+            "message": core.pipe()
         };
 
-        if (typeof(document_id) === 'string') {
-            setup();
-        } else {
-            var idx;
-            idx = conn.onMessage(function(message) {
-                var prev_id = document_id;
-                document_id = message.document_id;
-                conn.removeMessageCallback(idx);
-                if (typeof(prev_id) === 'function') {
-                    prev_id(document_id);
-                } else {
-                    window.location.hash = document_id;
-                }
-                setup();
-            });
-        }
+        conn.onMessage(function (msg) {
+            manifold[msg.kind].write(msg.value);
+        });
+
+        manifold.message.addReader(core.partial(enact.applyDelta, node));
+        change.changes(node, document_id, conn.send);
+
+        manifold.document_id.addReader(function(message) {
+            var prev_id = document_id;
+            document_id = message;
+            if (typeof(prev_id) === 'function') {
+                prev_id(document_id);
+            } else {
+                window.location.hash = document_id;
+            }
+        });
 
     };
 

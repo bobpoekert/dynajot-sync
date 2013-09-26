@@ -20,7 +20,7 @@ class ParrotHandler(websocket.WebSocketHandler):
             while (not new_id) or (new_id in documents):
                 new_id = random_id()
             document = new_id
-            self.write_message({'document_id':document})
+            self.write_message({'kind': 'document_id', 'value':document})
         if document in documents:
             documents[document].add(self)
         else:
@@ -32,7 +32,7 @@ class ParrotHandler(websocket.WebSocketHandler):
         print message
         for recipient in self.peers:
             if recipient != self:
-                recipient.write_message(message)
+                recipient.write_message({'kind': 'message', 'value': message})
 
     def on_close(self):
         self.peers.remove(self)

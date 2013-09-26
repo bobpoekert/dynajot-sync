@@ -127,7 +127,7 @@ define(["underscore"], function(underscore) {
         var failure_callbacks = [];
         var failed = false;
         var fired = false;
-        var data = null
+        var data = null;
         var await = function(success, fail) {
             if (fired) {
                 (failed ? fail : success).apply(data[0], data[1]);
@@ -136,6 +136,9 @@ define(["underscore"], function(underscore) {
                 failure_callbacks.push(fail);
             }
         };
+
+        await.addReader = await;
+        
         await.fail = function() {
             if (fired) return;
             data = [this, res.toArray(arguments)];
@@ -165,10 +168,8 @@ define(["underscore"], function(underscore) {
             addReader: function(fn) {
                 var idx = callbacks.length;
                 callbacks.push(fn);
-                if (idx === 0) {
-                    while(buffer.length > 0) {
-                        fn(buffer.shift());
-                    }
+                while(buffer.length > 0) {
+                    fn(buffer.shift());
                 }
                 return idx;
             },

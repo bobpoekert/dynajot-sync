@@ -28,10 +28,14 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         if (res.indexOf(repl) === -1) {
             res += ' ' + repl;
         }
+        res = res.replace(/\s+/g, ' ');
         node.setAttribute('class', res);
     };
 
-    dom.node_id = function(node, document_id) {
+    dom.node_id = function(root, node, document_id) {
+        if (node == root) { // ? comparison of dom nodes?
+            return "_root";
+        }
         var res = data.get(node, 'node_id');
         if (res) {
             return res;
@@ -42,6 +46,9 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         return new_id;
     };
 
+    dom.get_node_id = function(node) {
+        return data.get(node, "node_id");
+    };
 
     return dom;
 });

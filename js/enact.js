@@ -14,6 +14,7 @@ define(["core", "dom", "change"], function(core, dom, change) {
         if (inp.kind === 'text') {
             return document.createTextNode(inp.value);
         } else {
+            console.log(inp, inp.name);
             var res = document.createElement(inp.name);
             var attrs = inp.attrs || {};
             core.each(inp.attrs, function(v, k) {
@@ -33,28 +34,36 @@ define(["core", "dom", "change"], function(core, dom, change) {
         var node;
         if (delta.create) {
             delta.create.id = delta.id;
+            delta.position = delta.create.position;
             node = enact.reHydrateNode(delta.create);
         } else {
             node = enact.getNode(root, delta.id);
         }
 
-        change.nodeTransaction(node, function(state) {
+        var parent = delta.position ? enact.getNode(root, delta.position.parent) : null;
+        var nodes = [node];
 
-            if (delta.position) {
+        if (parent) {
+            nodes.push(parent);
+        }
+
+        change.nodeTransactions(root, nodes, function() {
+
+            if (parent) {
                 core.yankNode(node);
-                var parent = enact.getNode(root, delta.position.parent);
+                console.log(root);
+                console.log(delta);
+                console.log(parent);
+
                 core.insertNodeAt(parent, node, delta.position.index);
-                state.position = delta.position;
             }
 
             if (delta.attrs) {
                 core.each((delta.attrs['+'] || []), function(val, key) {
                     node.setAttribute(key, val);
-                    state.attrs[key] = val;
                 });
                 core.each((delta.attrs['-'] || []), function(val, key) {
                     node.removeAttribute(key);
-                    delete state.attrs[key];
                 });
             }
 

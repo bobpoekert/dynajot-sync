@@ -22,34 +22,14 @@ define(["load_swf", "core"], function(swf, core) {
         };
     };
 
-    var future = function() {
-        var callbacks = [];
-        return {
-            add: function(fn) {
-                var idx = callbacks.length;
-                callbacks.push(fn);
-                return idx;
-            },
-            remove: function(idx) {
-                callbacks[idx] = null;
-            },
-            fire: function() {
-                for (var i=0; i < callbacks.length; i++) {
-                    var cb = callbacks[i];
-                    if (cb) cb.apply(cb, arguments);
-                }
-            }
-        };
-    };
-
     if (window.WebSocket) {
         socket.connect = function(url) {
 
             url = core.maybe_function(url);
 
             var ws;
-            var message_callbacks = future();
-            var open_callbacks = future();
+            var message_callbacks = core.pipe();
+            var open_callbacks = core.future();
             var send_buffer = [];
             var closed = false;
             var open = false;
@@ -69,10 +49,12 @@ define(["load_swf", "core"], function(swf, core) {
                     }
                 };
                 ws.onerror = function(evt) {
-                    retry();
+                    if (ws.readyState !== 1) {
+                        retry();
+                    }
                 };
                 ws.onmessage = function(evt) {
-                    message_callbacks.fire(JSON.parse(evt.data));
+                    message_callbacks.write(JSON.parse(evt.data));
                 };
                 ws.onclose = function() {
                     open = false;
@@ -99,10 +81,10 @@ define(["load_swf", "core"], function(swf, core) {
                         break;
                     }
                 },
-                onOpen: open_callbacks.add,
+                onOpen: open_callbacks,
                 removeOpenCallback: open_callbacks.remove,
-                onMessage: message_callbacks.add,
-                removeMessageCallback: message_callbacks.remove,
+                onMessage: message_callbacks.addReader,
+                removeMessageCallback: message_callbacks.removeReader,
                 close: function() {
                     closed = true;
                     ws.close();
@@ -147,8 +129,8 @@ define(["load_swf", "core"], function(swf, core) {
             url = core.maybe_function(url);
 
             var callback_idx = swf_callbacks.length;
-            var message_callbacks = future();
-            var open_callbacks = future();
+            var message_callbacks = core.pipe();
+            var open_callbacks = core.future();
             var send_buffer = [];
             var closed = false;
             var open = false;
@@ -165,7 +147,7 @@ define(["load_swf", "core"], function(swf, core) {
                 switch(evt.type) {
                     case 'message':
                         var msg = decodeURIComponent(evt.message);
-                        message_callbacks.fire(JSON.parse(msg));
+                        message_callbacks.write(JSON.parse(msg));
                         break;
                     case 'close':
                         if (!closed) reconnect();
@@ -193,10 +175,10 @@ define(["load_swf", "core"], function(swf, core) {
                         send_buffer.push(data);
                     }
                 },
-                onOpen: open_callbacks.add,
+                onOpen: open_callbacks,
                 removeOpenCallback: open_callbacks.remove,
-                onMessage: message_callbacks.add,
-                removeMessageCallback: message_callbacks.remove,
+                onMessage: message_callbacks.addReader,
+                removeMessageCallback: message_callbacks.removeReader,
                 close: function() {
                     closed = true;
                     if (open) {

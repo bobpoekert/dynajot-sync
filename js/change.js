@@ -40,13 +40,18 @@ define([
         "onblur":true
     };
 
-    change.serializeNode = function(node, document_id) {
+    change.serializeNode = function(root, node, document_id) {
         if (!node) {
             return {};
         }
         var res = {};
         if (core.isTextNode(node)) {
-            return change.serializeNode(node.parent, document_id);
+            return change.serializeNode(root, node.parent, document_id);
+        } else if (dom.get_node_id(node)) {
+            return {
+                kind: 'id',
+                value: dom.get_node_id(node)
+            };
         } else {
             res.attrs = {};
             if (node.hasAttributes()) {
@@ -57,6 +62,7 @@ define([
                     }
                     if (i === 'class') {
                         attr = attr.replace(/dynajot-.*?(\s|$)/g, '');
+                        attr = attr.replace(/\s+/g, ' ');
                     }
                     res.attrs[node.attributes[i].name] = node.attributes[i].value;
                 }
@@ -69,15 +75,12 @@ define([
                         value: inner.data
                     };
                 } else {
-                    return {
-                        kind: 'id',
-                        value: dom.node_id(inner, document_id)
-                    };
+                    return change.serializeNode(root, inner, document_id);
                 }
             });
         }
         res.position = {
-            parent: dom.node_id(node.parentNode, document_id),
+            parent: dom.node_id(root, node.parentNode, document_id),
             index: dom.parentIndex(node)[1]
         };
         return res;
@@ -230,33 +233,31 @@ define([
         }
     };
 
-    change.nodeMarkDirty = function(node) {
-        data.set(node, 'dirty', true);
+    change.nodeTransactions = function(root, nodes, fn) {
+        core.each(nodes, function(node) {
+            data.set(node, 'dirty', true);
+        });
+        fn();
+        core.each(nodes, function(node) {
+            data.set(node, 'state', change.serializeNode(node));
+            data.set(node, 'dirty', false);
+        });
     };
 
-    change.nodeMarkClean = function(node) {
-        data.set(node, 'state', change.serializeNode(node));
-        data.set(node, 'dirty', false);
-    };
-
-    change.nodeTransaction = function(node, fn) {
+    change.nodeTransaction = function(root, node, fn) {
         // console.trace();
         if (!node.parentNode) { // node not in dom yet
             fn({}, node);
             return;
         }
         data.set(node, 'dirty', true);
-        data.set(node, 'state', fn(data.get(node, 'state'), node) || change.serializeNode(node));
+        data.set(node, 'state', fn(data.get(node, 'state'), node) || change.serializeNode(root, node));
         data.set(node, 'dirty', false);
     };
 
     change.changes = function(tree, document_id, delta_callback) {
         var node_id = function(node) {
-            if (node == tree) {
-                return '_root';
-            } else {
-                return dom.node_id(node, document_id);
-            }
+            return dom.node_id(tree, node, document_id);
         };
         mutation.onChange(tree, function(node) {
             if (core.isTextNode(node)) {
@@ -264,7 +265,7 @@ define([
             }
             if (data.get(node, 'dirty')) return;
             var prev_state = data.get(node, 'state');
-            var cur_state = change.serializeNode(node, document_id);
+            var cur_state = change.serializeNode(tree, node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta) && !core.isEqual(core.keys(delta), ['id'])) {

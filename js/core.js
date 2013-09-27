@@ -316,6 +316,13 @@ define(["underscore"], function(underscore) {
     });
 
     res.insertNodeAt = function(parent, child, index) {
+        if (parent == null) {
+            console.trace();
+        }
+        if (parent.children.length === 0) {
+            parent.appendChild(child);
+            return;
+        }
         var after = parent.children[index];
         after.insertBefore(parent, child);
     };

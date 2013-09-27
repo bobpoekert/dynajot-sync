@@ -49,7 +49,9 @@ define(["load_swf", "core"], function(swf, core) {
                     }
                 };
                 ws.onerror = function(evt) {
-                    retry();
+                    if (ws.readyState !== 1) {
+                        retry();
+                    }
                 };
                 ws.onmessage = function(evt) {
                     message_callbacks.write(JSON.parse(evt.data));

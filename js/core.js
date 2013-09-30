@@ -319,7 +319,7 @@ define(["underscore"], function(underscore) {
         if (parent == null) {
             console.trace();
         }
-        if (parent.children.length === 0) {
+        if (parent.children.length <= index) {
             parent.appendChild(child);
             return;
         }

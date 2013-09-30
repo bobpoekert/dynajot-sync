@@ -79,6 +79,8 @@ Data.prototype = {
 		return unlock;
 	},
 	set: function( owner, data, value ) {
+		console.log([data, value]);
+		console.trace();
 		var prop,
 			// There may be an unlock assigned to this node,
 			// if there is no entry for this "owner", create one inline

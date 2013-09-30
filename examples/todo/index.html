@@ -50,11 +50,15 @@
 
         <script src="jquery-1.10.2.min.js"></script>
         <script src="main.js"></script>
-        <script src="dynajot-api.js"></script>
+        <script src="/js/require.js"></script>
         <script>
-        $(function () {
-            sync.sync(document.getElementById("todoapp"));
-        });
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["sync"], function(sync) {
+                sync.sync(document.getElementById('todoapp'));
+            });
         </script>
     </body>
 </html>

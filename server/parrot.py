@@ -44,7 +44,7 @@ class ParrotHandler(websocket.WebSocketHandler):
 
 app = web.Application([
     ('/doc/(.*)', ParrotHandler),
-    ('/(.*)', web.StaticFileHandler, {'path':relpath('..')})
+    ('/(.*)', web.StaticFileHandler, {'path':relpath('../static')})
 ], debug=True)
 
 if __name__ == '__main__':

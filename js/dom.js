@@ -32,7 +32,13 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         node.setAttribute('class', res);
     };
 
-    dom.node_id = function(root, node, document_id) {
+    dom.set_node_id = function(node, id) {
+        console.trace();
+        data.set(node, 'node_id', id);
+        dom.setIdClass(node, id);
+    };
+
+    dom.assign_node_id = function(root, node, document_id) {
         if (node == root) { // ? comparison of dom nodes?
             return "_root";
         }
@@ -41,8 +47,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
             return res;
         }
         var new_id = ids.node_id(document_id);
-        data.set(node, 'node_id', new_id);
-        dom.setIdClass(node, new_id);
+        dom.set_node_id(node, new_id);
         return new_id;
     };
 

@@ -12,9 +12,19 @@ define(["storage"], function(storage) {
 
     ids.session_id += '-' + Math.floor(Math.random() * 1000);
 
+    var putStorage = function(key, val) {
+        var raw_key = 'djc:'+key;
+        localStorage.setItem(raw_key, val);
+    };
+
+    var getStorage = function(key) {
+        return localStorage.getItem('djc:'+key);
+    };
+
     ids.counter = function(key) {
-        var ctr = parseInt(localStorage.getItem(key) || 0, 10);
-        localStorage.setItem(key, (ctr+1));
+        var s = getStorage(key);
+        var ctr = parseInt(s || 0, 10);
+        putStorage(key, (ctr+1).toString());
         return ctr;
     };
 
@@ -22,7 +32,7 @@ define(["storage"], function(storage) {
         var key = 'gs_'+document_id;
         var prevval = parseInt(storage.get(key) || 0, 10);
         if (nextval && nextval > prevval) {
-            storage.put(key, nextval.toString());
+            putStorage(key, nextval.toString());
             return nextval;
         } else {
             return prevval;

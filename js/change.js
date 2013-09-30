@@ -47,11 +47,6 @@ define([
         var res = {};
         if (core.isTextNode(node)) {
             return change.serializeNode(root, node.parent, document_id);
-        } else if (dom.get_node_id(node)) {
-            return {
-                kind: 'id',
-                value: dom.get_node_id(node)
-            };
         } else {
             res.attrs = {};
             if (node.hasAttributes()) {
@@ -80,9 +75,10 @@ define([
             });
         }
         res.position = {
-            parent: dom.node_id(root, node.parentNode, document_id),
+            parent: dom.assign_node_id(root, node.parentNode, document_id),
             index: dom.parentIndex(node)[1]
         };
+        res.id = dom.assign_node_id(root, node, document_id);
         return res;
     };
 
@@ -257,7 +253,7 @@ define([
 
     change.changes = function(tree, document_id, delta_callback) {
         var node_id = function(node) {
-            return dom.node_id(tree, node, document_id);
+            return dom.assign_node_id(tree, node, document_id);
         };
         mutation.onChange(tree, function(node) {
             if (core.isTextNode(node)) {
@@ -265,6 +261,7 @@ define([
             }
             if (data.get(node, 'dirty')) return;
             var prev_state = data.get(node, 'state');
+            var old_node_id = dom.get_node_id(node);
             var cur_state = change.serializeNode(tree, node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
@@ -273,7 +270,9 @@ define([
                     delta_callback(delta);
                 }
             } else if (node !== tree) {
+                console.log(cur_state);
                 delta_callback({"create":cur_state, "id":node_id(node)});
+                dom.assign_node_id(tree, node, document_id);
             }
             data.set(node, 'state', cur_state);
         });

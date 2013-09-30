@@ -14,13 +14,12 @@ define(["core", "dom", "change"], function(core, dom, change) {
         if (inp.kind === 'text') {
             return document.createTextNode(inp.value);
         } else {
-            console.log(inp, inp.name);
             var res = document.createElement(inp.name);
             var attrs = inp.attrs || {};
             core.each(inp.attrs, function(v, k) {
                 res.setAttribute(k, v);
             });
-            dom.setIdClass(res, inp.id);
+            dom.set_node_id(res, inp.id);
             if (inp.children) {
                 core.each(inp.children, function(c) {
                     res.appendChild(enact.reHydrateNode(c));
@@ -40,6 +39,11 @@ define(["core", "dom", "change"], function(core, dom, change) {
             node = enact.getNode(root, delta.id);
         }
 
+        if (!node) {
+            console.error(delta);
+        }
+
+
         var parent = delta.position ? enact.getNode(root, delta.position.parent) : null;
         var nodes = [node];
 
@@ -51,9 +55,6 @@ define(["core", "dom", "change"], function(core, dom, change) {
 
             if (parent) {
                 core.yankNode(node);
-                console.log(root);
-                console.log(delta);
-                console.log(parent);
 
                 core.insertNodeAt(parent, node, delta.position.index);
             }
@@ -76,6 +77,9 @@ define(["core", "dom", "change"], function(core, dom, change) {
                             var res = enact.getNode(node.value);
                             core.yankNode(res);
                             return res;
+                        } else {
+                            console.log(['hydrate', node]);
+                            return enact.reHydrateNode(node);
                         }
                     });
                     core.spliceNodes(node, slice.start, slice.end, new_nodes);

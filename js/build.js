@@ -4,7 +4,12 @@
     dir: "../../dynajot-build",
     modules: [
 	{
-            name: "sync"
+            name: "sync",
+            include: ['jquery',
+		      'underscore',
+		      'load_swf',
+		      'msgpack'
+ 	    ]
         }
     ]
 })

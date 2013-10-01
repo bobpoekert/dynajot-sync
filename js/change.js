@@ -82,6 +82,15 @@ define([
         return res;
     };
 
+    change.updateState = function(node) {
+        data.set(node, 'state', change.serializeNode(node));
+        var id = node.getAttribute('data-id');
+        if (id) {
+            dom.set_node_id(node, id);
+            node.removeAttribute('data-id');
+        }
+    };
+
     change.sentenceDiff = function(o, n) {
         var old_parts = core.sentenceSplit(o);
         var new_parts = core.sentenceSplit(n);
@@ -258,6 +267,7 @@ define([
             if (core.isTextNode(node)) {
                 node = node.parentNode;
             }
+            if (!node) return; //orphaned text node
             if (data.get(node, 'dirty')) return;
             var prev_state = data.get(node, 'state');
             var old_node_id = dom.get_node_id(node);

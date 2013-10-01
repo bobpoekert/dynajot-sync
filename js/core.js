@@ -294,9 +294,14 @@ define(["underscore"], function(underscore) {
 
     res.spliceNodes = res.logsErrors(function(target, start, end, replacement) {
         var children = res.toArray(target.childNodes);
-        var insertion_point = children[end];
         var i;
         var e;
+
+        var fragment = document.createDocumentFragment();
+        for (i=0; i < replacement.length; i++) {
+            fragment.appendChild(replacement[i]);
+        }
+
         for (i=start; i < end; i++) {
             try {
                 target.removeChild(children[i]);
@@ -304,14 +309,10 @@ define(["underscore"], function(underscore) {
                 // Node is not in dom. Maybe write a check for this?
             }
         }
-        if (insertion_point) {
-            for (i=replacement.length; i > 0; i--) {
-                insertion_point = target.insertBefore(replacement[i], insertion_point);
-            }
+        if (end < children.length) {
+            target.insertBefore(fragment, children[end]);
         } else {
-            for (i=0; i < replacement.length; i++) {
-                target.appendChild(replacement[i]);
-            }
+            target.appendChild(fragment);
         }
     });
 

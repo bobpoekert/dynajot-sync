@@ -1,4 +1,4 @@
-define(["core", "socket", "change", "enact"], function(core, socket, change, enact) {
+define(["core", "socket", "change", "enact", "dom"], function(core, socket, change, enact, dom) {
 
     var sync = {};
 
@@ -21,17 +21,16 @@ define(["core", "socket", "change", "enact"], function(core, socket, change, ena
 
         var manifold = {
             "document_id": core.pipe(),
+            "document_state": core.pipe(),
             "message": core.pipe()
         };
 
         conn.onMessage(function (msg) {
+            console.log(msg);
             if (manifold[msg.kind]) {
                 manifold[msg.kind].write(msg.value);
             }
         });
-
-        manifold.message.addReader(core.partial(enact.applyDelta, node));
-        change.changes(node, document_id, conn.send);
 
         manifold.document_id.addReader(function(message) {
             var prev_id = document_id;
@@ -43,6 +42,14 @@ define(["core", "socket", "change", "enact"], function(core, socket, change, ena
             }
         });
 
+        manifold.document_state.addReader(core.once(function(message) {
+            if (message) {
+                node.innerHTML = message;
+                dom.traverse(node, change.updateState);
+            }
+            manifold.message.addReader(core.partial(enact.applyDelta, node));
+            change.changes(node, document_id, conn.send);
+        }));
     };
 
     return sync;

@@ -67,6 +67,7 @@ define(["load_swf", "core"], function(swf, core) {
             init();
             return {
                 send: function(data) {
+                    console.log(data);
                     if (closed) return false;
                     while(true) {
                         var e;

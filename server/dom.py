@@ -1,5 +1,6 @@
 from weakref import WeakValueDictionary, ref
 from xml.sax.saxutils import escape, quoteattr
+import traceback
 
 unclosed_tags = frozenset([
     'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen',
@@ -28,6 +29,7 @@ def token_list(node, res=[]):
             token_list(child, res)
 
     return res
+
 class Node(object):
 
     def __init__(self, tagname=None, attrs={}, children=[], parent=None):
@@ -99,9 +101,8 @@ class DocumentTree(object):
             return res
 
     def set_node_id(self, node, _id):
-        node._id = _id
         self.node_ids[_id] = node
-        print self.node_ids
+        node.attrs['data-id'] = _id
         cls = node.attrs.get('class')
         if cls:
             parts = [e for e in cls.split() if not e.startswith('dynajot-')]

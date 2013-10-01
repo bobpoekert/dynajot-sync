@@ -173,6 +173,7 @@ define(["underscore"], function(underscore) {
                 }
                 return idx;
             },
+            buffer: buffer,
             removeReader: function(idx) {
                 callbacks[idx] = null;
             },
@@ -215,6 +216,12 @@ define(["underscore"], function(underscore) {
             } else if (!res.contains(arg_set, arg)) {
                 arg_set.push(arg);
             }
+        };
+    };
+
+    res.reTester = function(re) {
+        return function(item) {
+            return re.test(item);
         };
     };
 

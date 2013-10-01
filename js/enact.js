@@ -39,11 +39,6 @@ define(["core", "dom", "change"], function(core, dom, change) {
             node = enact.getNode(root, delta.id);
         }
 
-        if (!node) {
-            console.error(delta);
-        }
-
-
         var parent = delta.position ? enact.getNode(root, delta.position.parent) : null;
         var nodes = [node];
 
@@ -78,7 +73,6 @@ define(["core", "dom", "change"], function(core, dom, change) {
                             core.yankNode(res);
                             return res;
                         } else {
-                            console.log(['hydrate', node]);
                             return enact.reHydrateNode(node);
                         }
                     });

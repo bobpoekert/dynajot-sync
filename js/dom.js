@@ -3,6 +3,8 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     var dom = {};
 
     dom.traverse = function(dom_tree, visitor) {
+        console.log([dom_tree, visitor]);
+        console.trace();
         visitor(dom_tree);
         var children = dom_tree.children;
         for (var i=0; i < children.length; i++) {
@@ -33,7 +35,6 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     };
 
     dom.set_node_id = function(node, id) {
-        console.trace();
         data.set(node, 'node_id', id);
         dom.setIdClass(node, id);
     };

@@ -324,7 +324,7 @@ define(["underscore"], function(underscore) {
             return;
         }
         var after = parent.children[index];
-        after.insertBefore(parent, child);
+        parent.insertBefore(child, after);
     };
 
     res.extend = function() {

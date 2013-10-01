@@ -25,7 +25,9 @@ define(["core", "socket", "change", "enact"], function(core, socket, change, ena
         };
 
         conn.onMessage(function (msg) {
-            manifold[msg.kind].write(msg.value);
+            if (manifold[msg.kind]) {
+                manifold[msg.kind].write(msg.value);
+            }
         });
 
         manifold.message.addReader(core.partial(enact.applyDelta, node));

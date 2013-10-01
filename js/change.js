@@ -241,7 +241,6 @@ define([
     };
 
     change.nodeTransaction = function(root, node, fn) {
-        // console.trace();
         if (!node.parentNode) { // node not in dom yet
             fn({}, node);
             return;
@@ -270,7 +269,6 @@ define([
                     delta_callback(delta);
                 }
             } else if (node !== tree) {
-                console.log(cur_state);
                 delta_callback({"create":cur_state, "id":node_id(node)});
                 dom.assign_node_id(tree, node, document_id);
             }

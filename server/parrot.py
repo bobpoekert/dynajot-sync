@@ -5,6 +5,8 @@ from functools import partial
 import os, hashlib
 import json
 
+import dom
+
 base_path = os.path.dirname(os.path.abspath(__file__))
 def relpath(p):
     return os.path.join(base_path, p)
@@ -13,6 +15,15 @@ def random_id():
     return hashlib.sha1(os.urandom(20)).hexdigest()
 
 documents = {}
+document_trees = {}
+
+class DocumentStateHandler(web.RequestHandler):
+
+    def get(self, document_id):
+        try:
+            self.write(str(document_trees[document_id]))
+        except KeyError:
+            self.send_error(404)
 
 class ParrotHandler(websocket.WebSocketHandler):
 
@@ -23,16 +34,32 @@ class ParrotHandler(websocket.WebSocketHandler):
                 new_id = random_id()
             document = new_id
             self.write_message({'kind': 'document_id', 'value':document})
+        else:
+            try:
+                self.write_message({
+                    'kind': 'document_state',
+                    'value': str(document_trees[document])})
+            except KeyError:
+                pass
+
+        if document not in document_trees:
+            document_trees[document] = dom.DocumentTree()
+
         if document in documents:
             documents[document].add(self)
         else:
             documents[document] = set([self])
+
         self.document = document
         self.peers = documents[document]
+        self.tree = document_trees[document]
 
     def on_message(self, blob):
         print blob
         message = json.loads(blob)
+
+        self.tree.apply_delta(message)
+
         for recipient in self.peers:
             if recipient != self:
                 recipient.write_message({'kind': 'message', 'value': message})
@@ -44,6 +71,7 @@ class ParrotHandler(websocket.WebSocketHandler):
 
 app = web.Application([
     ('/doc/(.*)', ParrotHandler),
+    ('/doc_state/(.*)', DocumentStateHandler),
     ('/(.*)', web.StaticFileHandler, {'path':relpath('..')})
 ], debug=True)
 

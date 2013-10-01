@@ -34,16 +34,16 @@ class ParrotHandler(websocket.WebSocketHandler):
                 new_id = random_id()
             document = new_id
             self.write_message({'kind': 'document_id', 'value':document})
-        else:
-            try:
-                self.write_message({
-                    'kind': 'document_state',
-                    'value': str(document_trees[document])})
-            except KeyError:
-                pass
 
-        if document not in document_trees:
+        if document in document_trees:
+            self.write_message({
+                'kind':'document_state',
+                'value':str(document_trees[document])})
+        else:
             document_trees[document] = dom.DocumentTree()
+            self.write_message({
+                'kind':'document_state',
+                'value': None})
 
         if document in documents:
             documents[document].add(self)
@@ -65,6 +65,8 @@ class ParrotHandler(websocket.WebSocketHandler):
                 recipient.write_message({'kind': 'message', 'value': message})
 
     def on_close(self):
+        if not hasattr(self, 'peers'):
+            return
         self.peers.remove(self)
         if not self.peers:
             del documents[self.document]

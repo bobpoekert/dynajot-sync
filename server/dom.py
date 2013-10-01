@@ -1,4 +1,4 @@
-from weakref import WeakValueDictionary
+from weakref import WeakValueDictionary, ref
 from xml.sax.saxutils import escape, quoteattr
 
 unclosed_tags = frozenset([
@@ -8,7 +8,6 @@ unclosed_tags = frozenset([
 def token_list(node, res=[]):
     if type(node) != Node:
         res.append(escape(node))
-        return node
     elif node.tagname:
         res.append('<')
         res.append(node.tagname)
@@ -20,16 +19,15 @@ def token_list(node, res=[]):
         res.append('>')
         if node.tagname not in unclosed_tags:
             for child in node.children:
-                node.token_list(child, res)
+                token_list(child, res)
             res.append('</')
             res.append(node.tagname)
             res.append('>')
-        return res
     else:
         for child in node.children:
             token_list(child, res)
-        return res
 
+    return res
 class Node(object):
 
     def __init__(self, tagname=None, attrs={}, children=[], parent=None):
@@ -44,6 +42,22 @@ class Node(object):
     def __repr__(self):
         return 'Node: %s' % str(self)
 
+    def set_parent(self, parent):
+        if parent == None:
+            self._parent = None
+        else:
+            self._parent = ref(parent)
+
+    def get_parent(self):
+        try:
+            if self._parent == None:
+                return None
+            return self._parent()
+        except AttributeError:
+            return None
+
+    parent = property(get_parent, set_parent)
+
     def yank(self):
         if self.parent:
             self.parent.children.remove(self)
@@ -53,12 +67,12 @@ class Node(object):
         if hasattr(other, 'yank'):
             other.yank()
         if index >= 0:
+            print index
             self.children.insert(index, other)
         else:
             self.children.append(other)
         if hasattr(other, 'parent'):
             other.parent = self
-        print self
 
     def splice(self, start, end, insertion):
         self.children = self.children[:start] + insertion + self.children[end:]
@@ -87,6 +101,14 @@ class DocumentTree(object):
     def set_node_id(self, node, _id):
         node._id = _id
         self.node_ids[_id] = node
+        print self.node_ids
+        cls = node.attrs.get('class')
+        if cls:
+            parts = [e for e in cls.split() if not e.startswith('dynajot-')]
+            parts.append('dynajot-%s' % _id)
+            node.attrs['class'] = ' '.join(parts)
+        else:
+            node.attrs['class'] = 'dynajot-%s' % _id
 
     def get_node(self, _id):
         if _id == '_root':
@@ -94,26 +116,24 @@ class DocumentTree(object):
         else:
             return self.node_ids[_id]
 
-    def yank_node(self, node):
-        if node.parentNode:
-            node.parentNode.removeChild(node)
-
     def apply_delta(self, delta):
         node = None
-        if delta.get('create'):
+        if delta.get('create') and delta['id'] not in self.node_ids:
             delta['create']['id'] = delta['id']
             delta['position'] = delta['create']['position']
             node = self.re_hydrate_node(delta['create'])
             self.set_node_id(node, delta['id'])
+        elif delta.get('create'):
+            node = self.get_node(delta['id'])
+            delta['create']['id'] = delta['id']
+            delta = delta['create']
         else:
             node = self.get_node(delta['id'])
 
-        print '>>', delta
+        parent_id = delta.get('position', {}).get('parent')
 
-        parent_name = delta.get('position', {}).get('parent')
-
-        if parent_name:
-            parent = self.get_node(parent_name)
+        if parent_id:
+            parent = self.get_node(parent_id)
         else:
             parent = None
 

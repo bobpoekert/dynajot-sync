@@ -42,7 +42,5 @@ define(["core"], function(core) {
         };
     };
 
-    var createStore = function(store_name, 
-
     return storage;
 });

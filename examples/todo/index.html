@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="main.css">
+    </head>
+    <body>
+        <div id="todoapp">
+            <h1>todos</h1>
+            <header id="header">
+                <h1>todos</h1>
+                <input id="new-todo" placeholder="What needs to be done?" autofocus="">
+            </header>
+            <section id="main" style="display: block;">
+                <label for="toggle-all">Mark all as complete</label>
+                <ul id="todo-list"><li>
+                    <div class="view">
+                        <input class="toggle" type="checkbox">
+                        <label>lol</label>
+                        <button class="destroy"></button>
+                    </div>  
+                    <input class="edit" value="lol">
+                </li></ul>
+            </section>
+            <footer id="footer" style="display: block;">
+            <span id="todo-count"><strong>1</strong> item left</span>
+            <ul id="filters">
+                <li>
+                    <a class="selected" href="#/" data--filter-name="all">All</a>
+                </li>
+                <li>
+                    <a href="#/" data-filter-name="active">Active</a>
+                </li>
+                <li>
+                    <a href="#/" data-filter-name="completed">Completed</a>
+                </li>
+            </ul>
+            <button id="clear-completed" class="hidden"></button>
+            
+        </footer>
+        </section>
+
+
+            <div id="templates">
+                <li class="todo-item">
+                    <input class="toggle" type="checkbox">
+                    <label>lol</label>
+                    <button class="destroy"></button>
+                </li>
+            </div>
+        </div>
+
+        <script src="jquery-1.10.2.min.js"></script>
+        <script src="main.js"></script>
+        <script src="/js/require.js"></script>
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["sync"], function(sync) {
+                sync.sync(document.getElementById('todoapp'));
+            });
+        </script>
+    </body>
+</html>

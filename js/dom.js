@@ -52,6 +52,12 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         return new_id;
     };
 
+    dom.assign_all_ids = function(root, node, document_id) {
+        dom.traverse(node, function(inner) {
+            dom.assign_node_id(root, inner, document_id);
+        });
+    };
+
     dom.get_node_id = function(node) {
         return data.get(node, "node_id");
     };

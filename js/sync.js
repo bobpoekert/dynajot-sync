@@ -43,10 +43,10 @@ define(["core", "socket", "change", "enact", "dom"], function(core, socket, chan
         });
 
         manifold.document_state.addReader(core.once(function(message) {
-            if (message) {
+            /*if (message) {
                 node.innerHTML = message;
                 dom.traverse(node, change.updateState);
-            }
+            }*/
             manifold.message.addReader(enact.appliesDeltas(node));
             change.changes(node, document_id, conn.send);
         }));

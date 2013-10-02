@@ -70,12 +70,14 @@ define(["underscore"], function(underscore) {
     };
 
     res.gattr = function(k) {
+        /* @t String -> (Dict -> String) */
         return function(o) {
             return o[k];
         }
     };
 
     res.splat = function(fn) {
+        /* @t (... -> ?P) -> ([...] -> ?P) */
         return function(arr) {
             return fn.apply(this, arr);
         };
@@ -85,6 +87,7 @@ define(["underscore"], function(underscore) {
     res.dictIsEqual = res.isEqual;
 
     res.truthiness = function(obj) {
+        /* ?P -> Boolean */
         switch(obj) {
             case 0:
             case false:
@@ -112,17 +115,27 @@ define(["underscore"], function(underscore) {
     };
 
     res.removeWhitespace = function(s) {
+        /* @t String -> String */
         return s.replace(/\s/g, '');
     };
 
     res.whitespaceEqual = function(a, b) {
+        /* @t String, String -> Boolean */
         if (!(res.truthiness(a) === res.truthiness(b))) {
             return false;
         }
         return res.removeWhitespace(a) == res.removeWhitespace(b);
     };
 
+    /* @defrecord Future(?P)
+    *   (): (?P -> null), (?P -> null)? -> null
+    *   addReader: (?P -> null), (?P -> null)? -> null
+    *   fail: null -> null
+    *   fire: ?P, ... -> null
+    */
+
     res.future = function() {
+        /* @t () -> Future */
         var success_callbacks = [];
         var failure_callbacks = [];
         var failed = false;
@@ -159,7 +172,15 @@ define(["underscore"], function(underscore) {
         return await;
     };
 
+    /* @defrecord Pipe(?P)
+    *   addReader: (?P -> ...) -> Number
+    *   buffer: [?P, ...]
+    *   removeReader: Number -> null
+    *   write: ?P -> null
+    */
+
     res.pipe = function() {
+        /* @t () -> Pipe */
 
         var buffer = [];
         var callbacks = [];
@@ -193,10 +214,12 @@ define(["underscore"], function(underscore) {
     };
 
     res.maybe_function = function(val) {
+        /* @t ?P -> (... -> ...) */
         return typeof(val) === 'function' ? val : function() { return val; };
     };
 
     res.uniqueDebounce = function(fn, interval) {
+        /* @t (?P... -> null) -> (?P... -> null) */
         if (!interval) interval = 100;
         var locked = false;
         var arg_set = [];
@@ -220,12 +243,14 @@ define(["underscore"], function(underscore) {
     };
 
     res.reTester = function(re) {
+        /* @t RegExp -> (String -> Boolean) */
         return function(item) {
             return re.test(item);
         };
     };
 
     res.clean = function(arr) {
+        /* @t [?P, ...] -> [?P, ...] */
         return res.filter(arr, res.truthiness);
     };
 
@@ -235,10 +260,12 @@ define(["underscore"], function(underscore) {
 	};
 
     res.camelCase = function(string) {
+        /* @t String -> String */
         return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
     };
 
     res.replace = function(arr, fn) {
+        /* @t [?P, ...], (?P -> ?P/false) -> [?P, ...] */
         for (var i=0; i < arr.length; i++) {
             var e = arr[i];
             var r = fn(e);
@@ -249,6 +276,7 @@ define(["underscore"], function(underscore) {
     };
 
     res.indexOf = function(arr, el) {
+        /* @t [?P, ...], ?P -> Number */
         if (arr.indexOf) {
             return arr.indexOf(el);
         }
@@ -262,6 +290,7 @@ define(["underscore"], function(underscore) {
 
     var sentence_splitter = /(<[^>]*>|[^\w\s]+)/;
     res.sentenceSplit = function(s) {
+        /* @t String -> [[String, ...], [Number, ...]] */
         var parts = s.split(sentence_splitter);
         var res = [];
         for (var i=0; i < parts.length; i++) {
@@ -283,10 +312,12 @@ define(["underscore"], function(underscore) {
     };
 
     res.isTextNode = function(node) {
+        /* @t DOMNode -> Boolean */
         return !!(node && node.nodeType === 3);
     };
 
     res.logsErrors = function(fn) {
+        /* @t (?A, _... -> ?B) -> (?A, _... -> ?B) */
         return fn;
         if (console) {
             return function() {
@@ -304,12 +335,15 @@ define(["underscore"], function(underscore) {
     };
 
     res.yankNode = function(node) {
+        /* @t DOMNode -> null */
+        if (!node) console.trace();
         if (node.parentNode) {
             node.parentNode.removeChild(node);
         }
     };
 
     res.spliceNodes = res.logsErrors(function(target, start, end, replacement) {
+        /* @t DOMNode, Number, Number, [DOMNode, ...] -> null */
         var children = res.toArray(target.childNodes);
         var i;
         var e;
@@ -323,7 +357,7 @@ define(["underscore"], function(underscore) {
             try {
                 target.removeChild(children[i]);
             } catch(e) {
-                console.trace();
+                //console.trace();
             }
         }
         if (end < children.length) {
@@ -334,12 +368,25 @@ define(["underscore"], function(underscore) {
     });
 
     res.insertNodeAt = function(parent, child, index) {
-        if (parent.children.length <= index) {
-            parent.appendChild(child);
-        } else {
-            var after = parent.children[index];
+        /* @t DOMNode, DOMNode, Number -> null */
+        var after = parent.children[index];
+        if (after) {
             parent.insertBefore(child, after);
+        } else {
+            parent.appendChild(child);
         }
+    };
+
+    res.isChildOf = function(parent, child) {
+        /* @t DOMNode, DOMNode -> Boolean */
+        var accum = child;
+        while(accum && accum != document) {
+            if (accum.parentNode == parent) {
+                return true;
+            }
+            accum = accum.parentNode;
+        }
+        return false;
     };
 
     res.extend = function() {

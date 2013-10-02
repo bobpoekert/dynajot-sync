@@ -2,7 +2,18 @@ define(["core", "dom", "change"], function(core, dom, change) {
     
     var enact = {};
 
+    /* @defrecord Delta
+    *   id: String
+    *   name: String
+    *   attrs: Dict
+    *   position: {
+    *       parent: String
+    *       offset: Number}
+    *   children: [{kind: String, value: String}, ...]
+    */
+
     enact.getNode = function(parent, id) {
+        /* @t String, String -> DOMNode */
         if (id === '_root') {
             return parent;
         } else {
@@ -11,6 +22,7 @@ define(["core", "dom", "change"], function(core, dom, change) {
     };
 
     enact.reHydrateNode = function(inp) {
+        /* @t Delta -> DOMNode */
         if (inp.kind === 'text') {
             return document.createTextNode(inp.value);
         } else {
@@ -30,12 +42,16 @@ define(["core", "dom", "change"], function(core, dom, change) {
         }
     };
 
+    /* @t core.partial = (?A, ?B... -> ?C), ?A -> (?B... -> ?C) */
+    /* @t core.reduce = [?A, ...], (?A, ?A -> ?A) -> ?A */
     enact.appliesDeltas = function(root) {
+        /* @t DOMNode -> (Delta -> null) */
         var resolution_index = {};
 
         var getNode = core.partial(enact.getNode, root);
 
         var maybeFinish = function(delta) {
+            /* @t Delta -> null */
             var parent = getNode(delta.position.parent);
             if (!parent) return;
             if (core.some(
@@ -44,11 +60,13 @@ define(["core", "dom", "change"], function(core, dom, change) {
                 return;
             }
             var hydrated = enact.reHydrateNode(delta);
+            console.log('ps', delta.position);
             core.insertNodeAt(parent, hydrated, delta.position.index);
             change.updateState(parent);
         };
 
         var doCreate = function(delta) {
+            /* @t Delta -> null */
             var parent = delta.position.parent;
             var children = delta.children;
             
@@ -76,6 +94,7 @@ define(["core", "dom", "change"], function(core, dom, change) {
         };
 
         return function(delta) {
+            /* @t Delta -> null */
             var node = getNode(delta.id);
             if (!node) {
                 doCreate(delta);

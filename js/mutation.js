@@ -13,6 +13,8 @@ define(['dom', 'core'], function(dom, core) {
 
         callback = core.uniqueDebounce(callback, interval);
 
+        dom.traverse(node, callback);
+
         if (typeof(MutationObserver) !== 'undefined') {
             var observer = new MutationObserver(function(changes) {
                 for (var i=0; i < changes.length; i++) {

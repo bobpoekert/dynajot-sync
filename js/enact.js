@@ -29,6 +29,20 @@ define(["core", "dom", "change"], function(core, dom, change) {
         }
     };
 
+    enact.applyDelta = function () {
+        var resolution_index = {}; // maps children id -> parent
+
+        return function (root, delta) {
+            // delta comes in, check parent reference
+            var parent = delta.position ? enact.getNode(root, delta.position.parent) : null;
+
+               // if in index: stick it in the index as a child of that node
+               // if not:      check if all parents are in the dom
+                    // if so:  add it to the dom
+                    // if not: for each child that's not in the dom add them to the index
+        };
+    };
+
     enact.applyDelta = function(root, delta) {
         var node;
         if (delta.create) {

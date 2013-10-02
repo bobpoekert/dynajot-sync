@@ -46,7 +46,10 @@ define([
         }
         var res = {};
         if (core.isTextNode(node)) {
-            return change.serializeNode(root, node.parent, document_id);
+            return {
+                kind: 'text',
+                value: node.data
+            };
         } else {
             res.attrs = {};
             if (node.hasAttributes()) {
@@ -70,7 +73,10 @@ define([
                         value: inner.data
                     };
                 } else {
-                    return change.serializeNode(root, inner, document_id);
+                    return {
+                        kind: 'id',
+                        value: dom.get_node_id(node)
+                    };
                 }
             });
         }

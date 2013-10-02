@@ -44,6 +44,10 @@ define([
         if (!node) {
             return {};
         }
+        if (!node.parentNode) {
+            // node is not in the dom
+            return {};
+        }
         var res = {};
         if (core.isTextNode(node)) {
             return change.serializeNode(root, node.parent, document_id);
@@ -77,6 +81,7 @@ define([
                 }
             });
         }
+        if (!node.parentNode) console.log('p', node);
         res.position = {
             parent: dom.assign_node_id(root, node.parentNode, document_id),
             index: dom.parentIndex(node)[1]
@@ -236,6 +241,7 @@ define([
             }
 
             res.id = cur.id;
+            res.name = cur.name;
 
             return res;
         }
@@ -277,7 +283,7 @@ define([
             var cur_state = change.serializeNode(tree, node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
-                if (core.truthiness(delta) && !core.isEqual(core.keys(delta), ['id'])) {
+                if (core.truthiness(delta) && !core.isEqual(core.keys(delta), ['id', 'name'])) {
                     delta.id = node_id(node);
                     delta_callback(delta);
                 }

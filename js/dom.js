@@ -20,6 +20,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     };
     
     dom.setIdClass = function(node, id) {
+        if (!node) console.trace();
         var prev = node.getAttribute('class');
         var res = null;
         if (prev) {

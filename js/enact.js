@@ -121,6 +121,7 @@ define(["core", "dom", "change"], function(core, dom, change) {
                                     return enact.reHydrateNode(node);
                                 }
                             });
+                            console.log(new_nodes);
                             core.spliceNodes(node, slice.start, slice.end, new_nodes);
                         });
                     }

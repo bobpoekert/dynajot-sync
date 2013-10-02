@@ -58,7 +58,7 @@ class ParrotHandler(websocket.WebSocketHandler):
         print blob
         message = json.loads(blob)
 
-        self.tree.apply_delta(message)
+        #self.tree.apply_delta(message)
 
         for recipient in self.peers:
             if recipient != self:

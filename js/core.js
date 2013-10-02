@@ -238,6 +238,16 @@ define(["underscore"], function(underscore) {
         return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
     };
 
+    res.replace = function(arr, fn) {
+        for (var i=0; i < arr.length; i++) {
+            var e = arr[i];
+            var r = fn(e);
+            if (r !== false) {
+                arr[i] = r;
+            }
+        }
+    };
+
     res.indexOf = function(arr, el) {
         if (arr.indexOf) {
             return arr.indexOf(el);
@@ -313,7 +323,7 @@ define(["underscore"], function(underscore) {
             try {
                 target.removeChild(children[i]);
             } catch(e) {
-                // Node is not in dom. Maybe write a check for this?
+                console.trace();
             }
         }
         if (end < children.length) {
@@ -324,15 +334,12 @@ define(["underscore"], function(underscore) {
     });
 
     res.insertNodeAt = function(parent, child, index) {
-        if (parent == null) {
-            console.trace();
-        }
         if (parent.children.length <= index) {
             parent.appendChild(child);
-            return;
+        } else {
+            var after = parent.children[index];
+            parent.insertBefore(child, after);
         }
-        var after = parent.children[index];
-        parent.insertBefore(child, after);
     };
 
     res.extend = function() {

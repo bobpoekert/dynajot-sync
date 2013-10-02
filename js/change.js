@@ -70,7 +70,10 @@ define([
                         value: inner.data
                     };
                 } else {
-                    return change.serializeNode(root, inner, document_id);
+                    return {
+                        kind: 'id',
+                        value: dom.assign_node_id(root, inner, document_id)
+                    };
                 }
             });
         }
@@ -244,7 +247,7 @@ define([
         });
         fn();
         core.each(nodes, function(node) {
-            data.set(node, 'state', change.serializeNode(node));
+            change.updateState(node);
             data.set(node, 'dirty', false);
         });
     };
@@ -279,8 +282,7 @@ define([
                     delta_callback(delta);
                 }
             } else if (node !== tree) {
-                delta_callback({"create":cur_state, "id":node_id(node)});
-                dom.assign_node_id(tree, node, document_id);
+                delta_callback(cur_state);
             }
             data.set(node, 'state', cur_state);
         });

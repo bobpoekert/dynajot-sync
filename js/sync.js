@@ -47,7 +47,7 @@ define(["core", "socket", "change", "enact", "dom"], function(core, socket, chan
                 node.innerHTML = message;
                 dom.traverse(node, change.updateState);
             }
-            manifold.message.addReader(core.partial(enact.applyDelta, node));
+            manifold.message.addReader(enact.appliesDeltas(node));
             change.changes(node, document_id, conn.send);
         }));
     };

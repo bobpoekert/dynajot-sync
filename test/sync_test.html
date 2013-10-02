@@ -19,17 +19,17 @@
                 background: #eee!important;
             }
         </style>
-    </head>
-    <body>
-        <div contenteditable="true" id="target"></div>
-
         <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
         <script src="/js/require.js"></script>
+    </head>
+    <body>
+        <div contenteditable="true" id="dynadoc-app"></div>
+
         <script src="/js/dynajot-api.js"></script>
 
         <script>
         $(function () {
-            $("#target").collab();
+            $("#dynadoc-app").collab();
         });
         </script>
     </body>

@@ -49,6 +49,8 @@ define(["core", "dom", "change"], function(core, dom, change) {
         var resolution_index = {};
 
         var getNode = core.partial(enact.getNode, root);
+        
+        var create_callbacks = {};
 
         var maybeFinish = function(delta) {
             /* @t Delta -> null */
@@ -60,14 +62,73 @@ define(["core", "dom", "change"], function(core, dom, change) {
                 return;
             }
             var hydrated = enact.reHydrateNode(delta);
-            console.log('ps', delta.position);
             core.insertNodeAt(parent, hydrated, delta.position.index);
+            var cb = create_callbacks[delta.id];
+            while (cb && cb.length > 0) {
+                cb.shift()(hydrated);
+            }
             change.updateState(parent);
         };
+        
+        var asyncGetNode = function(id, fn) {
+            var node = getNode(id);
+            if (node) {
+                fn(node);
+                return;
+            }
+            var cb = create_callbacks[id];
+            if (!cb) {
+                cb = [];
+                create_callbacks[id] = cb;
+            }
+            cb.push(fn);
+        };
+        
+        var hasAllChildren = function(delta) {
+            for (var i=0; i < delta.children.length; i++) {
+                var c = delta.children[i];
+                if (c.kind != 'id') continue;
+                if (getNode(c.value)) continue;
+                return false;
+            }
+            return true;
+        };
+
+
+        var whenCanApplyDelta = function(delta, cb) {
+            var node = getNode(delta.id);
+            var recur = core.partial(whenCanApplyDelta, delta, cb);
+            if (!node) {
+                asyncGetNode(delta.id, recur);
+                return;
+            }
+            var child_nodes = [];
+            for (var i=0; i < delta.children.length; i++) {
+                var c = delta.children[i];
+                if (c === true) {
+                    child_nodes.append(true);
+                    continue;
+                }
+                if (c.kind == 'text') {
+                    child_nodes.push(document.createTextNode(c.value));
+                    continue;
+                }
+                var cn = getNode(c.value);
+                if (cn) {
+                    child_nodes.push(cn);
+                    continue;
+                }
+                asyncGetNode(c.value, recur);
+                return;
+            }
+            console.log(child_nodes);
+            cb(delta, node, child_nodes);
+        };
+
 
         var doCreate = function(delta) {
             /* @t Delta -> null */
-            var parent = delta.position.parent;
+            var parent = delta.position && delta.position.parent;
             var children = delta.children;
             
             core.each(children, function(child) {
@@ -77,17 +138,19 @@ define(["core", "dom", "change"], function(core, dom, change) {
                 }
             });
 
-            var resolved_parent = resolution_index[parent];
-            if (resolved_parent) {
-                core.replace(resolved_parent.children, function(child) {
-                    if (child.value == delta.id) {
-                        return delta;
-                    } else {
-                        return false;
-                    }
-                });
-                delete resolution_index[parent];
-                maybeFinish(resolved_parent);
+            if (parent) {
+                var resolved_parent = resolution_index[parent];
+                if (resolved_parent) {
+                    core.replace(resolved_parent.children, function(child) {
+                        if (child.value == delta.id) {
+                            return delta;
+                        } else {
+                            return false;
+                        }
+                    });
+                    delete resolution_index[parent];
+                    maybeFinish(resolved_parent);
+                }
             }
 
             maybeFinish(delta);
@@ -95,65 +158,58 @@ define(["core", "dom", "change"], function(core, dom, change) {
 
         return function(delta) {
             /* @t Delta -> null */
-            var node = getNode(delta.id);
-            if (!node) {
-                doCreate(delta);
-            } else {
-                var nodes = [node];
-                var parent;
-                if (delta.position && delta.position.parnet) {
-                    parent = getNode(delta.position.parent);
+            whenCanApplyDelta(delta, function(node, child_nodes) {
+                console.log(node, child_nodes);
+                if (node.position) {
+                    doCreate(delta);
                 } else {
-                    parent = null;
-                }
-
-                if (parent) {
-                    nodes.push(parent);
-                }
-
-                change.nodeTransactions(root, nodes, function() {
-
-                    if (parent) {
-                        core.yankNode(node);
-                        core.insertNodeAt(parent, node, delta.position.index);
+                    var nodes = [node];
+                    var parent;
+                    if (delta.position && delta.position.parnet) {
+                        parent = getNode(delta.position.parent);
+                    } else {
+                        parent = null;
                     }
 
-                    if (delta.attrs) {
-                        core.each((delta.attrs['+'] || []), function(val, key) {
-                            node.setAttribute(key, val);
-                        });
-                        core.each((delta.attrs['-'] || []), function(val, key) {
-                            node.removeAttribute(key);
-                        });
-                    }
+                    change.nodeTransactions(root, nodes, function() {
 
-                    if (delta.children) {
-                        var target_children = core.toArray(node.childNodes);
-                        for (i=0; i < delta.children.length; i++) {
-                            var child = delta.children[i];
-                            var target = target_children[i];
-                            if (child === true) {
-                                continue;
-                            }
-                            var n;
-                            if (child.kind == 'text') {
-                                n = document.createTextNode(child.value)
-                            } else if (node.kind == 'id') {
-                                var n = getNode(child.value);
-                                core.yankNode(n);
-                            }
-                            if (target) {
-                                node.replaceChild(n, target);
-                            } else {
-                                node.appendChild(n);
-                            }
-                            change.updateState(n);
+                        if (parent) {
+                            core.yankNode(node);
+                            core.insertNodeAt(parent, node, delta.position.index);
                         }
-                    }
 
-                });
+                        if (delta.attrs) {
+                            core.each((delta.attrs['+'] || []), function(val, key) {
+                                node.setAttribute(key, val);
+                            });
+                            core.each((delta.attrs['-'] || []), function(val, key) {
+                                node.removeAttribute(key);
+                            });
+                        }
 
-            }
+                        if (delta.children) {
+                            var target_children = core.toArray(node.childNodes);
+                            console.log(target_children, child_nodes);
+                            for (i=0; i < delta.children.length; i++) {
+                                var child = child_nodes[i];
+                                var target = target_children[i];
+                                if (child === true) {
+                                    continue;
+                                }
+                                core.yankNode(child);
+                                if (target) {
+                                    node.replaceChild(child, target);
+                                } else {
+                                    node.appendChild(child);
+                                }
+                                change.updateState(child);
+                            }
+                        }
+
+                    });
+
+                }
+            });
         };
     };
 

@@ -1,4 +1,4 @@
-define(["core", "dom", "change"], function(core, dom, change) {
+define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
     
     var enact = {};
 
@@ -61,7 +61,7 @@ define(["core", "dom", "change"], function(core, dom, change) {
             }
             var hydrated = enact.reHydrateNode(delta);
             console.log('ps', delta.position);
-            core.insertNodeAt(parent, hydrated, delta.position.index);
+            dom.insertNodeAt(parent, hydrated, delta.position.index);
             change.updateState(parent);
         };
 
@@ -114,8 +114,8 @@ define(["core", "dom", "change"], function(core, dom, change) {
                 change.nodeTransactions(root, nodes, function() {
 
                     if (parent) {
-                        core.yankNode(node);
-                        core.insertNodeAt(parent, node, delta.position.index);
+                        dom.yankNode(node);
+                        dom.insertNodeAt(parent, node, delta.position.index);
                     }
 
                     if (delta.attrs) {
@@ -134,14 +134,16 @@ define(["core", "dom", "change"], function(core, dom, change) {
                                     return document.createTextNode(node.value);
                                 } else if (node.kind == 'id') {
                                     var res = getNode(node.value);
-                                    core.yankNode(res);
+                                    dom.yankNode(res);
                                     return res;
                                 } else {
-                                    return enact.reHydrateNode(node);
+                                    console.log(node);
+                                    console.trace();
                                 }
                             });
+                            console.log('nn', slice, new_nodes);
                             console.log(new_nodes);
-                            core.spliceNodes(node, slice.start, slice.end, new_nodes);
+                            dom.spliceNodes(node, slice.start, slice.end, new_nodes);
                         });
                     }
 

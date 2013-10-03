@@ -34,14 +34,10 @@ define(['dom', 'core'], function(dom, core) {
             node.addEventListener('DOMSubtreeModified', function(evt) {
                 dom.traverse(evt.target || node, callback);
             });
-            
-            // DOMSubtreeModified doesn't work for new nodes in IE9,
-            // so we still have to poll.
-            // (also DOMSubtreeModified isn't supported at all in IE8)
-            setInterval(function() {
-                dom.traverse(node, callback);
-            }, 500);
         }
+        setInterval(function() {
+            dom.traverse(node, callback);
+        }, 500);
     };
 
     return res;

@@ -249,6 +249,14 @@ define(["underscore"], function(underscore) {
         };
     };
 
+    res.hasOnlyKeys = function(dict, keys) {
+        for (var k in dict) {
+            if (!dict.hasOwnProperty(k)) continue;
+            if (res.indexOf(keys, k) == -1) return false;
+        }
+        return true;
+    };
+
     res.clean = function(arr) {
         /* @t [?P, ...] -> [?P, ...] */
         return res.filter(arr, res.truthiness);
@@ -317,7 +325,7 @@ define(["underscore"], function(underscore) {
     };
 
     res.logsErrors = function(fn) {
-        /* @t (?A, _... -> ?B) -> (?A, _... -> ?B) */
+        /* @t (?A, ?_... -> ?B) -> (?A, ?_... -> ?B) */
         return fn;
         if (console) {
             return function() {
@@ -332,61 +340,6 @@ define(["underscore"], function(underscore) {
         } else {
             return fn;
         }
-    };
-
-    res.yankNode = function(node) {
-        /* @t DOMNode -> null */
-        if (!node) console.trace();
-        if (node.parentNode) {
-            node.parentNode.removeChild(node);
-        }
-    };
-
-    res.spliceNodes = res.logsErrors(function(target, start, end, replacement) {
-        /* @t DOMNode, Number, Number, [DOMNode, ...] -> null */
-        var children = res.toArray(target.childNodes);
-        var i;
-        var e;
-
-        var fragment = document.createDocumentFragment();
-        for (i=0; i < replacement.length; i++) {
-            fragment.appendChild(replacement[i]);
-        }
-
-        for (i=start; i < end; i++) {
-            try {
-                target.removeChild(children[i]);
-            } catch(e) {
-                //console.trace();
-            }
-        }
-        if (end < children.length) {
-            target.insertBefore(fragment, children[end]);
-        } else {
-            target.appendChild(fragment);
-        }
-    });
-
-    res.insertNodeAt = function(parent, child, index) {
-        /* @t DOMNode, DOMNode, Number -> null */
-        var after = parent.children[index];
-        if (after) {
-            parent.insertBefore(child, after);
-        } else {
-            parent.appendChild(child);
-        }
-    };
-
-    res.isChildOf = function(parent, child) {
-        /* @t DOMNode, DOMNode -> Boolean */
-        var accum = child;
-        while(accum && accum != document) {
-            if (accum.parentNode == parent) {
-                return true;
-            }
-            accum = accum.parentNode;
-        }
-        return false;
     };
 
     res.extend = function() {

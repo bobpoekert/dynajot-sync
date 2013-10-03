@@ -67,7 +67,7 @@ define([
                 }
             }
             res.name = node.tagName.toLowerCase();
-            res.children = core.map(node.childNodes, function(inner) {
+            res.children = core.map(dom.getChildNodes(node), function(inner) {
                 if (core.isTextNode(inner)) {
                     return {
                         kind: 'text',
@@ -215,8 +215,8 @@ define([
                     return val.kind+':'+val.value;
                 };
                 var matcher = new difflib.SequenceMatcher(
-                    core.map(cur.children, serializer),
-                    core.map(old.children, serializer));
+                    core.map(old.children, serializer),
+                    core.map(cur.children, serializer));
                 var opcodes = matcher.get_opcodes();
 
                 res.children = core.clean(core.map(
@@ -283,7 +283,7 @@ define([
             var cur_state = change.serializeNode(tree, node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
-                if (core.truthiness(delta) && !core.isEqual(core.keys(delta), ['id', 'name'])) {
+                if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
                     delta.id = node_id(node);
                     delta_callback(delta);
                 }

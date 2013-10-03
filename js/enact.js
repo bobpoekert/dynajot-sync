@@ -128,21 +128,27 @@ define(["core", "dom", "change"], function(core, dom, change) {
                     }
 
                     if (delta.children) {
-                        core.each(delta.children, function(slice) {
-                            var new_nodes = core.map(slice.value, function(node) {
-                                if (node.kind == 'text') {
-                                    return document.createTextNode(node.value);
-                                } else if (node.kind == 'id') {
-                                    var res = getNode(node.value);
-                                    core.yankNode(res);
-                                    return res;
-                                } else {
-                                    return enact.reHydrateNode(node);
-                                }
-                            });
-                            console.log(new_nodes);
-                            core.spliceNodes(node, slice.start, slice.end, new_nodes);
-                        });
+                        var target_children = core.toArray(node.childNodes);
+                        for (i=0; i < delta.children.length; i++) {
+                            var child = delta.children[i];
+                            var target = target_children[i];
+                            if (child === true) {
+                                continue;
+                            }
+                            var n;
+                            if (child.kind == 'text') {
+                                n = document.createTextNode(child.value)
+                            } else if (node.kind == 'id') {
+                                var n = getNode(child.value);
+                                core.yankNode(n);
+                            }
+                            if (target) {
+                                node.replaceChild(n, target);
+                            } else {
+                                node.appendChild(n);
+                            }
+                            change.updateState(n);
+                        }
                     }
 
                 });

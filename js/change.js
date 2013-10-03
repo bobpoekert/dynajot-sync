@@ -92,7 +92,7 @@ define([
 
     change.updateState = function(node) {
         data.set(node, 'state', change.serializeNode(node));
-        var id = node.getAttribute('data-id');
+        var id = node.getAttribute && node.getAttribute('data-id');
         if (id) {
             dom.set_node_id(node, id);
             node.removeAttribute('data-id');
@@ -210,34 +210,26 @@ define([
                     }
                 }
             }
-            if (!core.isEqual(cur.children, old.children)) {
-                var serializer = function(val) {
-                    return val.kind+':'+val.value;
-                };
-                var matcher = new difflib.SequenceMatcher(
-                    core.map(cur.children, serializer),
-                    core.map(old.children, serializer));
-                var opcodes = matcher.get_opcodes();
-
-                res.children = core.clean(core.map(
-                    opcodes, core.splat(function(opcode, i1, i2, j1, j2) {
-                        switch(opcode) {
-                            case 'insert':
-                            case 'replace':
-                                return {
-                                   start: i1,
-                                   end: i2,
-                                   value: cur.children.slice(j1, j2)
-                                };
-                            case 'delete':
-                                return {
-                                    start: i1,
-                                    end: i2,
-                                    value: []
-                                };
-                        }
-                    })
-                ));
+   
+            if (old.children && cur.children) {
+                var children = [];
+                var children_differ = (old.children.length != cur.children.length);
+                console.log(old.children, cur.children);
+                for (var i=0; i < cur.children.length; i++) {
+                    if (core.isEqual(old.children[i], cur.children[i])) {
+                        children.push(true);
+                    } else {
+                        children.push(cur.children[i]);
+                        children_differ = true;
+                    }
+                }
+                if (children_differ) {
+                    res.children = children;
+                }
+            } else if (old.children) {
+                res.children = [];
+            } else if (cur.children) {
+                res.children = cur.children;
             }
 
             res.id = cur.id;

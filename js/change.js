@@ -248,6 +248,7 @@ define([
     };
 
     change.nodeTransactions = function(root, nodes, fn) {
+        /* @t DOMNode, [DOMNode, ...] (() -> null) -> null */
         core.each(nodes, function(node) {
             data.set(node, 'dirty', true);
         });
@@ -259,16 +260,19 @@ define([
     };
 
     change.nodeTransaction = function(root, node, fn) {
+        /* @t DOMNode, DOMNode, (NodeState, DOMNode -> NodeState/null) -> null */
         if (!node.parentNode) { // node not in dom yet
             fn({}, node);
             return;
         }
         data.set(node, 'dirty', true);
-        data.set(node, 'state', fn(data.get(node, 'state'), node) || change.serializeNode(root, node));
+        fn(data.get(node, 'state'), node);
+        dom.updateState(node);
         data.set(node, 'dirty', false);
     };
 
     change.changes = function(tree, document_id, delta_callback) {
+        /* @t DOMNode, String, (NodeDelta -> null) -> null */ 
         var node_id = function(node) {
             return dom.assign_node_id(tree, node, document_id);
         };
@@ -277,12 +281,18 @@ define([
                 node = node.parentNode;
             }
             if (!node) return; //orphaned text node
-            if (data.get(node, 'dirty')) return;
+            if (data.get(node, 'dirty')) {
+                return;
+            }
+            var seen = data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
             var old_node_id = dom.get_node_id(node);
             var cur_state = change.serializeNode(tree, node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
+                if (!seen) {
+                    delta.create = true;
+                }
                 if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
                     delta.id = node_id(node);
                     delta_callback(delta);
@@ -291,6 +301,7 @@ define([
                 delta_callback(cur_state);
             }
             data.set(node, 'state', cur_state);
+            data.set(node, 'seen', true);
         });
     };
 

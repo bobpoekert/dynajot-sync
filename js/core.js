@@ -51,6 +51,7 @@ define(["underscore"], function(underscore) {
     };
 
     res.mapAll = function(arrs, fn, context) {
+        /* @t [[?A...], ...], (?A -> ?A), Dict -> [[?A...], ...] */
         var results = [];
         if (arrs == null) return results;
         var max_length = 0;
@@ -74,6 +75,17 @@ define(["underscore"], function(underscore) {
         return function(o) {
             return o[k];
         }
+    };
+
+    res.unsplat = function(arg_count, fn) {
+        return function() {
+            var dst = [];
+            var src = res.toArray(arguments);
+            for (var i=0; i < arg_count; i++) {
+                args.push(src.shift());
+            }
+            return fn.apply(this, dst.concat(src));
+        };
     };
 
     res.splat = function(fn) {
@@ -127,7 +139,7 @@ define(["underscore"], function(underscore) {
         return res.removeWhitespace(a) == res.removeWhitespace(b);
     };
 
-    /* @defrecord Future(?P)
+    /* @defrecord Future
     *   (): (?P -> null), (?P -> null)? -> null
     *   addReader: (?P -> null), (?P -> null)? -> null
     *   fail: null -> null
@@ -153,6 +165,7 @@ define(["underscore"], function(underscore) {
         await.addReader = await;
         
         await.fail = function() {
+            /* @t () -> null */
             if (fired) return;
             data = [this, res.toArray(arguments)];
             fired = true;
@@ -162,6 +175,7 @@ define(["underscore"], function(underscore) {
             }
         };
         await.fire = function() {
+            /* @t () -> null */
             if (fired) return;
             data = [this, res.toArray(arguments)];
             fired = true;
@@ -170,6 +184,38 @@ define(["underscore"], function(underscore) {
             }
         };
         return await;
+    };
+
+    res.multi = function(callback) {
+        /* @t (?A... -> null) -> Multi(?A) */
+        var slots = [];
+        var item_count = 0;
+        var delivered_count = 0;
+        var started = false;
+        var fired = false;
+
+        var deliverItem = function(index, item) {
+            var old = slots[index];
+            slots[index] = item;
+            if (old === null) delivered_count++;
+            if (started && !fired && delivered_count >= item_count) {
+                fired = true;
+                callback.apply(null, slots);
+            }
+        };
+
+        return {
+            getCallback: function() {
+                if (started) return;
+                var old_count = item_count;
+                slots[old_count] = null;
+                item_count++;
+                return res.partial(deliverItem, old_count);
+            },
+            start: function() {
+                started = true;
+            }
+        };
     };
 
     /* @defrecord Pipe(?P)
@@ -250,6 +296,7 @@ define(["underscore"], function(underscore) {
     };
 
     res.hasOnlyKeys = function(dict, keys) {
+        /* @t Dict, [String, ...] -> Boolean */
         for (var k in dict) {
             if (!dict.hasOwnProperty(k)) continue;
             if (res.indexOf(keys, k) == -1) return false;

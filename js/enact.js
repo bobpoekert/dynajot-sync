@@ -47,8 +47,59 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
     enact.appliesDeltas = function(root) {
         /* @t DOMNode -> (Delta -> null) */
         var resolution_index = {};
+        var create_callbacks = {};
 
         var getNode = core.partial(enact.getNode, root);
+
+        var resolveId = function(id, callback) {
+            if (!id) {
+                callback(null);
+                return;
+            }
+            var node = getNode(delta.value);
+            if (node) {
+                callback(node);
+            } else if (create_callbacks[delta.id]) {
+                create_callbacks[delta.id].push(callback);
+            } else {
+                create_callbacks[delta.id] = [callback];
+            }
+        };
+
+        var resolveNode = function(delta, callback) {
+            /* @t Delta, (DOMNode -> null) -> null */
+            if (delta.kind == 'text') {
+                callback(document.createTextNode(delta.value));
+            } else if (delta.kind == 'id') {
+                resolveId(delta.value, callback);
+            }
+        };
+
+        var deliverNode = function(id, node) {
+            /* @t String, DOMNode -> null */
+            var callbacks = create_callbacks[id];
+            if (callbacks) {
+                while(callbacks.length > 0) {
+                    callbacks.shift()(node);
+                }
+                delete create_callbacks[id];
+            }
+        };
+
+        var resolveNodes = function(deltas, callback) {
+            /* @t [Delta, ...], (DOMNode -> null) -> null */
+            var m = core.multi(callback);
+            core.each(deltas, function(delta) {
+                resolveNode(delta, m.getCallback());
+            });
+            m.start();
+        };
+
+        var resolveDelta = function(delta, callback) {
+            resolveNodes(
+                [{'kind':'id', 'value':delta.id}].concat(delta.children),
+                core.unsplat(1, callback));
+        };
 
         var maybeFinish = function(delta) {
             /* @t Delta -> null */
@@ -60,9 +111,9 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
                 return;
             }
             var hydrated = enact.reHydrateNode(delta);
-            console.log('ps', delta.position);
             dom.insertNodeAt(parent, hydrated, delta.position.index);
             change.updateState(parent);
+            deliverNode(hydrated);
         };
 
         var doCreate = function(delta) {
@@ -95,11 +146,17 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
 
         return function(delta) {
             /* @t Delta -> null */
-            var node = getNode(delta.id);
-            if (!node) {
+            var deps = [{'kind':'id',
+                         'value':delta.position ? delta.position.parent : null}
+                        ].concat(delta.children || []);
+            console.log(deps);
+            if (delta.create) {
                 doCreate(delta);
-            } else {
-                var nodes = [node];
+                return;
+            }
+            resolveNodes(deps, core.unsplat(1, function(parent, child_nodes) {
+                var node = getNode(delta.id);
+                var nodes = [node].concat(childNodes);
                 var parent;
                 if (delta.position && delta.position.parnet) {
                     parent = getNode(delta.position.parent);
@@ -128,28 +185,12 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
                     }
 
                     if (delta.children) {
-                        core.each(delta.children, function(slice) {
-                            var new_nodes = core.map(slice.value, function(node) {
-                                if (node.kind == 'text') {
-                                    return document.createTextNode(node.value);
-                                } else if (node.kind == 'id') {
-                                    var res = getNode(node.value);
-                                    dom.yankNode(res);
-                                    return res;
-                                } else {
-                                    console.log(node);
-                                    console.trace();
-                                }
-                            });
-                            console.log('nn', slice, new_nodes);
-                            console.log(new_nodes);
-                            dom.spliceNodes(node, slice.start, slice.end, new_nodes);
-                        });
+                        dom.spliceNodes(
+                            node, slice.start, slice.end, childNodes);
                     }
 
                 });
-
-            }
+            }));
         };
     };
 

@@ -70,6 +70,13 @@ define(["underscore"], function(underscore) {
         return results;
     };
 
+    res.noop = function(){};
+
+    res.identity = function(a) {
+        /* @t ?A -> ?A */
+        return a;
+    };
+
     res.gattr = function(k) {
         /* @t String -> (Dict -> String) */
         return function(o) {
@@ -78,18 +85,24 @@ define(["underscore"], function(underscore) {
     };
 
     res.unsplat = function(arg_count, fn) {
-        return function() {
-            var dst = [];
-            var src = res.toArray(arguments);
-            for (var i=0; i < arg_count; i++) {
-                args.push(src.shift());
-            }
-            return fn.apply(this, dst.concat(src));
-        };
+        if (!fn) {
+            fn = arg_count;
+            return function() {
+                return fn(res.toArray(arguments));
+            };
+        } else {
+            return function() {
+                var dst = [];
+                var src = res.toArray(arguments);
+                for (var i=0; i < arg_count; i++) {
+                    dst.push(src.shift());
+                }
+                return fn.apply(this, dst.concat(src));
+            };
+        }
     };
 
     res.splat = function(fn) {
-        /* @t (... -> ?P) -> ([...] -> ?P) */
         return function(arr) {
             return fn.apply(this, arr);
         };
@@ -189,31 +202,42 @@ define(["underscore"], function(underscore) {
     res.multi = function(callback) {
         /* @t (?A... -> null) -> Multi(?A) */
         var slots = [];
+        var delivered = [];
         var item_count = 0;
         var delivered_count = 0;
         var started = false;
         var fired = false;
 
-        var deliverItem = function(index, item) {
-            var old = slots[index];
-            slots[index] = item;
-            if (old === null) delivered_count++;
+        var maybeFire = function() {
             if (started && !fired && delivered_count >= item_count) {
                 fired = true;
-                callback.apply(null, slots);
+                console.log('fire');
+                callback(slots);
             }
+        };
+
+        var deliverItem = function(index, item) {
+            console.log('d', index, item);
+            slots[index] = item;
+            if (!delivered[index]) {
+                delivered_count++;
+                delivered[index] = true;
+            }
+            maybeFire();
         };
 
         return {
             getCallback: function() {
-                if (started) return;
+                if (started) return res.noop;
                 var old_count = item_count;
-                slots[old_count] = null;
+                slots.push(null);
+                delivered.push(false);
                 item_count++;
                 return res.partial(deliverItem, old_count);
             },
             start: function() {
                 started = true;
+                maybeFire();
             }
         };
     };

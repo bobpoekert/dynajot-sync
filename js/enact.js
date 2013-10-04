@@ -56,13 +56,13 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
                 callback(null);
                 return;
             }
-            var node = getNode(delta.value);
+            var node = getNode(id);
             if (node) {
                 callback(node);
-            } else if (create_callbacks[delta.id]) {
-                create_callbacks[delta.id].push(callback);
+            } else if (create_callbacks[id]) {
+                create_callbacks[id].push(callback);
             } else {
-                create_callbacks[delta.id] = [callback];
+                create_callbacks[id] = [callback];
             }
         };
 
@@ -86,6 +86,26 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
             }
         };
 
+        var resolveChild = function(child, callback) {
+            var m = core.multi(function(nodes) {
+                var copy = core.inherit(child);
+                copy.value = nodes;
+                callback(copy);
+            });
+            core.each(child.value, function(node) {
+                resolveNode(node, m.getCallback());
+            });
+            m.start();
+        };
+
+        var resolveChildren = function(children, callback) {
+            var m = core.multi(callback);
+            core.each(children, function(child) {
+                resolveChild(child, m.getCallback());
+            });
+            m.start();
+        };
+
         var resolveNodes = function(deltas, callback) {
             /* @t [Delta, ...], (DOMNode -> null) -> null */
             var m = core.multi(callback);
@@ -95,10 +115,12 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
             m.start();
         };
 
-        var resolveDelta = function(delta, callback) {
-            resolveNodes(
-                [{'kind':'id', 'value':delta.id}].concat(delta.children),
-                core.unsplat(1, callback));
+        var resolveDeps = function(node_id, parent_id, children, callback) {
+            var m = core.multi(core.splat(callback));
+            resolveId(node_id, m.getCallback());
+            resolveId(parent_id, m.getCallback());
+            resolveChildren(children, m.getCallback());
+            m.start();
         };
 
         var maybeFinish = function(delta) {
@@ -118,27 +140,35 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
 
         var doCreate = function(delta) {
             /* @t Delta -> null */
-            var parent = delta.position.parent;
+            var parent = delta.position ? delta.position.parent : null;
+            if (!parent) {
+                console.log('!parent', delta);
+            }
             var children = delta.children;
             
             core.each(children, function(child) {
                 if (child.kind === 'id') {
                     resolution_index[child.value] = delta;
+                    if (!(child.position && child.position.parent)) {
+                        chils.position.parent = delta.id;
+                    }
                     child.resolved = false;
                 }
             });
 
-            var resolved_parent = resolution_index[parent];
-            if (resolved_parent) {
-                core.replace(resolved_parent.children, function(child) {
-                    if (child.value == delta.id) {
-                        return delta;
-                    } else {
-                        return false;
-                    }
-                });
-                delete resolution_index[parent];
-                maybeFinish(resolved_parent);
+            if (parent) {
+                var resolved_parent = resolution_index[parent];
+                if (resolved_parent) {
+                    core.replace(resolved_parent.children, function(child) {
+                        if (child.value == delta.id) {
+                            return delta;
+                        } else {
+                            return false;
+                        }
+                    });
+                    delete resolution_index[parent];
+                    maybeFinish(resolved_parent);
+                }
             }
 
             maybeFinish(delta);
@@ -146,51 +176,48 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
 
         return function(delta) {
             /* @t Delta -> null */
-            var deps = [{'kind':'id',
-                         'value':delta.position ? delta.position.parent : null}
-                        ].concat(delta.children || []);
-            console.log(deps);
             if (delta.create) {
                 doCreate(delta);
                 return;
             }
-            resolveNodes(deps, core.unsplat(1, function(parent, child_nodes) {
-                var node = getNode(delta.id);
-                var nodes = [node].concat(childNodes);
-                var parent;
-                if (delta.position && delta.position.parnet) {
-                    parent = getNode(delta.position.parent);
-                } else {
-                    parent = null;
-                }
-
-                if (parent) {
-                    nodes.push(parent);
-                }
-
-                change.nodeTransactions(root, nodes, function() {
+            resolveDeps(
+                delta.id,
+                delta.position ? delta.position.parent : null,
+                delta.children || [],
+                function(node, parent, child_nodes) {
+                    console.log('rc', parent, child_nodes);
+                    var nodes = [node];
+                    core.each(child_nodes, function(slice) {
+                        nodes.push.apply(nodes, slice.value);
+                    });
 
                     if (parent) {
-                        dom.yankNode(node);
-                        dom.insertNodeAt(parent, node, delta.position.index);
+                        nodes.push(parent);
                     }
 
-                    if (delta.attrs) {
-                        core.each((delta.attrs['+'] || []), function(val, key) {
-                            node.setAttribute(key, val);
+                    change.nodeTransactions(root, nodes, function() {
+
+                        if (parent) {
+                            dom.yankNode(node);
+                            dom.insertNodeAt(parent, node, delta.position.index);
+                        }
+
+                        if (delta.attrs) {
+                            core.each((delta.attrs['+'] || []), function(val, key) {
+                                node.setAttribute(key, val);
+                            });
+                            core.each((delta.attrs['-'] || []), function(val, key) {
+                                node.removeAttribute(key);
+                            });
+                        }
+
+                        console.log('!!!', child_nodes);
+                        core.each(child_nodes, function(slice) {  
+                            dom.spliceNodes(
+                                node, slice.start, slice.end, slice.value);
                         });
-                        core.each((delta.attrs['-'] || []), function(val, key) {
-                            node.removeAttribute(key);
-                        });
-                    }
-
-                    if (delta.children) {
-                        dom.spliceNodes(
-                            node, slice.start, slice.end, childNodes);
-                    }
-
+                    });
                 });
-            }));
         };
     };
 

@@ -81,7 +81,6 @@ define([
                 }
             });
         }
-        if (!node.parentNode) console.log('p', node);
         res.position = {
             parent: dom.assign_node_id(root, node.parentNode, document_id),
             index: dom.parentIndex(node)[1]
@@ -91,6 +90,7 @@ define([
     };
 
     change.updateState = function(node) {
+        if (dom.isTextNode(node)) return;
         data.set(node, 'state', change.serializeNode(node));
         var id = node.getAttribute('data-id');
         if (id) {
@@ -284,20 +284,25 @@ define([
             if (data.get(node, 'dirty')) {
                 return;
             }
-            var seen = data.get(node, 'seen');
+            var seen = !!data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
             var old_node_id = dom.get_node_id(node);
             var cur_state = change.serializeNode(tree, node, document_id);
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
-                if (!seen) {
-                    delta.create = true;
-                }
                 if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
-                    delta.id = node_id(node);
-                    delta_callback(delta);
+                    if (seen) {
+                        delta.id = node_id(node);
+                        delta_callback(delta);
+                    } else {
+                        cur_state.create = true;
+                        delta_callback(cur_state);
+                    }
                 }
             } else if (node !== tree) {
+                if (!seen) {
+                    cur_state.create = true;
+                }
                 delta_callback(cur_state);
             }
             data.set(node, 'state', cur_state);

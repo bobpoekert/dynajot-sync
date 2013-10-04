@@ -74,10 +74,10 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
         var after = children[end];
         if (after) {
-            console.log('b', children, target.innerHTML, replacement);
+            console.log('b', target, children, target.innerHTML, replacement);
             target.insertBefore(fragment, after);
         } else {
-            console.log('a', children, target.innerHTML, replacement);
+            console.log('a', target, children, target.innerHTML, replacement);
             target.appendChild(fragment);
         }
     };

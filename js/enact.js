@@ -150,7 +150,8 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
                 if (child.kind === 'id') {
                     resolution_index[child.value] = delta;
                     if (!(child.position && child.position.parent)) {
-                        chils.position.parent = delta.id;
+                        if (!child.position) child.position = {};
+                        child.position.parent = delta.id;
                     }
                     child.resolved = false;
                 }

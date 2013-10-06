@@ -116,6 +116,7 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
         };
 
         var resolveDeps = function(node_id, parent_id, children, callback) {
+            /* @t String, String, [Node, ...], (DOMNode, DOMNode, [DOMNode, ...] -> null) -> null */
             var m = core.multi(core.splat(callback));
             resolveId(node_id, m.getCallback());
             resolveId(parent_id, m.getCallback());

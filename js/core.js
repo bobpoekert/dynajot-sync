@@ -70,6 +70,19 @@ define(["underscore"], function(underscore) {
         return results;
     };
 
+    res.stringCompare = function(a, b) {
+        /* @t String, String -> Number */
+        var max = Math.min(a.length, b.length);
+        for (var i=0; i < max; i++) {
+            var as = a.charCodeAt(i);
+            var bs = b.charCodeAt(i);
+            if (as != bs) {
+                return as - bs;
+            }
+        }
+        return b.length - a.length;
+    };
+
     res.noop = function(){};
 
     res.identity = function(a) {

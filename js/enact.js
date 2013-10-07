@@ -126,7 +126,7 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
 
         var maybeFinish = function(delta) {
             /* @t Delta -> null */
-            var parent = getNode(delta.position.parent);
+            var parent = delta.position ? getNode(delta.position.parent) : null;
             if (!parent) return;
             if (core.some(
                     delta.children,
@@ -142,16 +142,14 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
         var doCreate = function(delta) {
             /* @t Delta -> null */
             var parent = delta.position ? delta.position.parent : null;
-            if (!parent) {
-                console.log('!parent', delta);
-            }
             var children = delta.children;
             
             core.each(children, function(child) {
                 if (child.kind === 'id') {
                     resolution_index[child.value] = delta;
                     if (!(child.position && child.position.parent)) {
-                        chils.position.parent = delta.id;
+                        if (!child.position) child.position = {};
+                        child.position.parent = delta.id;
                     }
                     child.resolved = false;
                 }
@@ -213,7 +211,6 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
                             });
                         }
 
-                        console.log('!!!', child_nodes);
                         core.each(child_nodes, function(slice) {  
                             dom.spliceNodes(
                                 node, slice.start, slice.end, slice.value);

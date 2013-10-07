@@ -21,7 +21,7 @@ class DocumentStateHandler(web.RequestHandler):
 
     def get(self, document_id):
         try:
-            self.write(str(document_trees[document_id]))
+            self.write(document_trees[document_id].to_html())
         except KeyError:
             self.send_error(404)
 
@@ -42,8 +42,9 @@ class ParrotHandler(websocket.WebSocketHandler):
                 'value': True})
             for node in tree:
                 d = node.to_dict()
-                d['create'] = True
-                #print '>>', d
+                if d['id'] != '_root':
+                    d['create'] = True
+                print '>>', d
                 self.write_message({'kind':'message', 'value':d})
         else:
             document_trees[document] = patch.Document()
@@ -61,7 +62,7 @@ class ParrotHandler(websocket.WebSocketHandler):
         self.tree = document_trees[document]
 
     def on_message(self, blob):
-        #print blob
+        print blob
         message = json.loads(blob)
 
         self.tree.apply_delta(message)

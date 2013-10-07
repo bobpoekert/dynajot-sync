@@ -93,6 +93,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
     dom.insertNodeAt = function(parent, child, index) {
         /* @t DOMNode, DOMNode, Number -> null */
+        if (!parent) console.trace();
         var after = parent.children[index];
         if (after) {
             parent.insertBefore(child, after);

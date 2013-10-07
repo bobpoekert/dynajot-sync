@@ -399,14 +399,14 @@ define([
                         delta_callback(delta);
                     } else {
                         cur_state.create = true;
-                        delta_callback(cur_state);
+                        delta_callback(change.rootDelta(cur_state));
                     }
                 }
             } else if (node !== tree) {
                 if (!seen) {
                     cur_state.create = true;
                 }
-                delta_callback(cur_state);
+                delta_callback(change.rootDelta(cur_state));
             }
             data.set(node, 'state', cur_state);
             data.set(node, 'seen', true);

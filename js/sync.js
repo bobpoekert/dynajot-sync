@@ -50,14 +50,16 @@ define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, 
                 dom.traverse(node, function(c) {
                     if (dom.isTextNode(c)) return;
                     var ser = change.serializeNode(node, c);
-                    console.log(c, ser);
                     var state = change.rootDelta(ser);
-                    console.log('!', c, state);
                     document_timeline.addDelta(state);
                     conn.send(state);
                 });
             }
-            manifold.message.addReader(core.compose(enact.appliesDeltas(node), document_timeline.changeset));
+            var applier = enact.appliesDeltas(node);
+            manifold.message.addReader(function(message) {
+                var changeset = document_timeline.changeset(message);
+                core.each(changeset, applier);
+            });
             change.changes(node, document_id, function(delta) {
                 document_timeline.addDelta(delta);
                 conn.send(delta);

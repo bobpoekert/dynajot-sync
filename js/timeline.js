@@ -27,7 +27,6 @@ define(["ids", "core"], function(ids, core) {
             }
             var start = 0;
             var end = sequence.length;
-            console.log(sequence);
             var end_cmp = compareDeltas(delta, sequence[end-1]);
             if (end_cmp >= 0) {
                 return end;
@@ -54,7 +53,7 @@ define(["ids", "core"], function(ids, core) {
                 var nodes = by_node_ids[node_id];
                 var node_res = core.inherit(nodes[0]);
                 for (var i=1; i < nodes.length; i++) {
-                    change.mergeDeltas(node_res, nodes[i]);
+                    mergeDeltas(node_res, nodes[i]);
                 }
                 res[node_id] = node_res;
             }

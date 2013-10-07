@@ -230,7 +230,9 @@ define(["underscore"], function(underscore) {
         };
 
         var deliverItem = function(index, item) {
-            console.log('d', index, item);
+            if (!item) {
+                console.trace();
+            }
             slots[index] = item;
             if (!delivered[index]) {
                 delivered_count++;

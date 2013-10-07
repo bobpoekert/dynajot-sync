@@ -22,8 +22,12 @@ define(["ids", "core"], function(ids, core) {
         };
 
         var insertionPoint = function(delta) {
+            if (sequence.length === 0) {
+                return 0;
+            }
             var start = 0;
             var end = sequence.length;
+            console.log(sequence);
             var end_cmp = compareDeltas(delta, sequence[end-1]);
             if (end_cmp >= 0) {
                 return end;
@@ -66,6 +70,13 @@ define(["ids", "core"], function(ids, core) {
             sequence.splice(idx, 0, delta);
             return sequence.slice(idx);
         };
+
+        instance.changeset = function(delta) {
+            var sequence = instance.addDelta(delta);
+            return mergeDeltas(sequence);
+        };
+
+        return instance;
 
     };
 

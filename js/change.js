@@ -42,9 +42,11 @@ define([
 
     change.serializeNode = function(root, node, document_id) {
         if (!node) {
+            console.log('no node');
             return {};
         }
         if (!node.parentNode) {
+            console.log('no parent');
             // node is not in the dom
             return {};
         }
@@ -91,12 +93,14 @@ define([
 
     change.updateState = function(node) {
         if (dom.isTextNode(node)) return;
-        data.set(node, 'state', change.serializeNode(node));
+        var state = change.serializeNode(node);
+        data.set(node, 'state', state);
         var id = node.getAttribute('data-id');
         if (id) {
             dom.set_node_id(node, id);
             node.removeAttribute('data-id');
         }
+        return state;
     };
 
     change.mergeDeltas = function(a, b) {
@@ -263,6 +267,19 @@ define([
                     break;
             }
         }
+        return res;
+    };
+
+    change.rootDelta = function(state) {
+        var res = {};
+        res.name = state.name;
+        res.attrs = {'+':state.attrs};
+        res.children = [{
+            start: 0,
+            end: state.children.length,
+            value: state.children
+        }];
+        res.id = state.id;
         return res;
     };
 

@@ -176,6 +176,7 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
         };
 
         return function(delta) {
+            console.log('delta', delta);
             /* @t Delta -> null */
             if (delta.create) {
                 doCreate(delta);

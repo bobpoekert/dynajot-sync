@@ -120,14 +120,8 @@ class DocumentTree(object):
     def apply_delta(self, delta):
         node = None
         if delta.get('create') and delta['id'] not in self.node_ids:
-            delta['create']['id'] = delta['id']
-            delta['position'] = delta['create']['position']
-            node = self.re_hydrate_node(delta['create'])
+            node = self.re_hydrate_node(delta)
             self.set_node_id(node, delta['id'])
-        elif delta.get('create'):
-            node = self.get_node(delta['id'])
-            delta['create']['id'] = delta['id']
-            delta = delta['create']
         else:
             node = self.get_node(delta['id'])
 

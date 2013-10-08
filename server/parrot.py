@@ -5,7 +5,7 @@ from functools import partial
 import os, hashlib
 import json
 
-import dom
+import patch
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 def relpath(p):
@@ -21,7 +21,7 @@ class DocumentStateHandler(web.RequestHandler):
 
     def get(self, document_id):
         try:
-            self.write(str(document_trees[document_id]))
+            self.write(document_trees[document_id].to_html())
         except KeyError:
             self.send_error(404)
 
@@ -36,14 +36,15 @@ class ParrotHandler(websocket.WebSocketHandler):
             self.write_message({'kind': 'document_id', 'value':document})
 
         if document in document_trees:
+            tree = document_trees[document]
             self.write_message({
                 'kind':'document_state',
-                'value':str(document_trees[document])})
+                'value': tree.to_html()})
         else:
-            document_trees[document] = dom.DocumentTree()
+            document_trees[document] = patch.Document()
             self.write_message({
                 'kind':'document_state',
-                'value': None})
+                'value': False})
 
         if document in documents:
             documents[document].add(self)
@@ -58,7 +59,7 @@ class ParrotHandler(websocket.WebSocketHandler):
         print blob
         message = json.loads(blob)
 
-        #self.tree.apply_delta(message)
+        self.tree.apply_delta(message)
 
         for recipient in self.peers:
             if recipient != self:

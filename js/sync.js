@@ -1,4 +1,4 @@
-define(["core", "socket", "change", "enact", "dom"], function(core, socket, change, enact, dom) {
+define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, socket, change, enact, dom, timeline) {
 
     var sync = {};
 
@@ -10,6 +10,7 @@ define(["core", "socket", "change", "enact", "dom"], function(core, socket, chan
         }
        
         var url_prefix = 'ws://localhost:5000/doc/';
+        var document_timeline;
 
         var conn = socket.connect(function() {
             if (document_id) {
@@ -26,7 +27,6 @@ define(["core", "socket", "change", "enact", "dom"], function(core, socket, chan
         };
 
         conn.onMessage(function (msg) {
-            console.log(msg);
             if (manifold[msg.kind]) {
                 manifold[msg.kind].write(msg.value);
             }
@@ -43,12 +43,31 @@ define(["core", "socket", "change", "enact", "dom"], function(core, socket, chan
         });
 
         manifold.document_state.addReader(core.once(function(message) {
-            /*if (message) {
+            document_timeline = timeline.make(document_id);
+            if (message) {
+                var frag = document.createElement('div');
                 node.innerHTML = message;
-                dom.traverse(node, change.updateState);
-            }*/
-            manifold.message.addReader(enact.appliesDeltas(node));
-            change.changes(node, document_id, conn.send);
+                dom.traverse(node, function(child) {
+                    change.updateState(node, child);
+                });
+            } else {
+                dom.traverse(node, function(c) {
+                    if (dom.isTextNode(c)) return;
+                    var ser = change.serializeNode(node, c);
+                    var state = change.rootDelta(ser);
+                    document_timeline.addDelta(state);
+                    conn.send(state);
+                });
+            }
+            var applier = enact.appliesDeltas(node);
+            manifold.message.addReader(function(message) {
+                var changeset = document_timeline.changeset(message);
+                core.each(changeset, applier);
+            });
+            change.changes(node, document_id, function(delta) {
+                document_timeline.addDelta(delta);
+                conn.send(delta);
+            });
         }));
     };
 

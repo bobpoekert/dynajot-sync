@@ -54,7 +54,12 @@ define(["load_swf", "core"], function(swf, core) {
                     }
                 };
                 ws.onmessage = function(evt) {
-                    message_callbacks.write(JSON.parse(evt.data));
+                    var val = JSON.parse(evt.data);
+                    if (core.isArray(val)) {
+                        core.each(message_callbacks.write, val);
+                    } else {
+                        message_callbacks.write(val);
+                    }
                 };
                 ws.onclose = function() {
                     open = false;

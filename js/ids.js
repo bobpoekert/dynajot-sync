@@ -1,16 +1,6 @@
-define(["storage"], function(storage) {
+define([], function() {
 
     var ids = {};
-
-    var old_sid = storage.get('session_id');
-    if (old_sid) {
-        ids.session_id = old_sid;
-    } else {
-        ids.session_id = Math.floor(Math.random() * 10000000000000000).toString();
-        storage.put('session_id', ids.session_id);
-    }
-
-    ids.session_id += '-' + Math.floor(Math.random() * 1000);
 
     var putStorage = function(key, val) {
         var raw_key = 'djc:'+key;
@@ -20,6 +10,16 @@ define(["storage"], function(storage) {
     var getStorage = function(key) {
         return localStorage.getItem('djc:'+key);
     };
+    
+    var old_sid = getStorage('session_id');
+    if (old_sid) {
+        ids.session_id = old_sid;
+    } else {
+        ids.session_id = Math.floor(Math.random() * 10000000000000000).toString();
+        putStorage('session_id', ids.session_id);
+    }
+
+    ids.session_id += '-' + Math.floor(Math.random() * 1000);
 
     ids.counter = function(key) {
         var s = getStorage(key);
@@ -30,7 +30,7 @@ define(["storage"], function(storage) {
 
     ids.global_timestamp = function(document_id, nextval) {
         var key = 'gs_'+document_id;
-        var prevval = parseInt(storage.get(key) || 0, 10);
+        var prevval = parseInt(getStorage(key) || 0, 10);
         if (nextval && nextval > prevval) {
             putStorage(key, nextval.toString());
             return nextval;

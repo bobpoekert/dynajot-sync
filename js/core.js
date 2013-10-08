@@ -70,6 +70,19 @@ define(["underscore"], function(underscore) {
         return results;
     };
 
+    res.stringCompare = function(a, b) {
+        /* @t String, String -> Number */
+        var max = Math.min(a.length, b.length);
+        for (var i=0; i < max; i++) {
+            var as = a.charCodeAt(i);
+            var bs = b.charCodeAt(i);
+            if (as != bs) {
+                return as - bs;
+            }
+        }
+        return b.length - a.length;
+    };
+
     res.noop = function(){};
 
     res.identity = function(a) {
@@ -217,16 +230,23 @@ define(["underscore"], function(underscore) {
         };
 
         var deliverItem = function(index, item) {
-            console.log('d', index, item);
             slots[index] = item;
             if (!delivered[index]) {
                 delivered_count++;
                 delivered[index] = true;
             }
+            console.log(index, item_count, delivered_count, item);
             maybeFire();
         };
 
         return {
+            addValue: function(value) {
+                var old_count = item_count;
+                slots.push(value);
+                delivered.push(true);
+                item_count++;
+                delivered_count++;
+            },
             getCallback: function() {
                 if (started) return res.noop;
                 var old_count = item_count;

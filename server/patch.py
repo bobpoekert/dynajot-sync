@@ -21,10 +21,13 @@ def recursive(fn):
     return res
 
 @recursive
-def token_list(token_list, nodes, node, res=[]):
+def token_list(token_list, nodes, node, res=[], seen=set([])):
     if type(node) != Node:
         res.append(escape(node))
-    elif node.name:
+        return
+    assert node.id not in seen
+    seen.add(node.id)
+    if node.name:
         res.append('<')
         res.append(node.name)
         for k, v in node.attrs.iteritems():
@@ -38,7 +41,7 @@ def token_list(token_list, nodes, node, res=[]):
         if node.name not in unclosed_tags:
             for child in node.children:
                 if child['kind'] == 'id':
-                    token_list(nodes, nodes[child['value']], res)
+                    token_list(nodes, nodes[child['value']], res, seen)
                 else:
                     res.append(child['value'])
             res.append('</')
@@ -47,7 +50,7 @@ def token_list(token_list, nodes, node, res=[]):
     else:
         for child in node.children:
             if child['kind'] == 'id':
-                token_list(nodes, nodes[child['value']], res)
+                token_list(nodes, nodes[child['value']], res, seen)
             else:
                 res.append(child['value'])
 

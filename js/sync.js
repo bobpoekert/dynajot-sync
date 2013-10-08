@@ -45,7 +45,11 @@ define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, 
         manifold.document_state.addReader(core.once(function(message) {
             document_timeline = timeline.make(document_id);
             if (message) {
-                node.innerHTML = '';
+                var frag = document.createElement('div');
+                node.innerHTML = message;
+                dom.traverse(node, function(child) {
+                    change.updateState(node, child);
+                });
             } else {
                 dom.traverse(node, function(c) {
                     if (dom.isTextNode(c)) return;

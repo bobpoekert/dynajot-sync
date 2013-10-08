@@ -230,18 +230,23 @@ define(["underscore"], function(underscore) {
         };
 
         var deliverItem = function(index, item) {
-            if (!item) {
-                console.trace();
-            }
             slots[index] = item;
             if (!delivered[index]) {
                 delivered_count++;
                 delivered[index] = true;
             }
+            console.log(index, item_count, delivered_count, item);
             maybeFire();
         };
 
         return {
+            addValue: function(value) {
+                var old_count = item_count;
+                slots.push(value);
+                delivered.push(true);
+                item_count++;
+                delivered_count++;
+            },
             getCallback: function() {
                 if (started) return res.noop;
                 var old_count = item_count;

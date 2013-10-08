@@ -5,13 +5,13 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     dom.traverse = function(dom_tree, visitor) {
         /* @t DOMNode, (DOMNode -> null) -> null */
         if (!dom_tree) return;
-        visitor(dom_tree);
+        if (dom_tree.nodeType == Node.ELEMENT_NODE) visitor(dom_tree);
         // apparently DocumentFragments don't have .children
         // and their .childNodes includes text nodes
         var children = dom.getChildNodes(dom_tree);
         for (var i=0; i < children.length; i++) {
             var c = children[i];
-            if (c.nodeType = Node.ELEMENT_NODE) {
+            if (c.nodeType == Node.ELEMENT_NODE) {
                 dom.traverse(children[i], visitor);
             }
         }
@@ -94,6 +94,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     dom.insertNodeAt = function(parent, child, index) {
         /* @t DOMNode, DOMNode, Number -> null */
         if (!parent) console.trace();
+        if (!parent.children) console.trace();
         var after = parent.children[index];
         if (after) {
             parent.insertBefore(child, after);

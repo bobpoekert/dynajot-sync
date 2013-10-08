@@ -1,11 +1,27 @@
 from xml.sax.saxutils import escape, quoteattr
 import traceback
+from functools import wraps
 
 unclosed_tags = frozenset([
     'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen',
     'link', 'meta', 'param', 'source', 'trace', 'wbr'])
 
-def token_list(nodes, node, res=[]):
+def recursive(fn):
+
+    @wraps(fn)
+    def res(*args):
+        stack = [args]
+        def recur(*args):
+            stack.append(args)
+        retval = None
+        while stack:
+            retval = fn(recur, *stack.pop())
+        return retval
+
+    return res
+
+@recursive
+def token_list(token_list, nodes, node, res=[]):
     if type(node) != Node:
         res.append(escape(node))
     elif node.name:
@@ -16,7 +32,9 @@ def token_list(nodes, node, res=[]):
             res.append(k.replace('=', ''))
             res.append('=')
             res.append(quoteattr(v))
-        res.append('>')
+        res.append(' data-id="')
+        res.append(node.id)
+        res.append('">')
         if node.name not in unclosed_tags:
             for child in node.children:
                 if child['kind'] == 'id':

@@ -39,13 +39,7 @@ class ParrotHandler(websocket.WebSocketHandler):
             tree = document_trees[document]
             self.write_message({
                 'kind':'document_state',
-                'value': True})
-            for node in tree:
-                d = node.to_dict()
-                if d['id'] != '_root':
-                    d['create'] = True
-                print '>>', d
-                self.write_message({'kind':'message', 'value':d})
+                'value': tree.to_html()})
         else:
             document_trees[document] = patch.Document()
             self.write_message({

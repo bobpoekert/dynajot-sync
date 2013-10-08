@@ -43,6 +43,7 @@ define([
     change.serializeNode = function(root, node, document_id) {
         if (!node) {
             console.log('no node');
+            console.trace();
             return {};
         }
         if (!node.parentNode) {
@@ -91,15 +92,15 @@ define([
         return res;
     };
 
-    change.updateState = function(node) {
+    change.updateState = function(root, node) {
         if (dom.isTextNode(node)) return;
-        var state = change.serializeNode(node);
-        data.set(node, 'state', state);
         var id = node.getAttribute('data-id');
         if (id) {
             dom.set_node_id(node, id);
             node.removeAttribute('data-id');
         }
+        var state = change.serializeNode(root, node);
+        data.set(node, 'state', state);
         return state;
     };
 

@@ -1,8 +1,10 @@
-define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, socket, change, enact, dom, timeline) {
+define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], function(core, socket, change, enact, dom, timeline, cursors) {
 
     var sync = {};
 
-    sync.sync = function(node, document_id) {
+    sync.sync = function(node, options) {
+        options || (options = {});
+        var document_id = options.document_id;
 
         var frag = window.location.hash.slice(1).trim();
         if (!document_id && core.truthiness(frag)) {
@@ -26,6 +28,10 @@ define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, 
             "message": core.pipe()
         };
 
+        if (options.cursors) {
+            manifold.cursors = core.pipe();
+        }
+
         conn.onMessage(function (msg) {
             if (manifold[msg.kind]) {
                 manifold[msg.kind].write(msg.value);
@@ -39,6 +45,10 @@ define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, 
                 prev_id(document_id);
             } else {
                 window.location.hash = document_id;
+            }
+            if (manifold.cursors) { 
+                console.log("sending init to cursors js");
+                cursors.init(conn.send);
             }
         });
 
@@ -64,6 +74,12 @@ define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, 
                 var changeset = document_timeline.changeset(message);
                 core.each(changeset, applier);
             });
+
+            if (manifold.cursors) {
+                console.log("added Reader");
+                manifold.cursors.addReader(cursors.updateCursors);
+            }
+
             change.changes(node, document_id, function(delta) {
                 document_timeline.addDelta(delta);
                 conn.send(delta);

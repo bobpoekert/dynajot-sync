@@ -22,23 +22,30 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
             }
         });
 
-        var manifold = {
+        var outer_manifold = {
             "document_id": core.pipe(),
             "document_state": core.pipe(),
             "message": core.pipe()
         };
 
-        if (options.cursors) {
-            manifold.cursors = core.pipe();
-        }
+        var inner_manifold = {
+            "delta": core.pipe(),
+            "mouse_position": core.pipe()
+        };
 
-        conn.onMessage(function (msg) {
-            if (manifold[msg.kind]) {
-                manifold[msg.kind].write(msg.value);
-            }
-        });
+        var connect_manifold = function (manifold) {
+            return function (msg) {
+                if (manifold[msg.kind]) {
+                    manifold[msg.kind].write(msg.value);
+                }
+            };
+        };
 
-        manifold.document_id.addReader(function(message) {
+        conn.onMessage(connect_manifold(outer_manifold));
+
+        outer_manifold.message.addReader(connect_manifold(inner_manifold));
+
+        outer_manifold.document_id.addReader(function(message) {
             var prev_id = document_id;
             document_id = message;
             if (typeof(prev_id) === 'function') {
@@ -46,13 +53,15 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
             } else {
                 window.location.hash = document_id;
             }
-            if (manifold.cursors) { 
-                console.log("sending init to cursors js");
-                cursors.init(conn.send);
-            }
         });
 
-        manifold.document_state.addReader(core.once(function(message) {
+        if (options.cursors) {
+            console.log("added Reader");
+            cursors.init(conn.send);
+            inner_manifold.mouse_position.addReader(cursors.updateCursors);
+        }
+
+        outer_manifold.document_state.addReader(core.once(function(message) {
             document_timeline = timeline.make(document_id);
             if (message) {
                 var frag = document.createElement('div');
@@ -66,23 +75,18 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
                     var ser = change.serializeNode(node, c);
                     var state = change.rootDelta(ser);
                     document_timeline.addDelta(state);
-                    conn.send(state);
+                    conn.send({'kind':'delta', 'value': state});
                 });
             }
             var applier = enact.appliesDeltas(node);
-            manifold.message.addReader(function(message) {
+            inner_manifold.delta.addReader(function(message) {
                 var changeset = document_timeline.changeset(message);
                 core.each(changeset, applier);
             });
 
-            if (manifold.cursors) {
-                console.log("added Reader");
-                manifold.cursors.addReader(cursors.updateCursors);
-            }
-
             change.changes(node, document_id, function(delta) {
                 document_timeline.addDelta(delta);
-                conn.send(delta);
+                conn.send({'kind':'delta', 'value':delta});
             });
         }));
     };

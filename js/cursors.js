@@ -69,13 +69,13 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
         console.log("[socket] Opened");
         // get all cursors in the channel and init their divs? not necessary
 
-        var v = {'cursors': {'enter': true}, 'user': cursors.user};
-        sendMessage(v);
+        var v = {'mouse_position': {'enter': true}, 'user': cursors.user};
+        sendMessage({'kind': 'mouse_position', 'value': v});
 
         $("body").on("mousemove", core.throttle(function (e) {
-            var v = {'cursors': {'mousemove': {'coords': [e.pageX, e.pageY]}}, 'user': {'name': cursors.user.name, 'id': cursors.user.id}};
+            var v = {'mouse_position': {'mousemove': {'coords': [e.pageX, e.pageY]}}, 'user': {'name': cursors.user.name, 'id': cursors.user.id}};
             console.log("Sending ", v);
-            sendMessage(v);
+            sendMessage({'kind': 'mouse_position', 'value':v});
         }, 75));
     };
 
@@ -84,7 +84,7 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
         console.log(msg);
         var coords, posX, posY, msgv, $newCursor, $userMouse;
 
-        if (msg.kind === 'cursors') {
+        if (msg.kind === 'mouse_position') {
             // a person joined the document
             msgv = msg.value;
 

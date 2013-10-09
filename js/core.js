@@ -10,6 +10,7 @@ define(["underscore"], function(underscore) {
     } else {
         var extender = function(){};
         inherit = function(obj) {
+
             extender.prototype = obj;
             var res = new extender();
             extender.prototype = null;
@@ -94,7 +95,7 @@ define(["underscore"], function(underscore) {
         /* @t String -> (Dict -> String) */
         return function(o) {
             return o[k];
-        }
+        };
     };
 
     res.unsplat = function(arg_count, fn) {
@@ -110,7 +111,8 @@ define(["underscore"], function(underscore) {
                 for (var i=0; i < arg_count; i++) {
                     dst.push(src.shift());
                 }
-                return fn.apply(this, dst.concat(src));
+                dst.push(src);
+                return fn.apply(this, dst);
             };
         }
     };

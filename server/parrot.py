@@ -51,6 +51,8 @@ class ParrotHandler(websocket.WebSocketHandler):
         else:
             documents[document] = set([self])
 
+        print document, document_trees.keys()
+
         self.document = document
         self.peers = documents[document]
         self.tree = document_trees[document]

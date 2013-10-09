@@ -25,7 +25,9 @@ def token_list(token_list, nodes, node, res=[], seen=set([])):
     if type(node) != Node:
         res.append(escape(node))
         return
-    assert node.id not in seen
+    if node.id in seen:
+        # shouldn't be cycles, but if there are we shouldn't infinite-loop
+        return res
     seen.add(node.id)
     if node.name:
         res.append('<')
@@ -104,7 +106,6 @@ class Document(object):
 
         if delta.get('position'):
             node.position = delta['position']
-
 
     def to_html(self):
         try:

@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <style>
+        /*** BEGIN inserted css ***/
+        .dj-mouse {
+            width: 0px;
+            height: 0px;
+            border-left: 10px solid #3b6d11;
+            border-bottom: 10px solid rgba(0, 0, 0, 0);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .dj-filler-wrap {
+            position: relative;
+        }
+
+        .dj-filler {
+            font-family: Helvetica;
+            display: block;
+            position: absolute;
+            border-radius: 10px;
+            left: -10px;
+            top: 0px;
+            padding: 5px 12px;
+            border: 2px solid #fff;
+            color: #3b6d11;
+            background: #84b640; /* Old browsers */
+            background: -moz-linear-gradient(top, #84b640 0%, #8aae5e 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#84b640), color-stop(100%,#8aae5e)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #84b640 0%,#8aae5e 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #84b640 0%,#8aae5e 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #84b640 0%,#8aae5e 100%); /* IE10+ */
+            background: linear-gradient(to bottom, #84b640 0%,#8aae5e 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#84b640', endColorstr='#8aae5e',GradientType=0 ); /* IE6-9 */
+
+        }
+        /*** END inserted css ***/
+
+        #target {
+            width: 720px;
+            height: 480px;
+            margin: 0 auto;
+            border: 0px solid #999;
+            padding: 10px;
+            box-sizing: border-box;
+            padding: 80px 80px;
+            outline:none;
+            box-shadow: 0px 0px 5px #aaa;
+            background: #fff;
+        }
+
+        html,body {
+            font-family: "Helvetica Neue";
+            background: #eee!important;
+        }
+        </style>
+    </head>
+    <body>
+        <div contenteditable="true" id="target"></div>
+
+        <script src="http://codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
+
+        <script src="/js/require.js"></script>
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["sync"], function(sync) {
+                sync.sync(document.getElementById('target'), {
+                    'cursors': true
+                });
+            });
+        </script>
+        </script>
+    </body>
+</html>

@@ -53,6 +53,7 @@ define(["core", "socket", "change", "enact", "dom", "timeline"], function(core, 
             } else {
                 dom.traverse(node, function(c) {
                     if (dom.isTextNode(c)) return;
+                    if (c == node) return;
                     var ser = change.serializeNode(node, c);
                     var state = change.rootDelta(ser);
                     document_timeline.addDelta(state);

@@ -43,7 +43,6 @@ define([
     change.serializeNode = function(root, node, document_id) {
         if (!node) {
             console.log('no node');
-            console.trace();
             return {};
         }
         if (!node.parentNode) {
@@ -101,6 +100,7 @@ define([
         }
         var state = change.serializeNode(root, node);
         data.set(node, 'state', state);
+        data.set(node, 'seen', true);
         return state;
     };
 

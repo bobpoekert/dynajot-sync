@@ -88,10 +88,12 @@ define([
             index: dom.nodeParentIndex(node)[1]
         };
         res.id = dom.assign_node_id(root, node, document_id);
+        console.log(res);
         return res;
     };
 
     change.updateState = function(root, node) {
+        console.trace();
         if (dom.isTextNode(node)) return;
         var id = node.getAttribute('data-id');
         if (id) {

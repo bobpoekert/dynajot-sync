@@ -8,6 +8,8 @@ define(["ids", "core"], function(ids, core) {
         var sequence = [];
 
         var instance = {};
+        instance._locals = {};
+        instance._locals.sequence = sequence;
 
         var compareDeltas = function(a, b) {
             var am = a.message_id;
@@ -18,8 +20,9 @@ define(["ids", "core"], function(ids, core) {
             if (am[2] != bm[2]) {
                 return core.stringCompare(am[2], bm[2]); // session ids
             }
-            return 0;
+            return am[3] - bm[3]; // local timestamps
         };
+        instance._locals.compareDeltas = compareDeltas;
 
         var insertionPoint = function(delta) {
             if (sequence.length === 0) {
@@ -31,11 +34,13 @@ define(["ids", "core"], function(ids, core) {
             if (end_cmp >= 0) {
                 return end;
             }
-            while (end > start) {
-                var mid = start + Math.floor((end - start) / 2);
+            while (end > start && start >= 0) {
+                var mid = start + Math.round((end - start) / 2);
                 var cmp = compareDeltas(delta, sequence[mid]);
                 if (cmp === 0) {
                     return mid;
+                } else if (mid >= end) {
+                    return end;
                 } else if (cmp > 0) {
                     start = mid;
                 } else {
@@ -44,6 +49,7 @@ define(["ids", "core"], function(ids, core) {
             }
             return start;
         };
+        instance._locals.insertionPoint = insertionPoint;
 
         var mergeDeltas = function(deltas) {
             var by_node_ids = core.groupBy(deltas, core.gattr('id'));
@@ -53,12 +59,13 @@ define(["ids", "core"], function(ids, core) {
                 var nodes = by_node_ids[node_id];
                 var node_res = core.inherit(nodes[0]);
                 for (var i=1; i < nodes.length; i++) {
-                    mergeDeltas(node_res, nodes[i]);
+                    change.mergeDeltas(node_res, nodes[i]);
                 }
                 res[node_id] = node_res;
             }
             return core.values(res);
         };
+        instance._locals.mergeDeltas = mergeDeltas;
 
         instance.addDelta = function(delta) {
             delta = core.inherit(delta);

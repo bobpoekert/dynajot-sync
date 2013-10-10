@@ -1,4 +1,4 @@
-define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
+define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, data, schema) {
     
     var enact = {};
 
@@ -18,27 +18,6 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
             return parent;
         } else {
             return parent.querySelector(".dynajot-"+id);
-        }
-    };
-
-    enact.reHydrateNode = function(inp, child_nodes) {
-        /* @t Delta -> DOMNode */
-        if (inp.kind === 'text') {
-            return document.createTextNode(inp.value);
-        } else {
-            var res = document.createElement(inp.name);
-            var attrs = inp.attrs || {};
-            core.each(inp.attrs, function(v, k) {
-                res.setAttribute(k, v);
-            });
-            dom.set_node_id(res, inp.id);
-            if (inp.children) {
-                core.each(inp.children, function(c) {
-                    res.appendChild(enact.reHydrateNode(c));
-                });
-            }
-            change.updateState(res);
-            return res;
         }
     };
 
@@ -153,9 +132,9 @@ define(["core", "dom", "change", "Data"], function(core, dom, change, data) {
             core.each(children, function(c) {
                 if (c) res.appendChild(c);
             });
-            change.updateState(res);
+            change.updateState(root, res);
             dom.insertNodeAt(parent, res, delta.position.index);
-            change.updateState(parent);
+            change.updateState(root, parent);
             deliverNode(res);
         };
 

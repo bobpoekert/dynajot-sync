@@ -18,7 +18,7 @@ define(["ids", "core"], function(ids, core) {
             if (am[2] != bm[2]) {
                 return core.stringCompare(am[2], bm[2]); // session ids
             }
-            return 
+            return 0;
         };
 
         var insertionPoint = function(delta) {

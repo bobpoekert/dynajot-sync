@@ -104,15 +104,94 @@ define(["timeline", "core"], function (timeline, core) {
     });
     
     test("locals.mergeDeltas", function () {
-        var d1, d2, mergeDeltas;
+        var d1, d2, mergeDeltas, resDelta;
         mergeDeltas = locals.mergeDeltas;
+        d1 = getDeltaCopy(delta1);
+        d2 = getDeltaCopy(delta2);
+
+        resDelta = mergeDeltas([d1, d2]);
+        deepEqual(resDelta, [{
+            "id": "deadbeef",
+            "name": "testtagname",
+            'message_id': [
+                document_id,
+                1,
+                session_id,
+                1],
+            "attrs": {},
+            "position": {},
+            "children": []
+        }], "merges two deltas with the same node id and no attrs or children");
+    
+
+        d1 = {
+            "id": "deadbeef",
+            "name": "testtagname",
+            'message_id': [
+                document_id,
+                0,
+                session_id,
+                1],
+            "attrs": {},
+            "position": {},
+            "children": []
+        };
+        d2 = {
+            "id": "deadbeef",
+            "name": "testtagname",
+            'message_id': [
+                document_id,
+                1,
+                session_id,
+                1],
+            "attrs": {},
+            "position": {},
+            "children": []
+        };
+        var d3 = {
+            "id": "deadbeef2",
+            "name": "testtagname",
+            'message_id': [
+                document_id,
+                0,
+                session_id,
+                1],
+            "attrs": {},
+            "position": {},
+            "children": []
+        };
+
+        resDelta = mergeDeltas([d1, d2, d3]);
+        deepEqual(resDelta, [{
+            "id": "deadbeef",
+            "name": "testtagname",
+            'message_id': [
+                document_id,
+                1,
+                session_id,
+                1],
+            "attrs": {},
+            "position": {},
+            "children": []
+        }, {
+            "id": "deadbeef2",
+            "name": "testtagname",
+            'message_id': [
+                document_id,
+                0,
+                session_id,
+                1],
+            "attrs": {},
+            "position": {},
+            "children": []
+        }], "merges two deltas with the same node id and no attrs or children");
     });
     
     test("instance.addDelta", function () {
-
+        expect(0);
     });
 
     test("instance.changeset", function () {
-        
+        expect(0);
     });
 });

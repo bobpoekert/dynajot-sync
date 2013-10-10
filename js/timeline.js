@@ -1,4 +1,4 @@
-define(["ids", "core"], function(ids, core) {
+define(["ids", "core", "change"], function(ids, core, change) {
 
     var timeline = {};
 

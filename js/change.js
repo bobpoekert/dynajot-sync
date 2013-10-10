@@ -106,18 +106,19 @@ define([
         return state;
     };
 
+
     change.mergeDeltas = function(a, b) {
         /* WARNING: b is assumed to be immutable */
         if (b.attrs) {
             if (a.attrs) {
-                core.each((a.attrs['+'] || []), function(val, key) {
-                    b.attrs[key] = val;
+                core.each((b.attrs['+'] || []), function(val, key) {
+                    a.attrs['+'][key] = val;
                 });
-                core.each((a.attrs['-'] || []), function(val, key) {
-                    if (b.attrs['+'][key]) {
-                        delete b.attrs['+'][key];
+                core.each((b.attrs['-'] || []), function(val, key) {
+                    if (a.attrs['+'][key]) {
+                        delete a.attrs['+'][key];
                     }
-                    b.attrs['-'][key] = false;
+                    a.attrs['-'][key] = false;
                 });
             } else {
                 a.attrs = core.inherit(b.attrs);
@@ -126,68 +127,14 @@ define([
         if (b.position) {
             a.position = core.inherit(b.position);
         }
+        if (b.message_id) {
+            a.message_id = b.message_id;
+        }
         if (b.children) {
-            if (a.children) {
-                var a_ranges = core.map(function(c) {
-                    return [c.start, c.end, c];
-                }, a.children);
-                a_ranges.sort();
-                core.each(b.children, function(source) {
-                    for (var i=0; i < a_ranges.length; i++) {
-                        var range = a_ranges[i];
-                        var target = range[2];
-                        var overlap_start;
-                        var overlap_end;
-                        if (delta.start > child.end) {
-                            // no overlap found
-                            a.children.push(child);
-                            break;
-                        } else if (
-                            delta.start <= child.start && delta.end <= child.end) {
-                            overlap_start = child.start - delta.start;
-                            overlap_end = child.end - delta.end;
-                            
-                            target.start = Math.min(delta.start, child.start);
-                            target.end = Math.max(delta.end, child.end);
-
-                            target.value = delta.value.slice(0, overlap_start).concat(
-                                child.value.slice(overlap_start, child.value.length));
-
-                            break;
-                        } else if (
-                            child.start <= delta.start && child.end <= delta.end) {
-                            overlap_start = delta.start - child.start;
-                            overlap_end = delta.end - child.end;
-
-                            target.start = Math.min(delta.start, child.start);
-                            target.end = Math.max(delta.end, child.end);
-                            
-                            target.value = child.value.slice(0, overlap_start).concat(
-                                delta.value.slice(overlap_start, delta.value.length));
-
-                            break;
-                        } else if (delta.start <= child.start && delta.end > child.end) {
-                            // delta consumes child
-                            target.value = delta.value
-                                .slice(0, child.start)
-                                .concat(child.value)
-                                .concat(delta.value.slice(child.end, delta.value.length));
-                            target.start = delta.start;
-                            target.end = delta.end;
-                            break;
-                        } else if (child.start <= delta.start && child.end > delta.end) {
-                            target.value = child.value
-                                .slice(0, delta.start)
-                                .concat(delta.value)
-                                .concat(child.value.slice(delta.end, child.value.length));
-                            target.start = child.start;
-                            target.end = child.end;
-                            break;
-                        }
-                    }
-                });
+            if (a.children && a.children.length > 0) {
+                Array.prototype.push.apply(a.children, b.children);
             } else {
-                a.children = core.map(core.inherit, b.children);
+                a.children = b.children;
             }
         }
     };

@@ -17,25 +17,37 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
     };
 
-    dom.parentIndex = function(node) {
+    dom.nodeParentIndex = function(node) {
         /* @t DOMNode -> [DOMNode, Number] */
         var parent = node.parentNode;
-        var index = core.indexOf(parent.childNodes, node);
+        var index = core.indexOf(dom.getChildNodes(parent), node);
         return [parent, index];
     };
-   
+
+    dom.elementParentIndex = function(node) {
+        /* @t DOMNode -> [DOMNode, Number] */
+        var parent = node.parentNode;
+        var children = dom.getChildNodes(parent);
+        var index = core.indexOf(core.filter(children, dom.isElement), node);
+        return [parent, index];
+    };
+
+    dom.isElement = function(node) {
+        return node.nodeType == Node.ELEMENT_NODE;
+    };
+
     dom.isTextNode = function(node) {
         /* @t DOMNode -> Boolean */
-        return node.nodeType == Node.TEXT_NODE;
+        return !!(node && node.nodeType === Node.TEXT_NODE);
     };
 
     dom.setIdClass = function(node, id) {
         /* @t DOMNode, String -> null */
-        if (!node) console.trace();
         var prev = node.getAttribute('class');
         var res = null;
         if (prev) {
-            res = prev.replace((new RegExp('dynajot-(?!'+id+').*?\s*(\s|$)')), '');
+            var chars = [];
+            res = prev.replace((new RegExp('dynajot-(?!'+id+').*(?=\s|$)')), '', 'g');
         } else {
             res = '';
         }
@@ -63,30 +75,34 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
     dom.spliceNodes = function(target, start, end, replacement) {
         /* @t DOMNode, Number, Number, [DOMNode, ...] -> null */
-        var children = dom.getChildNodes(target);
+        var children = core.filter(
+            dom.getChildNodes(target),
+            function(node) {
+                return core.indexOf(replacement, node) === -1;
+            });
+
         var i;
         var e;
 
         var fragment = dom.toFragment(replacement);
 
         for (i=start; i < Math.min(end, children.length); i++) {
-            target.removeChild(children[i]);
+            if (children[i]) {
+                target.removeChild(children[i]);
+            }
         }
+
         var after = children[end];
         if (after) {
-            console.log('b', target, children, target.innerHTML, replacement);
             target.insertBefore(fragment, after);
         } else {
-            console.log('a', target, children, target.innerHTML, replacement);
             target.appendChild(fragment);
         }
     };
 
     dom.yankNode = function(node) {
         /* @t DOMNode -> null */
-        if (!node) console.trace();
         if (node.parentNode) {
-            console.log('yank', node);
             node.parentNode.removeChild(node);
         }
     };

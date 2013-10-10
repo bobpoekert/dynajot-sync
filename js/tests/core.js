@@ -204,10 +204,6 @@ define(["core"], function(core) {
         ok(true); // TODO
     });
 
-    test("isTextNode", function () {
-        ok(!core.isTextNode(document.createElement("div")));
-        ok(core.isTextNode(document.createTextNode("true")));
-    });
 
     // logsErrors for debugging
 

@@ -226,7 +226,6 @@ define(["underscore"], function(underscore) {
         var maybeFire = function() {
             if (started && !fired && delivered_count >= item_count) {
                 fired = true;
-                console.log('fire');
                 callback(slots);
             }
         };
@@ -237,7 +236,7 @@ define(["underscore"], function(underscore) {
                 delivered_count++;
                 delivered[index] = true;
             }
-            console.log(index, item_count, delivered_count, item);
+            // console.log(index, item_count, delivered_count, item);
             maybeFire();
         };
 
@@ -410,11 +409,6 @@ define(["underscore"], function(underscore) {
         }
 
         return [res, offsets];
-    };
-
-    res.isTextNode = function(node) {
-        /* @t DOMNode -> Boolean */
-        return !!(node && node.nodeType === 3);
     };
 
     res.logsErrors = function(fn) {

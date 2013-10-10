@@ -51,7 +51,7 @@ define([
             return {};
         }
         var res = {};
-        if (core.isTextNode(node)) {
+        if (dom.isTextNode(node)) {
             return change.serializeNode(root, node.parent, document_id);
         } else {
             res.attrs = {};
@@ -70,7 +70,7 @@ define([
             }
             res.name = node.tagName.toLowerCase();
             res.children = core.map(dom.getChildNodes(node), function(inner) {
-                if (core.isTextNode(inner)) {
+                if (dom.isTextNode(inner)) {
                     return {
                         kind: 'text',
                         value: inner.data
@@ -85,7 +85,7 @@ define([
         }
         res.position = {
             parent: dom.assign_node_id(root, node.parentNode, document_id),
-            index: dom.parentIndex(node)[1]
+            index: dom.nodeParentIndex(node)[1]
         };
         res.id = dom.assign_node_id(root, node, document_id);
         return res;
@@ -381,7 +381,7 @@ define([
             return dom.assign_node_id(tree, node, document_id);
         };
         mutation.onChange(tree, function(node) {
-            if (core.isTextNode(node)) {
+            if (dom.isTextNode(node)) {
                 node = node.parentNode;
             }
             if (!node) return; //orphaned text node

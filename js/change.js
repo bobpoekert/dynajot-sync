@@ -58,14 +58,19 @@ define([
             if (node.hasAttributes()) {
                 for (var i=0; i < node.attributes.length; i++) {
                     var attr = node.attributes[i].name;
+                    var val = node.attributes[i].value;
                     if (attr_blacklist.hasOwnProperty(attr.toLowerCase())) {
                         continue;
                     }
-                    if (i === 'class') {
-                        attr = attr.replace(/dynajot-.*?(\s|$)/g, '');
-                        attr = attr.replace(/\s+/g, ' ');
+                    if (attr == 'class') {
+                        val = val.replace(/dynajot-[^\s]*/g, '');
+                        val = val.replace(/\s+/g, ' ');
+                        val = val.trim();
+                        if (val.length === 0) {
+                            continue;
+                        }
                     }
-                    res.attrs[node.attributes[i].name] = node.attributes[i].value;
+                    res.attrs[attr] = val;
                 }
             }
             res.name = node.tagName.toLowerCase();
@@ -88,12 +93,10 @@ define([
             index: dom.nodeParentIndex(node)[1]
         };
         res.id = dom.assign_node_id(root, node, document_id);
-        console.log(res);
         return res;
     };
 
     change.updateState = function(root, node) {
-        console.trace();
         if (dom.isTextNode(node)) return;
         var id = node.getAttribute('data-id');
         if (id) {
@@ -223,7 +226,7 @@ define([
     change.rootDelta = function(state) {
         var res = {};
         res.name = state.name;
-        res.attrs = {'+':state.attrs};
+        res.attrs = {'+':state.attrs, '-':{}};
         res.children = [{
             start: 0,
             end: state.children.length,
@@ -307,7 +310,7 @@ define([
         });
         fn();
         core.each(nodes, function(node) {
-            change.updateState(node);
+            change.updateState(root, node);
             data.set(node, 'dirty', false);
         });
     };
@@ -320,7 +323,7 @@ define([
         }
         data.set(node, 'dirty', true);
         fn(data.get(node, 'state'), node);
-        dom.updateState(node);
+        change.updateState(root, node);
         data.set(node, 'dirty', false);
     };
 

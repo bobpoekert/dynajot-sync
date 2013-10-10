@@ -1,4 +1,4 @@
-define(["change", "core"], function(change, core) {
+define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
     module("change (js/change.js)");
 
     var delta1, delta2, document_id, session_id;
@@ -39,6 +39,90 @@ define(["change", "core"], function(change, core) {
             children: delta.children.slice()
         };
     };
+
+    test("serializeNode", function () {
+        var node, root, serializeNode, document_id;
+        serializeNode = change.serializeNode;
+        root = document.createElement("div");
+        document_id = "testid";
+
+        deepEqual(serializeNode(root, node, document_id), {}, "returns {} if no node");
+
+        node = document.createElement("div");
+
+        deepEqual(serializeNode(root, node, document_id), {}, "returns {} if node has no parent");
+
+        root.appendChild(node);
+        var br =document.createElement('br');
+        dom.set_node_id(br, 'br_id');
+        dom.set_node_id(node, 'some_id');
+        node.setAttribute("id", "mynodeid");
+        node.setAttribute("class", 'foo');
+        node.appendChild(document.createTextNode('some text'));
+        node.appendChild(br);
+        node.appendChild(document.createTextNode('more text'));
+
+        var expected_result = {
+            id: 'some_id',
+            name: 'div',
+            attrs: {
+                'id':'mynodeid',
+                'class':'foo'
+            },
+            children: [
+                {kind: 'text', value: 'some text'},
+                {kind: 'id', value: 'br_id'},
+                {kind: 'text', value: 'more text'}
+            ],
+            position: {
+                parent: '_root',
+                index: 0
+            }
+        };
+
+        deepEqual(serializeNode(root, node, document_id), expected_result);
+    });
+
+    test("updateState", function () {
+        var root, node;
+        root = document.createElement("div");
+        node = document.createElement("div");
+
+        root.appendChild(node);
+        node.setAttribute("data-id", "mytestid");
+        var br =document.createElement('br');
+        dom.set_node_id(br, 'br_id');
+        node.setAttribute("id", "mynodeid");
+        node.setAttribute("class", 'foo');
+        node.appendChild(document.createTextNode('some text'));
+        node.appendChild(br);
+        node.appendChild(document.createTextNode('more text'));
+
+       var expected_result = {
+            id: 'mytestid',
+            name: 'div',
+            attrs: {
+                'id':'mynodeid',
+                'class':'foo'
+            },
+            children: [
+                {kind: 'text', value: 'some text'},
+                {kind: 'id', value: 'br_id'},
+                {kind: 'text', value: 'more text'}
+            ],
+            position: {
+                parent: '_root',
+                index: 0
+            }
+        };
+
+        var returned_state = change.updateState(root, node);
+
+        deepEqual(returned_state, expected_result);
+        deepEqual(data.get(node, 'state'), expected_result);
+        equal(data.get(node, 'seen'), true);
+        ok(!node.hasAttribute('data-id'));
+    });
 
     test("mergeDeltas", function () {
         var a, b, mergeDeltas, expectedChildren;
@@ -176,4 +260,210 @@ define(["change", "core"], function(change, core) {
         deepEqual(a.children, expectedChildren, "no overlap for children");
 
     });
+
+    // sentence diff not used
+    // patch not used
+
+    test("rootDelta", function () {
+        var input_state = {
+            id: 'some_id',
+            name: 'div',
+            attrs: {
+                'id':'mynodeid',
+                'class':'foo'
+            },
+            children: [
+                {kind: 'text', value: 'some text'},
+                {kind: 'id', value: 'br_id'},
+                {kind: 'text', value: 'more text'}
+            ],
+            position: {
+                parent: '_root',
+                index: 0
+            }
+        };
+
+        var expected_delta = {
+            id: 'some_id',
+            name: 'div',
+            attrs: {
+                '+': {
+                    "id": "mynodeid",
+                    "class": "foo"
+                },
+                '-': {}
+            },
+            children: [{
+                start: 0,
+                end: 3,
+                value: [
+                    {kind: 'text', value: 'some text'},
+                    {kind: 'id', value: 'br_id'},
+                    {kind: 'text', value: 'more text'}]}]
+        };
+
+        deepEqual(change.rootDelta(input_state), expected_delta);
+    });
+
+    test("delta", function () {
+        var before_state = {
+            id: 'some_id',
+            name: 'div',
+            attrs: {
+                'id':'mynodeid',
+                'class':'foo'
+            },
+            children: [
+                {kind: 'text', value: 'some text'},
+                {kind: 'id', value: 'br_id'},
+                {kind: 'text', value: 'more text'}
+            ],
+            position: {
+                parent: '_root',
+                index: 0
+            }
+        };
+
+        var after_state = {
+            id: 'some_id',
+            name: 'div',
+            attrs: {
+                'id':'mynodeid',
+                'class':'bar'
+            },
+            children: [
+                {kind: 'text', value: 'more text'},
+                {kind: 'id', value: 'br_id'},
+                {kind: 'text', value: 'more text'}
+            ],
+            position: {
+                parent: '_root',
+                index: 0
+            }
+        };
+
+        var expected_delta = {
+            id: 'some_id',
+            name: 'div',
+            attrs: {
+                '+': {
+                    "class": "bar"
+                },
+                '-': {}
+            },
+            children: [
+                {
+                    start: 0,
+                    end: 1,
+                    value: [{kind: 'text', value: 'more text'}]
+                }
+            ]
+        };
+
+        deepEqual(change.delta(before_state, after_state), expected_delta);
+    });
+
+    test("nodeTransaction", function () {
+        var node = document.createElement("div");
+        var root = document.createElement("div");
+        root.appendChild(node);
+        change.nodeTransaction(root, node, function () {
+            equal(data.get(node, 'dirty'), true);
+        });
+        ok(!data.get(node, 'dirty'));
+    });
+
+    test("nodeTransactions", function () {
+        var node = document.createElement("div");
+        var root = document.createElement("div");
+        root.appendChild(node);
+        change.nodeTransactions(root, [node], function () {
+            equal(data.get(node, 'dirty'), true);
+        });
+        ok(!data.get(node, 'dirty'));
+    });
+
+
+    asyncTest("changes", function () {
+        var expected_deltas = [];
+
+        var root = document.createElement("div");
+        var node = document.createElement("div");
+        root.appendChild(node);
+        var change_functions = [];
+        var changes_applied = 0;
+        dom.set_node_id(node, "new_id");
+
+        change_functions.push(function () {
+            node.setAttribute("width", "1024");
+        });
+        expected_deltas.push({
+            id: 'new_id',
+            name: 'div',
+            attrs: {
+                '+': {
+                    "width": "1024"
+                },
+                '-': {}
+            },
+            "children": [
+                {
+                  "end": 0,
+                  "start": 0,
+                  "value": []
+                }
+            ]
+        });
+
+        change_functions.push(function () {
+            node.setAttribute("class", "foo");
+        });
+        expected_deltas.push({
+            id: 'new_id',
+            name: 'div',
+            attrs: {
+                '+': {
+                    "class": "foo"
+                },
+                '-': {}
+            }
+        });
+
+        change_functions.push(function () {
+            var child = document.createTextNode("more text");
+            node.appendChild(child);
+        });
+        expected_deltas.push({
+            id: 'new_id',
+            name: 'div',
+            children: [
+                {
+                    start: 0,
+                    end: 0,
+                    value: [{kind: 'text', value: 'more text'}]
+                }
+            ]
+        });
+
+        var interval = setInterval(function() {
+            change_functions[changes_applied]();
+            changes_applied++;
+            if (changes_applied >= change_functions.length) {
+                clearInterval(interval);
+            }
+        }, 200);
+
+        var changes_happened = 0;
+        change.changes(root, document_id, function (delta) {
+            var expect = expected_deltas[changes_happened];
+            deepEqual(delta, expect);
+            changes_happened++;
+            if (changes_happened >= expected_deltas.length) {
+                start();
+            }
+        });
+
+        expect(expected_deltas.length);
+    });
+
 });

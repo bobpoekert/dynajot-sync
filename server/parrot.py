@@ -14,7 +14,7 @@ def relpath(p):
 def random_id():
     return hashlib.sha1(os.urandom(20)).hexdigest()
 
-documents = {}
+document_connections = {}
 document_trees = {}
 document_counters = {}
 
@@ -31,7 +31,7 @@ class ParrotHandler(websocket.WebSocketHandler):
     def open(self, document):
         if not document:
             new_id = None
-            while (not new_id) or (new_id in documents):
+            while (not new_id) or (new_id in document_connections):
                 new_id = random_id()
             document = new_id
             self.write_message({'kind': 'document_id', 'value':document})
@@ -47,15 +47,13 @@ class ParrotHandler(websocket.WebSocketHandler):
                 'kind':'document_state',
                 'value': False})
 
-        if document in documents:
-            documents[document].add(self)
+        if document in document_connections:
+            document_connections[document].add(self)
         else:
-            documents[document] = set([self])
+            document_connections[document] = set([self])
 
 
         self.document = document
-        self.peers = documents[document]
-        self.tree = document_trees[document]
 
     def on_message(self, blob):
         message = json.loads(blob)
@@ -63,24 +61,24 @@ class ParrotHandler(websocket.WebSocketHandler):
         document_counters[self.document] = counter + 1
 
         if message["kind"] == "delta":
-            self.tree.apply_delta(message["value"])
+            document_trees[self.document].apply_delta(message["value"])
 
         message['global_timestamp'] = counter
         print message
-        print list(self.tree)
 
-        for recipient in self.peers:
+        for recipient in document_connections[self.document]:
             if recipient != self:
                 recipient.write_message({
                     'kind': 'message',
                     'value': message})
 
     def on_close(self):
-        if not hasattr(self, 'peers'):
+        if not hasattr(self, 'document'):
             return
-        self.peers.remove(self)
-        if not self.peers:
-            del documents[self.document]
+        peers = document_connections[self.document]
+        peers.remove(self)
+        if not peers:
+            del document_connections[self.document]
 
 app = web.Application([
     ('/doc/(.*)', ParrotHandler),

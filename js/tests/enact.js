@@ -7,8 +7,6 @@ define(["enact", 'core', "tests/action_log", "tests/action_result_html"], functi
 
     var deltas = core.map(action_log, core.gattr('value'));
   
-    var locals = applier._locals;
-
     var harness = function (fn) {
         var root = document.createElement("div");
         var applier = enact.appliesDeltas(root);
@@ -23,13 +21,14 @@ define(["enact", 'core', "tests/action_log", "tests/action_result_html"], functi
 
             core.each(deltas, applier);
 
-            // equal(root.innerHTML, action_result);
+             equal(root.innerHTML, action_result);
         });
     });
 
     test("resolveId", function () {
         harness(function (root, applier) {
-            
+
+            var node = document.createElement("div");
         });
     });
 });

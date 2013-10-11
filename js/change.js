@@ -233,6 +233,7 @@ define([
             value: state.children
         }];
         res.id = state.id;
+        res.position = state.position;
         return res;
     };
 
@@ -328,7 +329,7 @@ define([
     };
 
     change.changes = function(tree, document_id, delta_callback) {
-        /* @t DOMNode, String, (NodeDelta -> null) -> null */ 
+        /* @t DOMNode, String, (NodeDelta -> null) -> null */
         var node_id = function(node) {
             return dom.assign_node_id(tree, node, document_id);
         };
@@ -351,15 +352,17 @@ define([
                         delta.id = node_id(node);
                         delta_callback(delta);
                     } else {
-                        cur_state.create = true;
-                        delta_callback(change.rootDelta(cur_state));
+                        var root_delta = change.rootDelta(cur_state);
+                        root_delta.create = true;
+                        delta_callback(root_delta);
                     }
                 }
             } else if (node !== tree) {
+                var root_delta = change.rootDelta(cur_state);
                 if (!seen) {
-                    cur_state.create = true;
+                    root_delta.create = true;
                 }
-                delta_callback(change.rootDelta(cur_state));
+                delta_callback(root_delta);
             }
             data.set(node, 'state', cur_state);
             data.set(node, 'seen', true);

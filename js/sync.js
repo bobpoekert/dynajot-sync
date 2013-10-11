@@ -1,4 +1,8 @@
-define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], function(core, socket, change, enact, dom, timeline, cursors) {
+define([
+    "core", "socket", "change", "enact", "dom",
+    "timeline", "cursors", "ids"], function(
+        core, socket, change, enact, dom,
+        timeline, cursors, ids) {
 
     var sync = {};
 
@@ -48,6 +52,9 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
         outer_manifold.document_id.addReader(function(message) {
             var prev_id = document_id;
             document_id = message;
+            if (message.global_timestamp) {
+                ids.global_timestamp(document_id, message.global_timestamp);
+            }
             if (typeof(prev_id) === 'function') {
                 prev_id(document_id);
             } else {
@@ -79,13 +86,27 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
                     conn.send({'kind':'delta', 'value': state});
                 });
             }
+            var seen_message_ids = {};
+
+            var serializeMessageId = function(message_id) {
+                return core.map(message_id, function(e) {
+                    return e.toString();
+                }).join('-');
+            };
+            
             var applier = enact.appliesDeltas(node);
             inner_manifold.delta.addReader(function(message) {
+                var id_string = serializeMessageId(message.message_id);
+                if (seen_message_ids[id_string]) return;
+                seen_message_ids[id_string] = true;
                 var changeset = document_timeline.changeset(message);
                 core.each(changeset, applier);
             });
 
+
             change.changes(node, document_id, function(delta) {
+                delta.message_id = ids.message_id(document_id);
+                seen_message_ids[serializeMessageId(delta.message_id)] = true;
                 document_timeline.addDelta(delta);
                 conn.send({'kind':'delta', 'value':delta});
             });

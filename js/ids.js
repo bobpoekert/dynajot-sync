@@ -29,6 +29,8 @@ define([], function() {
     };
 
     ids.global_timestamp = function(document_id, nextval) {
+        // nextval is an optional argument
+        // set with nextval, get without it
         var key = 'gs_'+document_id;
         var prevval = parseInt(getStorage(key) || 0, 10);
         if (nextval && nextval > prevval) {

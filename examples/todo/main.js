@@ -42,10 +42,11 @@ $(function () {
             var $todos = $("#todo-list"),
                 $textBox = $('#new-todo'),
                 newText = $textBox.val();
-            $todos.prepend(createNewTodo(newText));
-            $textBox.val("");
-
-            updateTodoCount();
+            if (newText.length > 0) {
+                $todos.prepend(createNewTodo(newText));
+                $textBox.val("");
+                updateTodoCount();
+            }
         }
     });
 

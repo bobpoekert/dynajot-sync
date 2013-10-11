@@ -31,13 +31,13 @@ $(function () {
         updateTodoCount();
     };
 
-    $("#clear-completed").click(function () {
+    $("body").on("click", "#clear-completed", function () {
         $("#todo-list .completed").remove();
         $("#clear-completed").addClass("hidden");
         updateTodoCount();
     });
 
-    $("#new-todo").keyup(function (evt) {
+    $("body").on("keyup", "#new-todo", function (evt) {
         if (evt.keyCode === 13) {
             var $todos = $("#todo-list"),
                 $textBox = $('#new-todo'),
@@ -49,18 +49,18 @@ $(function () {
         }
     });
 
-    $("#todo-list").on("click", ".toggle", function () {
+    $("body").on("click", "#todo-list .toggle", function () {
         var $parent = $(this).parents("li");
         $parent.toggleClass("completed");
         updateClearCompleted();
     });
 
-    $("#todo-list").on("click", ".destroy", function() {
+    $("body").on("click", "#todo-list .destroy", function() {
         $(this).parents("li").remove();
         updateTodoCount();
     });
     
-    $("#filters").on("click", "a", function () {
+    $("body").on("click", "#filters a", function () {
         var $filters = $("#filters"),
             $todos = $("#todo-list"),
             $this = $(this),

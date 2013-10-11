@@ -16,6 +16,7 @@ def random_id():
 
 documents = {}
 document_trees = {}
+document_counters = {}
 
 class DocumentStateHandler(web.RequestHandler):
 
@@ -51,22 +52,28 @@ class ParrotHandler(websocket.WebSocketHandler):
         else:
             documents[document] = set([self])
 
-        print document, document_trees.keys()
 
         self.document = document
         self.peers = documents[document]
         self.tree = document_trees[document]
 
     def on_message(self, blob):
-        print blob
         message = json.loads(blob)
+        counter = document_counters.get(self.document, 0)
+        document_counters[self.document] = counter + 1
 
         if message["kind"] == "delta":
             self.tree.apply_delta(message["value"])
 
+        message['global_timestamp'] = counter
+        print message
+        print list(self.tree)
+
         for recipient in self.peers:
             if recipient != self:
-                recipient.write_message({'kind': 'message', 'value': message})
+                recipient.write_message({
+                    'kind': 'message',
+                    'value': message})
 
     def on_close(self):
         if not hasattr(self, 'peers'):

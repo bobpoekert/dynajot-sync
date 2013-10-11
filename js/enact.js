@@ -86,7 +86,8 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             change.nodeTransactions(root, nodes, function() {
                 if (existing_node) {
                     console.log(existing_node);
-                    if (parent) {
+                    if (parent && parent != root) {
+                        //console.trace();
                         dom.yankNode(existing_node);
                         enact.insertChildNodeAt(parent, existing_node, delta.position.index);
                     }

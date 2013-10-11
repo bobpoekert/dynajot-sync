@@ -20,13 +20,14 @@ def recursive(fn):
 
     return res
 
-@recursive
-def token_list(token_list, nodes, node, res=[], seen=set([])):
+#@recursive
+def token_list(nodes, node, res=[], seen=set([])):
     if type(node) != Node:
         res.append(escape(node))
         return
     if node.id in seen:
         # shouldn't be cycles, but if there are we shouldn't infinite-loop
+        print "tree cycle"
         return res
     seen.add(node.id)
     if node.name:
@@ -63,14 +64,29 @@ class Node(object):
     def __init__(self,
         id,
         name,
-        attrs={},
-        children=[],
+        attrs=None,
+        children=None,
         position=None):
-        self.id = id
+        self._id = id
         self.name = name
-        self.attrs = attrs
-        self.children = children
+        self.attrs = attrs or {}
+        self.children = children or []
         self.position = position
+
+    def get_id(self):
+        return self._id
+
+    def set_id(self, _id):
+        raise RuntimeError, '%s := %s' % (self._id, _id)
+
+    id = property(get_id, set_id)
+
+    def __repr__(self):
+        return '<Node\n %s,\n    %s>' % (self._id,
+            '\n    '.join('%s: %s' % (str(k), str(v)) for k, v in self.attrs.iteritems()))
+
+    def __str__(self):
+        return self._id
 
     def to_dict(self):
         return dict(
@@ -90,12 +106,14 @@ class Document(object):
         if not node:
             node = Node(
                 delta['id'],
-                delta['name'])
+                delta['name'],
+                attrs={})
             self.nodes[delta['id']] = node
 
         attrs = delta.get('attrs')
         if attrs:
             for k, v in attrs.get('+', {}).iteritems():
+                print node.id, k, v
                 node.attrs[k] = v
             for k in attrs.get('-', {}).iterkeys():
                 del node.attrs[k]

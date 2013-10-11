@@ -87,6 +87,7 @@ Data.prototype = {
 
 		// Handle: [ owner, key, value ] args
 		if ( typeof data === "string" ) {
+			//if (data == 'seen') console.trace();
 			cache[ data ] = value;
 
 		// Handle: [ owner, { properties } ] args

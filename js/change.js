@@ -96,16 +96,16 @@ define([
         return res;
     };
 
-    change.updateState = function(root, node) {
+    change.updateState = function(root, node, document_id) {
         if (dom.isTextNode(node)) return;
         var id = node.getAttribute('data-id');
         if (id) {
             dom.set_node_id(node, id);
             node.removeAttribute('data-id');
         }
-        var state = change.serializeNode(root, node);
+        var state = change.serializeNode(root, node, document_id);
         data.set(node, 'state', state);
-        data.set(node, 'seen', true);
+        //data.set(node, 'seen', true);
         return state;
     };
 
@@ -302,7 +302,7 @@ define([
 
     /*setTimeout(function() {
         stop = true;
-    }, 1000);*/
+    }, 5000);*/
 
     change.changes = function(tree, document_id, delta_callback) {
         /* @t DOMNode, String, (NodeDelta -> null) -> null */
@@ -327,8 +327,6 @@ define([
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
-                    console.log('d', prev_state, cur_state, delta);
-
                     if (seen) {
                         delta.id = node_id(node);
                         delta_callback(delta);

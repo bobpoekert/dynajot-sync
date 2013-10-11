@@ -12,6 +12,10 @@ define(["ids", "core", "change"], function(ids, core, change) {
         instance._locals.sequence = sequence;
 
         var compareDeltas = function(a, b) {
+            if (!(a && b)) {
+                console.log(sequence);
+                console.trace();
+            }
             var am = a.message_id;
             var bm = b.message_id;
             if (am[1] != bm[1]) {
@@ -27,6 +31,9 @@ define(["ids", "core", "change"], function(ids, core, change) {
         var insertionPoint = function(delta) {
             if (sequence.length === 0) {
                 return 0;
+            }
+            if (sequence.length === 1) {
+                return compareDeltas(delta, sequence[0]) > 0 ? 1 : 0;
             }
             var start = 0;
             var end = sequence.length;

@@ -29,7 +29,10 @@ define([], function() {
     };
 
     ids.global_timestamp = function(document_id, nextval) {
-        var key = 'gs_'+document_id;
+        // nextval is an optional argument
+        // set with nextval, get without it
+        console.log(nextval);
+        var key = 'gs:'+document_id;
         var prevval = parseInt(getStorage(key) || 0, 10);
         if (nextval && nextval > prevval) {
             putStorage(key, nextval.toString());
@@ -45,7 +48,7 @@ define([], function() {
     };
 
     ids.message_ctr = function(document_id) {
-        return ids.counter('message_ctr_'+document_id);
+        return ids.counter('message_ctr:'+document_id);
     };
 
     ids.node_id = function(document_id) {

@@ -41,22 +41,43 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         return !!(node && node.nodeType === Node.TEXT_NODE);
     };
 
+    dom.iterAttributes = function(node, iterator) {
+        for (var i=0; i < node.attributes.length; i++) {
+            var attr = node.attributes[i];
+            iterator(i.name, i.value);
+        }
+    };
+
+    dom.removeAllAttributes = function(node) {
+        var attribute_keys = [];
+        dom.iterAttributes(node, function(k, v) {
+            attribute_keys.push(k);
+        });
+        core.each(attribute_keys, function(k) {
+            node.removeAttribute(k);
+        });
+    };
+
+    dom.setAttributes = function(node, attrs) {
+        core.each(attrs, function(v, k) {
+            node.setAttribute(k, v);
+        });
+    };
+
     dom.setIdClass = function(node, id) {
         /* @t DOMNode, String -> null */
         var prev = node.getAttribute('class');
-        var res = null;
+        var parts;
         if (prev) {
-            var chars = [];
-            res = prev.replace((new RegExp('dynajot-(?!'+id+').*(?=\s|$)')), '', 'g');
+            parts = core.filter(prev.split(), function(part) {
+                return !(/^dynajot-/.test(part));
+            });
+            res = parts.join(' ');
         } else {
-            res = '';
+            parts = [];
         }
-        var repl = 'dynajot-'+id;
-        if (res.indexOf(repl) === -1) {
-            res += ' ' + repl;
-        }
-        res = res.replace(/\s+/g, ' ');
-        node.setAttribute('class', res);
+        parts.push('dynajot-'+id);
+        node.setAttribute('class', parts.join(' '));
     };
 
     dom.toFragment = function(arr) {
@@ -73,11 +94,17 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         return core.toArray(node.childNodes);
     };
 
-    dom.mergeChildren = function(node, children) { // actual merge later
-        core.each(node.childNodes, function(child) {
+    dom.removeAllChildren = function(node) {
+        while(node.firstChild) {
+            var child = node.firstChild;
             node.removeChild(child);
-        });
+        }
+    };
+
+    dom.mergeChildren = function(node, children) { // actual merge later
+        dom.removeAllChildren(node);
         core.each(children, function(child) {
+            console.log('adding child', child, child.nodeType);
             node.appendChild(child);
         });
     };

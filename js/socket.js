@@ -50,6 +50,7 @@ define(["load_swf", "core"], function(swf, core) {
                 };
                 ws.onerror = function(evt) {
                     if (ws.readyState !== 1) {
+                        ws.close();
                         retry();
                     }
                 };

@@ -28,6 +28,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
         var create_callbacks = {};
 
         var getNode = core.partial(enact.getNode, root);
+        var _locals = {};
 
         var resolveId = function(id, callback) {
             if (!id) {
@@ -43,6 +44,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 create_callbacks[id] = [callback];
             }
         };
+        _locals.resolveId = resolveId;
 
         var makeNode = function(delta) {
             if (delta.kind == 'text') {
@@ -51,6 +53,8 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 return getNode(delta.value);
             }
         };
+        _locals.makeNode = makeNode;
+
 
         var resolveNode = function(delta, callback) {
             /* @t Delta, (DOMNode -> null) -> null */
@@ -60,6 +64,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 resolveId(delta.value, callback);
             }
         };
+        _locals.resolveNode = resolveNode;
 
         var deliverNode = function(id, node) {
             /* @t String, DOMNode -> null */
@@ -71,6 +76,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 delete create_callbacks[id];
             }
         };
+        _locals.deliverNode = deliverNode;
 
         var resolveChild = function(child, callback) {
             var m = core.multi(function(nodes) {
@@ -83,6 +89,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             });
             m.start();
         };
+        _locals.resolveChild = resolveChild;
 
         var resolveChildren = function(children, callback) {
             var m = core.multi(callback);
@@ -91,6 +98,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             });
             m.start();
         };
+        _locals.resolveChildren = resolveChildren;
 
         var resolveNodes = function(deltas, callback) {
             /* @t [Delta, ...], (DOMNode -> null) -> null */
@@ -100,18 +108,19 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             });
             m.start();
         };
+        _locals.resolveNodes = resolveNodes;
 
         var resolveDeps = function(node_id, parent_id, children, callback) {
             /* @t String, String, [Node, ...], (DOMNode, DOMNode, [DOMNode, ...] -> null) -> null */
             var m = core.multi(core.splat(callback));
             if (node_id) {
-                console.log('node_id', node_id);
+                //console.log('node_id', node_id);
                 resolveId(node_id, m.getCallback());
             } else {
                 m.addValue(null);
             }
             if (parent_id) {
-                console.log('parent_id', parent_id);
+                //console.log('parent_id', parent_id);
                 resolveId(parent_id, m.getCallback());
             } else {
                 m.addValue(null);
@@ -119,6 +128,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             resolveChildren(children, m.getCallback());
             m.start();
         };
+        _locals.resolveDeps = resolveDeps;
 
         var finishCreate = function(delta, self, parent, children) {
             /* @t Delta -> null */
@@ -137,6 +147,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             change.updateState(root, parent);
             deliverNode(res);
         };
+        _locals.finishCreate = finishCreate;
 
         var doCreate = function(delta) {
             /* @t Delta -> null */
@@ -158,8 +169,9 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 delta.children || [],
                 core.partial(finishCreate, delta));
         };
+        _locals.doCreate = doCreate;
 
-        return function(delta) {
+        var res = function(delta) {
             //console.log('delta', delta);
             /* @t Delta -> null */
             if (delta.create) {
@@ -196,13 +208,15 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                             });
                         }
 
-                        core.each(child_nodes, function(slice) {  
+                        core.each(child_nodes, function(slice) {
                             dom.spliceNodes(
                                 node, slice.start, slice.end, slice.value);
                         });
                     });
                 });
         };
+        res._locals = _locals;
+        return res;
     };
 
     return enact;

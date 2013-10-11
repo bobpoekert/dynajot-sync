@@ -46,7 +46,7 @@ define([
             return {};
         }
         if (!node.parentNode) {
-            console.log('no parent');
+            //console.log('no parent');
             // node is not in the dom
             return {};
         }

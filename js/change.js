@@ -227,11 +227,7 @@ define([
         var res = {};
         res.name = state.name;
         res.attrs = {'+':state.attrs, '-':{}};
-        res.children = [{
-            start: 0,
-            end: state.children.length,
-            value: state.children
-        }];
+        res.children = state.children;
         res.id = state.id;
         res.position = state.position;
         return res;
@@ -260,7 +256,7 @@ define([
                         res.attrs['-'][k] = null;
                     }
                 }
-                for (var k in cur.attrs) {
+                for (k in cur.attrs) {
                     if (cur.attrs.hasOwnProperty(k) &&
                         !core.whitespaceEqual(cur.attrs[k], old.attrs[k])) {
                         res.attrs['+'][k] = cur.attrs[k];
@@ -268,33 +264,7 @@ define([
                 }
             }
             if (!core.isEqual(cur.children, old.children)) {
-                var serializer = function(val) {
-                    return val.kind+':'+val.value;
-                };
-                var matcher = new difflib.SequenceMatcher(
-                    core.map(old.children, serializer),
-                    core.map(cur.children, serializer));
-                var opcodes = matcher.get_opcodes();
-
-                res.children = core.clean(core.map(
-                    opcodes, core.splat(function(opcode, i1, i2, j1, j2) {
-                        switch(opcode) {
-                            case 'insert':
-                            case 'replace':
-                                return {
-                                   start: i1,
-                                   end: i2,
-                                   value: cur.children.slice(j1, j2)
-                                };
-                            case 'delete':
-                                return {
-                                    start: i1,
-                                    end: i2,
-                                    value: []
-                                };
-                        }
-                    })
-                ));
+                res.children = old.children;
             }
 
             res.id = cur.id;
@@ -328,12 +298,19 @@ define([
         data.set(node, 'dirty', false);
     };
 
+    var stop = false;
+
+    /*setTimeout(function() {
+        stop = true;
+    }, 1000);*/
+
     change.changes = function(tree, document_id, delta_callback) {
         /* @t DOMNode, String, (NodeDelta -> null) -> null */
         var node_id = function(node) {
             return dom.assign_node_id(tree, node, document_id);
         };
         mutation.onChange(tree, function(node) {
+            if (stop) return;
             if (dom.isTextNode(node)) {
                 node = node.parentNode;
             }
@@ -344,24 +321,26 @@ define([
             var seen = !!data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
             var old_node_id = dom.get_node_id(node);
+            var root_delta;
             var cur_state = change.serializeNode(tree, node, document_id);
+            if (!core.truthiness(cur_state)) return;
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
+                    console.log('d', prev_state, cur_state, delta);
+
                     if (seen) {
                         delta.id = node_id(node);
                         delta_callback(delta);
                     } else {
-                        var root_delta = change.rootDelta(cur_state);
+                        root_delta = change.rootDelta(cur_state);
                         root_delta.create = true;
                         delta_callback(root_delta);
                     }
                 }
-            } else if (node !== tree) {
-                var root_delta = change.rootDelta(cur_state);
-                if (!seen) {
-                    root_delta.create = true;
-                }
+            } else if (!seen && node != tree) {
+                root_delta = change.rootDelta(cur_state);
+                root_delta.create = true;
                 delta_callback(root_delta);
             }
             data.set(node, 'state', cur_state);

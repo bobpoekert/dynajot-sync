@@ -73,6 +73,15 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         return core.toArray(node.childNodes);
     };
 
+    dom.mergeChildren = function(node, children) { // actual merge later
+        core.each(node.childNodes, function(child) {
+            node.removeChild(child);
+        });
+        core.each(children, function(child) {
+            node.appendChild(child);
+        });
+    };
+
     dom.spliceNodes = function(target, start, end, replacement) {
         /* @t DOMNode, Number, Number, [DOMNode, ...] -> null */
         var children = core.filter(

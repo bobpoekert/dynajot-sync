@@ -3,7 +3,8 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
     var sync = {};
 
     sync.sync = function(node, options) {
-        options || (options = {});
+        options = options || {};
+
         var document_id = options.document_id;
 
         var frag = window.location.hash.slice(1).trim();
@@ -56,29 +57,28 @@ define(["core", "socket", "change", "enact", "dom", "timeline", "cursors"], func
         });
 
         if (options.cursors) {
-            console.log("added Reader");
             cursors.init(conn.send);
             inner_manifold.mouse_position.addReader(cursors.updateCursors);
         }
 
         outer_manifold.document_state.addReader(core.once(function(message) {
+            console.log(message);
             document_timeline = timeline.make(document_id);
             if (message) {
-                var frag = document.createElement('div');
                 node.innerHTML = message;
-                dom.traverse(node, function(child) {
-                    change.updateState(node, child);
-                });
             } else {
-                dom.traverse(node, function(c) {
+                /*dom.traverse(node, function(c) {
                     if (dom.isTextNode(c)) return;
                     if (c == node) return;
                     var ser = change.serializeNode(node, c);
                     var state = change.rootDelta(ser);
                     document_timeline.addDelta(state);
                     conn.send({'kind':'delta', 'value': state});
-                });
+                });*/
             }
+            dom.traverse(node, function(child) {
+                change.updateState(node, child);
+            });
             var applier = enact.appliesDeltas(node);
             inner_manifold.delta.addReader(function(message) {
                 var changeset = document_timeline.changeset(message);

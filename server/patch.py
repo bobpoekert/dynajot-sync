@@ -100,9 +100,8 @@ class Document(object):
             for k in attrs.get('-', {}).iterkeys():
                 del node.attrs[k]
 
-        for slc in delta.get('children', []):
-            node.children = node.children[:slc['start']] +\
-                    slc['value'] + node.children[slc['end']:]
+        if delta.get('children'):
+            node.children = delta['children']
 
         if delta.get('position'):
             node.position = delta['position']
@@ -112,7 +111,7 @@ class Document(object):
             root = self.nodes['_root']
         except KeyError:
             return ''
-        return ''.join(token_list(self.nodes, root,))
+        return ''.join(token_list(self.nodes, root))
 
     def __iter__(self):
         try:

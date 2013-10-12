@@ -31,7 +31,7 @@ define([], function() {
     ids.global_timestamp = function(document_id, nextval) {
         // nextval is an optional argument
         // set with nextval, get without it
-        console.log(nextval);
+        //console.log(nextval);
         var key = 'gs:'+document_id;
         var prevval = parseInt(getStorage(key) || 0, 10);
         if (nextval && nextval > prevval) {

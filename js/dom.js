@@ -104,7 +104,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     dom.mergeChildren = function(node, children) { // actual merge later
         dom.removeAllChildren(node);
         core.each(children, function(child) {
-            console.log('adding child', child, child.nodeType);
+            //console.log('adding child', child, child.nodeType);
             node.appendChild(child);
         });
     };
@@ -147,11 +147,25 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         /* @t DOMNode, DOMNode, Number -> null */
         //if (!parent) console.trace();
         //if (!parent.children) console.trace();
-        var after = parent.children[index];
-        if (after) {
+        var after = parent.childNodes[index];
+
+        if (!after) {
+            parent.appendChild(child);
+        } else if (after.nodeType == Node.ELEMENT_NODE) {
             parent.insertBefore(child, after);
         } else {
-            parent.appendChild(child);
+            var fragment = document.createDocumentFragment();
+            fragment.appendChild(child);
+            while(after && after.nodeType != Node.ELEMENT_NODE) {
+                parent.removeChild(after);
+                fragment.appendChild(after);
+                after = after.nextSibling;
+            }
+            if (after) {
+                parent.insertBefore(fragment, after);
+            } else {
+                parent.appendChild(fragment);
+            }
         }
     };
 

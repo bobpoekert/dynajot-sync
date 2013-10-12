@@ -35,7 +35,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
 
     enact.insertionIndex = function(target, index) {
         var is_resolved = data.get(target, 'children_resolved');
-        console.log('is_resolved', is_resolved);
+        //console.log('is_resolved', is_resolved);
         if (!is_resolved) return index;
         var offset = 0;
         for (var i=0; i < index; i++) {
@@ -63,14 +63,14 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
         var resolveNode = core.partial(enact.resolveNode, root);
 
         return function(delta) {
-            console.log('apply delta', delta);
+            //console.log('apply delta', delta);
             var id = delta.id;
             var existing_node = getNode(id);
             var parent = delta.position ? getNode(delta.position.parent) : null;
             var mergeChildren = function(target, children) {
                 var resolved = core.map(children, resolveNode);
                 var was_resolved = core.map(resolved, core.truthiness);
-                console.log('was_resolved', was_resolved);
+                //console.log('was_resolved', was_resolved);
                 data.set(target, 'children_resolved', was_resolved);
                 return dom.mergeChildren(
                     target,
@@ -85,7 +85,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             }
             change.nodeTransactions(root, nodes, function() {
                 if (existing_node) {
-                    console.log(existing_node);
+                    //console.log(existing_node);
                     if (parent && parent != root) {
                         //console.trace();
                         dom.yankNode(existing_node);
@@ -104,8 +104,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                     if (delta.children) {
                         mergeChildren(existing_node, delta.children);
                     }
-                } else if (delta.create) {
-                    console.log(delta);
+                } else { //if (delta.create) {
                     var result = document.createElement(delta.name);
                     if (delta.attrs) {
                         core.each((delta.attrs['+'] || []), function(v, k) {
@@ -119,11 +118,12 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                         mergeChildren(result, delta.children);
                     }
                     dom.set_node_id(result, delta.id);
-                    console.log('parent', parent, result, delta.position);
+                    //console.log('parent', parent, result, delta.position);
+                    console.log(result);
                     enact.insertChildNodeAt(parent, result, delta.position.index);
-                } else {
+                } /*else {
                     console.log(delta, "doesn't exist");
-                }
+                }*/
             });
         };
     };

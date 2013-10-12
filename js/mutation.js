@@ -17,11 +17,7 @@ define(['dom', 'core'], function(dom, core) {
             var observer = new MutationObserver(function(changes) {
                 for (var i=0; i < changes.length; i++) {
                     var change = changes[i];
-                    if (change.type == 'childList') {
-                        dom.traverse(change.target, callback);
-                    } else {
-                        callback(change.target);
-                    }
+                    dom.traverse(change.target, callback);
                 }
             });
             observer.observe(node, {

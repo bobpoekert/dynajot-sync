@@ -309,13 +309,14 @@ define([
         var node_id = function(node) {
             return dom.assign_node_id(tree, node, document_id);
         };
-        mutation.onChange(tree, function(node) {
+        var watcher = function(node) {
             if (stop) return;
             if (dom.isTextNode(node)) {
                 node = node.parentNode;
             }
             if (!node) return; //orphaned text node
             if (data.get(node, 'dirty')) {
+                setTimeout(core.partial(watcher, node), 200);
                 return;
             }
             var seen = !!data.get(node, 'seen');
@@ -329,6 +330,7 @@ define([
                 if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
                     if (seen) {
                         delta.id = node_id(node);
+                        delta.create = !seen;
                         delta_callback(delta);
                     } else {
                         root_delta = change.rootDelta(cur_state);
@@ -340,10 +342,13 @@ define([
                 root_delta = change.rootDelta(cur_state);
                 root_delta.create = true;
                 delta_callback(root_delta);
+            } else if (seen) {
+                console.log('seen but not serialized', node);
             }
             data.set(node, 'state', cur_state);
             data.set(node, 'seen', true);
-        });
+        };
+        mutation.onChange(tree, watcher);
     };
 
     return change;

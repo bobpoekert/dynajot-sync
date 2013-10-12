@@ -264,7 +264,7 @@ define([
                 }
             }
             if (!core.isEqual(cur.children, old.children)) {
-                res.children = old.children;
+                res.children = cur.children;
             }
 
             res.id = cur.id;

@@ -53,9 +53,9 @@ define(["dom", "core"], function(dom, core) {
         var td = test_dom();
         var header = td.getElementsByTagName("header")[0];
         dom.setIdClass(header, "testid");
-        equal(header.getAttribute("class"), ' dynajot-testid');
+        equal(header.getAttribute("class"), 'dynajot-testid');
         dom.setIdClass(header, "bogusasdasdasdasd");
-        equal(header.getAttribute("class"), ' dynajot-bogusasdasdasdasd');
+        equal(header.getAttribute("class"), 'dynajot-bogusasdasdasdasd');
     });
 
     test("toFragment", function () {

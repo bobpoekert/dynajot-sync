@@ -120,7 +120,6 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
 
         deepEqual(returned_state, expected_result);
         deepEqual(data.get(node, 'state'), expected_result);
-        equal(data.get(node, 'seen'), true);
         ok(!node.hasAttribute('data-id'));
     });
 
@@ -210,51 +209,34 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
         a = getDeltaCopy(delta1);
         b = getDeltaCopy(delta2); // b is immutable
         a.children = [{
-            "start": 3,
-            "end": 4,
-            "value": [{
-                'kind': 'id',
-                'value': 'brat'
-            }, {
-                'kind': 'text',
-                'value': 'brattext'
-            }]
+            'kind': 'id',
+            'value': 'brat'
+        }, {
+            'kind': 'text',
+            'value': 'brattext'
         }];
         b.children = [{
-            "start": 0,
-            "end": 2,
-            "value": [{
-                'kind': 'id',
-                'value': 'brat'
-            }, {
-                'kind': 'text',
-                'value': 'brattext'
-            }]
+            'kind': 'id',
+            'value': 'brat'
+        }, {
+            'kind': 'text',
+            'value': 'brattext'
         }];
 
         mergeDeltas(a, b);
-        expectedChildren = [
-        {
-            "start": 3,
-            "end": 4,
-            "value": [{
-                'kind': 'id',
-                'value': 'brat'
+        expectedChildren = [{
+            'kind': 'id',
+            'value': 'brat'
             }, {
-                'kind': 'text',
-                'value': 'brattext'
-            }]
+            'kind': 'text',
+            'value': 'brattext'
         },
         {
-            "start": 0,
-            "end": 2,
-            "value": [{
-                'kind': 'id',
-                'value': 'brat'
+            'kind': 'id',
+            'value': 'brat'
             }, {
-                'kind': 'text',
-                'value': 'brattext'
-            }]
+            'kind': 'text',
+            'value': 'brattext'
         }];
 
         deepEqual(a.children, expectedChildren, "no overlap for children");
@@ -293,13 +275,14 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
                 },
                 '-': {}
             },
-            children: [{
-                start: 0,
-                end: 3,
-                value: [
+            children: [
                     {kind: 'text', value: 'some text'},
                     {kind: 'id', value: 'br_id'},
-                    {kind: 'text', value: 'more text'}]}]
+                    {kind: 'text', value: 'more text'}],
+            position: {
+                parent: '_root',
+                index: 0
+            }
         };
 
         deepEqual(change.rootDelta(input_state), expected_delta);
@@ -351,13 +334,9 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
                 },
                 '-': {}
             },
-            children: [
-                {
-                    start: 0,
-                    end: 1,
-                    value: [{kind: 'text', value: 'more text'}]
-                }
-            ]
+            children: [{kind: 'text', value: 'more text'},
+                {kind: 'id', value: 'br_id'},
+                {kind: 'text', value: 'more text'}]
         };
 
         deepEqual(change.delta(before_state, after_state), expected_delta);
@@ -406,13 +385,12 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
                 },
                 '-': {}
             },
-            "children": [
-                {
-                  "end": 0,
-                  "start": 0,
-                  "value": []
-                }
-            ]
+            "children": [],
+            "create": true,
+            "position": {
+                "index": 0,
+                "parent": "_root"
+            }
         });
 
         change_functions.push(function () {
@@ -436,13 +414,7 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
         expected_deltas.push({
             id: 'new_id',
             name: 'div',
-            children: [
-                {
-                    start: 0,
-                    end: 0,
-                    value: [{kind: 'text', value: 'more text'}]
-                }
-            ]
+            children: [{kind: 'text', value: 'more text'}]
         });
 
         var interval = setInterval(function() {

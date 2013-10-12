@@ -12,10 +12,6 @@ define(["ids", "core", "change"], function(ids, core, change) {
         instance._locals.sequence = sequence;
 
         var compareDeltas = function(a, b) {
-            if (!(a && b)) {
-                console.log(sequence);
-                console.trace();
-            }
             var am = a.message_id;
             var bm = b.message_id;
             if (am[1] != bm[1]) {

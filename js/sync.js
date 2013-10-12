@@ -95,7 +95,6 @@ define([
                 dom.traverse(node, function(new_node) {
                     var attr = new_node.getAttribute('data-id');
                     if (!attr) return;
-                    console.log(new_node);
                     dom.set_node_id(new_node, attr);
                     new_node.removeAttribute('data-id');
                     change.updateState(node, new_node, document_id);
@@ -125,6 +124,7 @@ define([
 
             var applier = enact.appliesDeltas(node);
             inner_manifold.delta.addReader(function(message) {
+                console.log('got_delta', message);
                 var id_string = serializeMessageId(message.message_id);
                 if (seen_message_ids[id_string]) {
                     return;

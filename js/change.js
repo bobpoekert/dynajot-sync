@@ -88,10 +88,14 @@ define([
                 }
             });
         }
-        res.position = {
-            parent: dom.assign_node_id(root, node.parentNode, document_id),
-            index: dom.nodeParentIndex(node)[1]
-        };
+        if (node == root) {
+            res.position = null;
+        } else {
+            res.position = {
+                parent: dom.assign_node_id(root, node.parentNode, document_id),
+                index: dom.nodeParentIndex(node)[1]
+            };
+        }
         res.id = dom.assign_node_id(root, node, document_id);
         return res;
     };
@@ -321,30 +325,32 @@ define([
             }
             var seen = !!data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
-            var old_node_id = dom.get_node_id(node);
             var root_delta;
             var cur_state = change.serializeNode(tree, node, document_id);
             if (!core.truthiness(cur_state)) return;
             if (prev_state) {
                 var delta = change.delta(prev_state, cur_state);
                 if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
-                    if (seen) {
+                    delta_callback(cur_state);
+                    /*if (seen) {
                         delta.id = node_id(node);
-                        delta.create = !seen;
                         delta_callback(delta);
                     } else {
                         root_delta = change.rootDelta(cur_state);
                         root_delta.create = true;
                         delta_callback(root_delta);
-                    }
+                    }*/
                 }
-            } else if (!seen && node != tree) {
+            } else {
+                delta_callback(cur_state);
+            }
+            /*else if (!seen && node != tree) {
                 root_delta = change.rootDelta(cur_state);
                 root_delta.create = true;
                 delta_callback(root_delta);
             } else if (seen) {
                 console.log('seen but not serialized', node);
-            }
+            }*/
             data.set(node, 'state', cur_state);
             data.set(node, 'seen', true);
         };

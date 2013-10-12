@@ -57,75 +57,100 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
         }
     };
 
-    enact.appliesDeltas = function(root) {
+    enact.appliesDeltas = function(root, getNodeFromServer) {
+        var applyDelta;
 
-        var getNode = core.partial(enact.getNode, root);
+        var node_queues = {};
+        var gotNode = function(node_id, node) {
+            applyDelta(node);
+            var queue = node_queues[node_id];
+            while(queue && queue.length > 0) {
+                queue.shift()(node);
+            }
+            delete node_queues[node_id];
+        };
+        var getNode = function(node_id, callback) {
+            var res = enact.getNode(root, node_id);
+            console.log('getNode', node_id, res);
+            if (res) {
+                callback(res);
+                return;
+            }
+            if (!node_queues[node_id]) {
+                getNodeFromServer(node_id, core.partial(gotNode, node_id));
+                node_queues[node_id] = [callback];
+            } else {
+                node_queues[node_id].push(callback);
+            }
+        };
+
         var resolveNode = core.partial(enact.resolveNode, root);
 
-        return function(delta) {
+        applyDelta = function(delta) {
             //console.log('apply delta', delta);
             var id = delta.id;
-            var existing_node = getNode(id);
-            var parent = delta.position ? getNode(delta.position.parent) : null;
-            var mergeChildren = function(target, children) {
-                var resolved = core.map(children, resolveNode);
-                var was_resolved = core.map(resolved, core.truthiness);
-                //console.log('was_resolved', was_resolved);
-                data.set(target, 'children_resolved', was_resolved);
-                return dom.mergeChildren(
-                    target,
-                    core.clean(resolved));
-            };
-            var nodes = [];
-            if (existing_node) {
-                nodes.push(existing_node);
-            }
-            if (parent) {
-                nodes.push(parent);
-            }
-            change.nodeTransactions(root, nodes, function() {
+            var existing_node = enact.getNode(root, id);
+
+            var _applyDelta = function(parent) {
+                var mergeChildren = function(target, children) {
+                    var resolved = core.map(children, resolveNode);
+                    var was_resolved = core.map(resolved, core.truthiness);
+                    //console.log('was_resolved', was_resolved);
+                    data.set(target, 'children_resolved', was_resolved);
+                    return dom.mergeChildren(
+                        target,
+                        core.clean(resolved));
+                };
+                var nodes = [];
                 if (existing_node) {
-                    //console.log(existing_node);
-                    if (parent && parent != root) {
-                        //console.trace();
-                        dom.yankNode(existing_node);
-                        enact.insertChildNodeAt(parent, existing_node, delta.position.index);
-                    }
+                    nodes.push(existing_node);
+                }
+                if (parent) {
+                    nodes.push(parent);
+                }
+                change.nodeTransactions(root, nodes, function() {
+                    if (existing_node) {
+                        //console.log(existing_node);
+                        if (parent && parent != root) {
+                            var existing_parent = existing_node.parentNode;
+                            var existing_id = dom.get_node_id(existing_parent);
+                            var existing_index = dom.nodeParentIndex(existing_node);
+                            if (delta.position.parent != existing_id || delta.position.index != existing_index) {
+                                //console.trace();
+                                dom.yankNode(existing_node);
+                                enact.insertChildNodeAt(parent, existing_node, delta.position.index);
+                            }
+                        }
 
-                    if (delta.attrs) {
-                        core.each((delta.attrs['+'] || []), function(val, key) {
-                            existing_node.setAttribute(key, val);
-                        });
-                        core.each((delta.attrs['-'] || []), function(val, key) {
-                            existing_node.removeAttribute(key);
-                        });
-                    }
+                        if (delta.attrs) {
+                            dom.updateAttributes(existing_node, delta.attrs);
+                        }
 
-                    if (delta.children) {
-                        mergeChildren(existing_node, delta.children);
+                        if (delta.children) {
+                            mergeChildren(existing_node, delta.children);
+                        }
+                    } else {
+                        var result = document.createElement(delta.name);
+                        if (delta.attrs) {
+                            dom.updateAttributes(result, delta.attrs);
+                        }
+                        if (delta.children) {
+                            mergeChildren(result, delta.children);
+                        }
+                        dom.set_node_id(result, delta.id);
+                        //console.log('parent', parent, result, delta.position);
+                        //console.log(result);
+                        enact.insertChildNodeAt(parent, result, delta.position.index);
                     }
-                } else { //if (delta.create) {
-                    var result = document.createElement(delta.name);
-                    if (delta.attrs) {
-                        core.each((delta.attrs['+'] || []), function(v, k) {
-                            result.setAttribute(k, v);
-                        });
-                        core.each((delta.attrs['-'] || []), function(v, k) {
-                            result.removeAttribute(k);
-                        });
-                    }
-                    if (delta.children) {
-                        mergeChildren(result, delta.children);
-                    }
-                    dom.set_node_id(result, delta.id);
-                    //console.log('parent', parent, result, delta.position);
-                    console.log(result);
-                    enact.insertChildNodeAt(parent, result, delta.position.index);
-                } /*else {
-                    console.log(delta, "doesn't exist");
-                }*/
-            });
+                });
+            };
+            if (delta.position) {
+                getNode(delta.position.parent, _applyDelta);
+            } else {
+                _applyDelta(null);
+            }
         };
+        return applyDelta;
     };
 
 

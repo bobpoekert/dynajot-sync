@@ -11,13 +11,19 @@ define(['dom', 'core'], function(dom, core) {
         * Not checking before modifying the dom may result in infinite recursion!
         */
 
-        callback = core.uniqueDebounce(callback, interval);
+        var inner_callback = core.uniqueDebounce(callback, interval);
+
+        var outer_callback = function(target) {
+            if (!dom.isChildOf(target, node)) {
+                inner_callback(target);
+            }
+        };
 
         if (typeof(MutationObserver) !== 'undefined') {
             var observer = new MutationObserver(function(changes) {
                 for (var i=0; i < changes.length; i++) {
                     var change = changes[i];
-                    dom.traverse(change.target, callback);
+                    dom.traverse(change.target, outer_callback);
                 }
             });
             observer.observe(node, {
@@ -28,7 +34,7 @@ define(['dom', 'core'], function(dom, core) {
             });
         } else {
             node.addEventListener('DOMSubtreeModified', function(evt) {
-                dom.traverse(evt.target || node, callback);
+                dom.traverse(evt.target || node, outer_callback);
             });
         }
         setInterval(function() {

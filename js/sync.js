@@ -30,7 +30,39 @@ define([
         var outer_manifold = {
             "document_id": core.pipe(),
             "document_state": core.pipe(),
-            "message": core.pipe()
+            "message": core.pipe(),
+            "response": core.pipe()
+        };
+
+        var request_counter = 0;
+        var request_callbacks = {};
+        var request = function(resource, callback) {
+            var request_id = request_counter;
+            request_counter++;
+            request_callbacks[request_id] = callback;
+            conn.send({
+                'kind': 'request',
+                'value': {
+                    'resource': resource,
+                    'id': request_id
+                }
+            });
+        };
+
+        outer_manifold.response.addReader(function(response) {
+            console.log(response);
+            var id = response.id;
+            var value = response.value;
+            request_callbacks[id](value);
+            delete request_callbacks[id];
+        });
+
+        var getNodeFromServer = function(node_id, callback) {
+            request('/nodes/'+node_id, function(response) {
+                if (response.kind == 'error' && response.value == 404) {
+                    setTimeout(core.partial(getNodeFromServer, node_id, callback), 500);
+                }                
+            });
         };
 
         var inner_manifold = {
@@ -40,6 +72,7 @@ define([
 
         var connect_manifold = function (manifold) {
             return function (msg) {
+                console.log(msg);
                 if (manifold[msg.kind]) {
                     manifold[msg.kind].write(msg.value);
                 }
@@ -122,7 +155,7 @@ define([
                 }).join('-');
             };
 
-            var applier = enact.appliesDeltas(node);
+            var applier = enact.appliesDeltas(node, getNodeFromServer);
             inner_manifold.delta.addReader(function(message) {
                 //console.log('got_delta', message);
                 var id_string = serializeMessageId(message.message_id);

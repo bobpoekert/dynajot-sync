@@ -48,6 +48,25 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
     };
 
+    dom.updateAttributes = function(node, new_attributes) {
+        var seen_attrs = [];
+        dom.iterAttributes(node, function(k, v) {
+            if (new_attributes[k]) {
+                if (new_attributes[k] != v) {
+                    node.setAttribute(k, v);
+                }
+            } else {
+                node.removeAttribute(k);
+            }
+            seen_attrs.push(k);
+        });
+        core.each(new_attributes, function(v, k) {
+            if (core.indexOf(seen_attrs) == -1) {
+                node.setAttribute(k, v);
+            }
+        });
+    };
+
     dom.removeAllAttributes = function(node) {
         var attribute_keys = [];
         dom.iterAttributes(node, function(k, v) {

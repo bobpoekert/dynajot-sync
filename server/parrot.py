@@ -55,6 +55,25 @@ class ParrotHandler(websocket.WebSocketHandler):
 
         self.document = document
 
+    def process_request(self, request):
+        resource = request['resource']
+        value = None
+        if resource.startswith('/nodes/'):
+            try:
+                value = document_trees[self.document].nodes[resource.split('/')[-1]]
+            except KeyError:
+                value = {'kind':'error', 'value':404}
+        else:
+            value = {'kind': 'error', 'value': 404}
+
+        self.write_message({
+            'kind': 'response',
+            'value': {
+                'id': request['id'],
+                'value': value
+            }
+        })
+
     def on_message(self, blob):
         message = json.loads(blob)
         counter = document_counters.get(self.document, 0)
@@ -62,6 +81,10 @@ class ParrotHandler(websocket.WebSocketHandler):
 
         if message["kind"] == "delta":
             document_trees[self.document].apply_delta(message["value"])
+
+        if message['kind'] == 'request':
+            self.process_request(message['value'])
+            return
 
         message['global_timestamp'] = counter
         print message

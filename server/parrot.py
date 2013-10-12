@@ -37,10 +37,9 @@ class ParrotHandler(websocket.WebSocketHandler):
             self.write_message({'kind': 'document_id', 'value':document})
 
         if document in document_trees:
-            tree = document_trees[document]
             self.write_message({
                 'kind':'document_state',
-                'value': tree.to_html()})
+                'value': document_trees[document].to_html()})
         else:
             document_trees[document] = patch.Document()
             self.write_message({
@@ -76,6 +75,7 @@ class ParrotHandler(websocket.WebSocketHandler):
 
     def on_message(self, blob):
         message = json.loads(blob)
+        print message
         counter = document_counters.get(self.document, 0)
         document_counters[self.document] = counter + 1
 
@@ -87,7 +87,6 @@ class ParrotHandler(websocket.WebSocketHandler):
             return
 
         message['global_timestamp'] = counter
-        print message
 
         for recipient in document_connections[self.document]:
             if recipient != self:

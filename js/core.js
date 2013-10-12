@@ -51,6 +51,12 @@ define(["underscore"], function(underscore) {
 		return true;
     };
 
+    res.dictMerge = function(a, b) {
+        core.each(b, function(v, k) {
+            a[k] = v;
+        });
+    };
+
     res.mapAll = function(arrs, fn, context) {
         /* @t [[?A...], ...], (?A -> ?A), Dict -> [[?A...], ...] */
         var results = [];

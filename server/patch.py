@@ -21,7 +21,11 @@ def recursive(fn):
     return res
 
 #@recursive
-def token_list(nodes, node, res=[], seen=set([])):
+def token_list(nodes, node, res=None, seen=None):
+    if res is None:
+        res = []
+    if seen is None:
+        seen = set([])
     if type(node) != Node:
         res.append(escape(node))
         return
@@ -102,6 +106,7 @@ class Document(object):
         self.nodes = {}
 
     def apply_delta(self, delta):
+        print '((', delta
         node = self.nodes.get(delta['id'])
         if not node:
             node = Node(
@@ -112,11 +117,7 @@ class Document(object):
 
         attrs = delta.get('attrs')
         if attrs:
-            for k, v in attrs.get('+', {}).iteritems():
-                print node.id, k, v
-                node.attrs[k] = v
-            for k in attrs.get('-', {}).iterkeys():
-                del node.attrs[k]
+            node.attrs = attrs
 
         if delta.get('children'):
             node.children = delta['children']

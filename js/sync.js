@@ -137,9 +137,8 @@ define([
                 dom.traverse(node, function(c) {
                     if (dom.isTextNode(c)) return;
                     var ser = change.serializeNode(node, c, document_id);
-                    var state = change.rootDelta(ser);
-                    document_timeline.addDelta(state);
-                    conn.send({'kind':'delta', 'value': state});
+                    document_timeline.addDelta(ser);
+                    conn.send({'kind':'delta', 'value': ser});
                 });
             }
 
@@ -169,6 +168,9 @@ define([
 
 
             change.changes(node, document_id, function(delta) {
+                console.log('delta', delta);
+                if (core.isEmpty(delta)) return;
+                delta = core.clone(delta);
                 delta.message_id = ids.message_id(document_id);
                 seen_message_ids[serializeMessageId(delta.message_id)] = true;
                 document_timeline.addDelta(delta);

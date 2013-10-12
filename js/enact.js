@@ -92,6 +92,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             var existing_node = enact.getNode(root, id);
 
             var _applyDelta = function(parent) {
+                debugger;
                 var mergeChildren = function(target, children) {
                     var resolved = core.map(children, resolveNode);
                     var was_resolved = core.map(resolved, core.truthiness);

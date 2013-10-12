@@ -113,6 +113,21 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         return core.toArray(node.childNodes);
     };
 
+    dom.mergeTextChildren = function(node) {
+        var child_nodes = node.childNodes;
+        var prev = node.firstChild;
+        while(prev) {
+            var cur = prev.nextSibling;
+            if (!cur) break;
+            if (prev.nodeType == Node.TEXT_NODE && cur.nodeType == Node.TEXT_NODE) {
+                var cat = prev.data + cur.data;
+                node.removeChild(cur);
+                node.replaceChild(document.createTextNode(cat), prev);
+            }
+            prev = cur;
+        }
+    };
+
     dom.removeAllChildren = function(node) {
         while(node.firstChild) {
             var child = node.firstChild;
@@ -122,10 +137,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
     dom.mergeChildren = function(node, children) { // actual merge later
         dom.removeAllChildren(node);
-        core.each(children, function(child) {
-            //console.log('adding child', child, child.nodeType);
-            node.appendChild(child);
-        });
+        node.appendChild(dom.toFragment(children));
     };
 
     dom.spliceNodes = function(target, start, end, replacement) {

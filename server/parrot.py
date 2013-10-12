@@ -60,7 +60,7 @@ class ParrotHandler(websocket.WebSocketHandler):
         value = None
         if resource.startswith('/nodes/'):
             try:
-                value = document_trees[self.document].nodes[resource.split('/')[-1]]
+                value = document_trees[self.document].nodes[resource.split('/')[-1]].to_dict()
             except KeyError:
                 value = {'kind':'error', 'value':404}
         else:

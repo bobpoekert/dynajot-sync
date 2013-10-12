@@ -54,6 +54,7 @@ define([
         if (dom.isTextNode(node)) {
             return change.serializeNode(root, node.parent, document_id);
         } else {
+            dom.mergeTextChildren(node);
             res.attrs = {};
             if (node.hasAttributes()) {
                 for (var i=0; i < node.attributes.length; i++) {
@@ -87,6 +88,7 @@ define([
                     };
                 }
             });
+
         }
         if (node == root) {
             res.position = null;
@@ -290,6 +292,38 @@ define([
         });
     };
 
+    change.blockNode = function(root, node, callback) {
+        data.set(node, 'dirty', true);
+        var parent = node.parentNode;
+        if (parent) {
+            data.set(parent, 'dirty', true);
+        }
+        var children = dom.getChildNodes(node);
+        core.each(children, function(child) {
+            data.set(child, 'dirty', true);
+        });
+        var res = callback();
+        data.set(node, 'dirty', false);
+        change.updateState(root, node);
+        if (parent) {
+            data.set(parent, 'dirty', false);
+        }
+        core.each(children, function(child) {
+            data.set(child, 'dirty', false);
+        });
+    };
+
+    change.blocksNode = function(root, fn) {
+        var res = function(node) {
+            if (data.get(node, 'dirty')) {
+                setTimeout(core.partial(res, node), 200);
+                return;
+            }
+            change.blockNode(root, node, core.partial(fn, node));
+        };
+        return res;
+    };
+
     change.nodeTransaction = function(root, node, fn) {
         /* @t DOMNode, DOMNode, (NodeState, DOMNode -> NodeState/null) -> null */
         if (!node.parentNode) { // node not in dom yet
@@ -313,16 +347,12 @@ define([
         var node_id = function(node) {
             return dom.assign_node_id(tree, node, document_id);
         };
-        var watcher = function(node) {
+        var watcher = change.blocksNode(tree, function(node) {
             if (stop) return;
             if (dom.isTextNode(node)) {
                 node = node.parentNode;
             }
             if (!node) return; //orphaned text node
-            if (data.get(node, 'dirty')) {
-                setTimeout(core.partial(watcher, node), 200);
-                return;
-            }
             var seen = !!data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
             var root_delta;
@@ -353,7 +383,7 @@ define([
             }*/
             data.set(node, 'state', cur_state);
             data.set(node, 'seen', true);
-        };
+        });
         mutation.onChange(tree, watcher);
     };
 

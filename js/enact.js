@@ -92,14 +92,16 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
             var existing_node = enact.getNode(root, id);
 
             var _applyDelta = function(parent) {
-                var mergeChildren = function(target, children) {
+                var mergeChildren = function(target, children, removed_children) {
+                    removed_children = removed_children || [];
                     var resolved = core.map(children, resolveNode);
                     var was_resolved = core.map(resolved, core.truthiness);
                     //// console.log('was_resolved', was_resolved);
                     data.set(target, 'children_resolved', was_resolved);
                     return dom.mergeChildren(
                         target,
-                        core.clean(resolved));
+                        core.clean(resolved),
+                        removed_children);
                 };
                 var nodes = [];
                 if (existing_node) {
@@ -123,11 +125,11 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                         }
 
                         if (delta.attrs) {
-                            dom.updateAttributes(existing_node, delta.attrs);
+                            dom.updateAttributes(existing_node, delta.attrs, delta.removed_attrs);
                         }
 
                         if (delta.children) {
-                            mergeChildren(existing_node, delta.children);
+                            mergeChildren(existing_node, delta.children, delta.removed_children);
                         }
                     } else {
                         var result = document.createElement(delta.name);

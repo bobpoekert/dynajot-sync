@@ -68,7 +68,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
     };
 
-    dom.updateAttributes = function(node, new_attributes) {
+    dom.updateAttributes = function(node, new_attributes, removed_attributes) {
         var seen_attrs = [];
         dom.iterAttributes(node, function(k, v) {
             if (new_attributes[k]) {
@@ -84,6 +84,9 @@ define(["core", "Data", "ids"], function(core, data, ids) {
             if (core.indexOf(seen_attrs) == -1) {
                 node.setAttribute(k, v);
             }
+        });
+        core.each(removed_attributes, function(v, k) {
+            node.removeAttribute(k);
         });
     };
 
@@ -139,10 +142,19 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
     };
 
-    dom.mergeChildren = function(node, children) {
+    dom.mergeChildren = function(node, children, removed_children) {
         var a_nodes = dom.getChildNodes(node);
+        var removed_keys = {};
+        core.each(removed_children, function(node) {
+            var k = node.kind == 'text' ? 't:'+node.value : node.value; // stringifyNode
+            removed_keys[k] = true;
+        });
+
         var b_nodes = children;
         var merged = core.arrayMerge(a_nodes, b_nodes, dom.stringifyNode);
+        merged = core.filter(merged, function(el) {
+            return !(dom.stringifyNode(el) in removed_keys);
+        });
         dom.removeAllChildren(node);
         node.appendChild(dom.toFragment(merged));
     };

@@ -228,46 +228,19 @@ define([
         return res;
     };*/
 
-    /*change.delta = function(old, cur) {
-        if (!cur) {
-            return {};
-        }
-        if (old.name != cur.name) {
-            return {}; // tags can't change names, so this should never execute
-        } else {
-            var res = {};
-
-            if (!core.isEqual(cur.position, old.position)) {
-                res.position = cur.position;
+    change.delta = function(old, cur) {
+        var res = core.clone(cur);
+        res.removed_children = core.filter(old.children, function(child) {
+            return core.indexOf(cur.children, child, core.isEqual) == -1;
+        });
+        res.removed_attrs = {};
+        core.each(old.attrs, function(v, k) {
+            if (!(k in cur.attrs)) {
+                res.removed_attrs[k] = v;
             }
-            if (!core.isEqual(cur.attrs, old.attrs)) {
-                res.attrs = {
-                    '+': {},
-                    '-': {}
-                };
-                for (var k in old.attrs) {
-                    if (old.attrs.hasOwnProperty(k) &&
-                        !cur.attrs.hasOwnProperty(k)) {
-                        res.attrs['-'][k] = null;
-                    }
-                }
-                for (k in cur.attrs) {
-                    if (cur.attrs.hasOwnProperty(k) &&
-                        !core.whitespaceEqual(cur.attrs[k], old.attrs[k])) {
-                        res.attrs['+'][k] = cur.attrs[k];
-                    }
-                }
-            }
-            if (!core.isEqual(cur.children, old.children)) {
-                res.children = cur.children;
-            }
-
-            res.id = cur.id;
-            res.name = cur.name;
-
-            return res;
-        }
-    };*/
+        });
+        return res;
+    };
 
     change.nodeTransactions = function(root, nodes, fn) {
         /* @t DOMNode, [DOMNode, ...] (() -> null) -> null */

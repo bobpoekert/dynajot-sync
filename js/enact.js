@@ -25,7 +25,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
     };
 
     enact.resolveNode = function(root, node) {
-        //console.log('resolve', node);
+        //// console.log('resolve', node);
         if (node.kind == 'text') {
             return document.createTextNode(node.value);
         } else {
@@ -35,7 +35,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
 
     enact.insertionIndex = function(target, index) {
         var is_resolved = data.get(target, 'children_resolved');
-        //console.log('is_resolved', is_resolved);
+        //// console.log('is_resolved', is_resolved);
         if (!is_resolved) return index;
         var offset = 0;
         for (var i=0; i < index; i++) {
@@ -71,7 +71,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
         };
         var getNode = function(node_id, callback) {
             var res = enact.getNode(root, node_id);
-            console.log('getNode', node_id, res);
+            // console.log('getNode', node_id, res);
             if (res) {
                 callback(res);
                 return;
@@ -87,7 +87,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
         var resolveNode = core.partial(enact.resolveNode, root);
 
         applyDelta = function(delta) {
-            //console.log('apply delta', delta);
+            //// console.log('apply delta', delta);
             var id = delta.id;
             var existing_node = enact.getNode(root, id);
 
@@ -95,7 +95,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 var mergeChildren = function(target, children) {
                     var resolved = core.map(children, resolveNode);
                     var was_resolved = core.map(resolved, core.truthiness);
-                    //console.log('was_resolved', was_resolved);
+                    //// console.log('was_resolved', was_resolved);
                     data.set(target, 'children_resolved', was_resolved);
                     return dom.mergeChildren(
                         target,
@@ -110,7 +110,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 }
                 change.nodeTransactions(root, nodes, function() {
                     if (existing_node) {
-                        //console.log(existing_node);
+                        //// console.log(existing_node);
                         if (parent && parent != root) {
                             var existing_parent = existing_node.parentNode;
                             var existing_id = dom.get_node_id(existing_parent);
@@ -138,8 +138,8 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                             mergeChildren(result, delta.children);
                         }
                         dom.set_node_id(result, delta.id);
-                        //console.log('parent', parent, result, delta.position);
-                        //console.log(result);
+                        //// console.log('parent', parent, result, delta.position);
+                        //// console.log(result);
                         enact.insertChildNodeAt(parent, result, delta.position.index);
                     }
                 });

@@ -18,18 +18,18 @@ define(["underscore"], function(underscore) {
         };
     }
 
-    var res = inherit(underscore);
+    var core = inherit(underscore);
 
-    res.inherit = inherit;
+    core.inherit = inherit;
 
-    res.isWindow = function(obj) {
+    core.isWindow = function(obj) {
         return obj != null && obj === obj.window;
     };
 
-    res.isNumeric = res.isNumber;
+    core.isNumeric = core.isNumber;
 
-    res.isPlainObject = function(obj) {
-        if (typeof(obj) !== 'object' || obj.nodeType || res.isWindow(obj)) {
+    core.isPlainObject = function(obj) {
+        if (typeof(obj) !== 'object' || obj.nodeType || core.isWindow(obj)) {
             return false;
         }
 
@@ -51,13 +51,38 @@ define(["underscore"], function(underscore) {
 		return true;
     };
 
-    res.dictMerge = function(a, b) {
+    core.dictMerge = function(a, b) {
         core.each(b, function(v, k) {
             a[k] = v;
         });
     };
 
-    res.mapAll = function(arrs, fn, context) {
+    core.arrayMerge = function(a, b, stringify) {
+        var b_dict = {};
+        var el;
+        var s;
+        var idx;
+
+        for (i=0; i < b.length; i++) {
+            b_dict[stringify(b[i])] = i;
+        }
+        var res = [];
+        for (i=0; i < a.lenth; i++) {
+            el = a[i];
+            s = stringify(el);
+            res.push(el);
+            delete b_dict[s];
+        }
+        for (var k in b_dict) {
+            if (!b_dict.hasOwnProperty(k)) continue;
+            idx = b_dict[k];
+            el = b[idx];
+            res.splice(idx, 0, el);
+        }
+        return res;
+    };
+
+    core.mapAll = function(arrs, fn, context) {
         /* @t [[?A...], ...], (?A -> ?A), Dict -> [[?A...], ...] */
         var results = [];
         if (arrs == null) return results;
@@ -77,7 +102,7 @@ define(["underscore"], function(underscore) {
         return results;
     };
 
-    res.stringCompare = function(a, b) {
+    core.stringCompare = function(a, b) {
         /* @t String, String -> Number */
         var max = Math.min(a.length, b.length);
         for (var i=0; i < max; i++) {
@@ -90,30 +115,30 @@ define(["underscore"], function(underscore) {
         return b.length - a.length;
     };
 
-    res.noop = function(){};
+    core.noop = function(){};
 
-    res.identity = function(a) {
+    core.identity = function(a) {
         /* @t ?A -> ?A */
         return a;
     };
 
-    res.gattr = function(k) {
+    core.gattr = function(k) {
         /* @t String -> (Dict -> String) */
         return function(o) {
             return o[k];
         };
     };
 
-    res.unsplat = function(arg_count, fn) {
+    core.unsplat = function(arg_count, fn) {
         if (!fn) {
             fn = arg_count;
             return function() {
-                return fn(res.toArray(arguments));
+                return fn(core.toArray(arguments));
             };
         } else {
             return function() {
                 var dst = [];
-                var src = res.toArray(arguments);
+                var src = core.toArray(arguments);
                 for (var i=0; i < arg_count; i++) {
                     dst.push(src.shift());
                 }
@@ -123,16 +148,16 @@ define(["underscore"], function(underscore) {
         }
     };
 
-    res.splat = function(fn) {
+    core.splat = function(fn) {
         return function(arr) {
             return fn.apply(this, arr);
         };
     };
 
-    res.dictIsEmpty = res.isEmpty;
-    res.dictIsEqual = res.isEqual;
+    core.dictIsEmpty = core.isEmpty;
+    core.dictIsEqual = core.isEqual;
 
-    res.truthiness = function(obj) {
+    core.truthiness = function(obj) {
         /* ?P -> Boolean */
         switch(obj) {
             case 0:
@@ -146,7 +171,7 @@ define(["underscore"], function(underscore) {
         if (typeof(obj) === 'string') {
             return /[^\s]/.test(obj);
         }
-        if (res.isNumeric(obj)) {
+        if (core.isNumeric(obj)) {
             return true;
         }
         if (obj.length !== undefined) {
@@ -160,17 +185,17 @@ define(["underscore"], function(underscore) {
         return false;
     };
 
-    res.removeWhitespace = function(s) {
+    core.removeWhitespace = function(s) {
         /* @t String -> String */
         return s.replace(/\s/g, '');
     };
 
-    res.whitespaceEqual = function(a, b) {
+    core.whitespaceEqual = function(a, b) {
         /* @t String, String -> Boolean */
-        if (!(res.truthiness(a) === res.truthiness(b))) {
+        if (!(core.truthiness(a) === core.truthiness(b))) {
             return false;
         }
-        return res.removeWhitespace(a) == res.removeWhitespace(b);
+        return core.removeWhitespace(a) == core.removeWhitespace(b);
     };
 
     /* @defrecord Future
@@ -180,7 +205,7 @@ define(["underscore"], function(underscore) {
     *   fire: ?P, ... -> null
     */
 
-    res.future = function() {
+    core.future = function() {
         /* @t () -> Future */
         var success_callbacks = [];
         var failure_callbacks = [];
@@ -201,7 +226,7 @@ define(["underscore"], function(underscore) {
         await.fail = function() {
             /* @t () -> null */
             if (fired) return;
-            data = [this, res.toArray(arguments)];
+            data = [this, core.toArray(arguments)];
             fired = true;
             failed = true;
             while(failure_callbacks.length > 0) {
@@ -211,7 +236,7 @@ define(["underscore"], function(underscore) {
         await.fire = function() {
             /* @t () -> null */
             if (fired) return;
-            data = [this, res.toArray(arguments)];
+            data = [this, core.toArray(arguments)];
             fired = true;
             while(success_callbacks.length > 0) {
                 success_callbacks.shift().apply(this, arguments);
@@ -220,7 +245,7 @@ define(["underscore"], function(underscore) {
         return await;
     };
 
-    res.multi = function(callback) {
+    core.multi = function(callback) {
         /* @t (?A... -> null) -> Multi(?A) */
         var slots = [];
         var delivered = [];
@@ -255,12 +280,12 @@ define(["underscore"], function(underscore) {
                 delivered_count++;
             },
             getCallback: function() {
-                if (started) return res.noop;
+                if (started) return core.noop;
                 var old_count = item_count;
                 slots.push(null);
                 delivered.push(false);
                 item_count++;
-                return res.partial(deliverItem, old_count);
+                return core.partial(deliverItem, old_count);
             },
             start: function() {
                 started = true;
@@ -276,7 +301,7 @@ define(["underscore"], function(underscore) {
     *   write: ?P -> null
     */
 
-    res.pipe = function() {
+    core.pipe = function() {
         /* @t () -> Pipe */
 
         var buffer = [];
@@ -296,7 +321,7 @@ define(["underscore"], function(underscore) {
                 callbacks[idx] = null;
             },
             write: function(datum) {
-                if (res.some(callbacks)) {
+                if (core.some(callbacks)) {
                     for (var i=0; i < callbacks.length; i++) {
                         var cb = callbacks[i];
                         if (cb) {
@@ -310,12 +335,12 @@ define(["underscore"], function(underscore) {
         };
     };
 
-    res.maybe_function = function(val) {
+    core.maybe_function = function(val) {
         /* @t ?P -> (... -> ...) */
         return typeof(val) === 'function' ? val : function() { return val; };
     };
 
-    res.uniqueDebounce = function(fn, interval) {
+    core.uniqueDebounce = function(fn, interval) {
         /* @t (?P... -> null) -> (?P... -> null) */
         if (!interval) interval = 100;
         var locked = false;
@@ -333,31 +358,31 @@ define(["underscore"], function(underscore) {
                 fn(arg);
                 locked = true;
                 setTimeout(debounceUnlock, interval);
-            } else if (!res.contains(arg_set, arg)) {
+            } else if (!core.contains(arg_set, arg)) {
                 arg_set.push(arg);
             }
         };
     };
 
-    res.reTester = function(re) {
+    core.reTester = function(re) {
         /* @t RegExp -> (String -> Boolean) */
         return function(item) {
             return re.test(item);
         };
     };
 
-    res.hasOnlyKeys = function(dict, keys) {
+    core.hasOnlyKeys = function(dict, keys) {
         /* @t Dict, [String, ...] -> Boolean */
         for (var k in dict) {
             if (!dict.hasOwnProperty(k)) continue;
-            if (res.indexOf(keys, k) == -1) return false;
+            if (core.indexOf(keys, k) == -1) return false;
         }
         return true;
     };
 
-    res.clean = function(arr) {
+    core.clean = function(arr) {
         /* @t [?P, ...] -> [?P, ...] */
-        return res.filter(arr, res.truthiness);
+        return core.filter(arr, core.truthiness);
     };
 
     var rdashAlpha = /-([\da-z])/gi;
@@ -365,12 +390,12 @@ define(["underscore"], function(underscore) {
 		return letter.toUpperCase();
 	};
 
-    res.camelCase = function(string) {
+    core.camelCase = function(string) {
         /* @t String -> String */
         return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
     };
 
-    res.replace = function(arr, fn) {
+    core.replace = function(arr, fn) {
         /* @t [?P, ...], (?P -> ?P/false) -> [?P, ...] */
         for (var i=0; i < arr.length; i++) {
             var e = arr[i];
@@ -381,21 +406,32 @@ define(["underscore"], function(underscore) {
         }
     };
 
-    res.indexOf = function(arr, el) {
+    core.indexOf = function(arr, el, comparator, start) {
         /* @t [?P, ...], ?P -> Number */
-        if (arr.indexOf) {
-            return arr.indexOf(el);
-        }
-        for (var i=0; i < arr.length; i++) {
-            if (arr[i] == el) {
-                return i;
+        start = typeof(start) == 'undefined' ? 0 : start;
+        if (comparator) {
+            for (start; start < arr.length; start++) {
+                if (comparator(el, arr[start])) {
+                    return start;
+                }
             }
+            return -1;
+        } else {
+            if (arr.indexOf && start === 0) {
+                return arr.indexOf(el);
+            }
+            for (start; start < arr.length; start++) {
+                if (arr[start] == el) {
+                    return start;
+                }
+            }
+            return -1;
         }
-        return -1;
     };
 
+
     var sentence_splitter = /(<[^>]*>|[^\w\s]+)/;
-    res.sentenceSplit = function(s) {
+    core.sentenceSplit = function(s) {
         /* @t String -> [[String, ...], [Number, ...]] */
         var parts = s.split(sentence_splitter);
         var res = [];
@@ -417,7 +453,7 @@ define(["underscore"], function(underscore) {
         return [res, offsets];
     };
 
-    res.logsErrors = function(fn) {
+    core.logsErrors = function(fn) {
         /* @t (?A, ?_... -> ?B) -> (?A, ?_... -> ?B) */
         return fn;
         if (console) {
@@ -435,7 +471,7 @@ define(["underscore"], function(underscore) {
         }
     };
 
-    res.throttle = function(func, wait, options) {
+    core.throttle = function(func, wait, options) {
         var context, args, result;
         var timeout = null;
         var previous = 0;
@@ -463,7 +499,7 @@ define(["underscore"], function(underscore) {
         };
     };
 
-    res.extend = function() {
+    core.extend = function() {
         var options, name, src, copy, copyIsArray, clone,
                 target = arguments[0] || {},
                 i = 1,
@@ -479,7 +515,7 @@ define(["underscore"], function(underscore) {
             }
 
             // Handle case when target is a string or something (possible in deep copy)
-            if ( typeof target !== "object" && !res.isFunction(target) ) {
+            if ( typeof target !== "object" && !core.isFunction(target) ) {
                 target = {};
             }
 
@@ -503,17 +539,17 @@ define(["underscore"], function(underscore) {
                         }
 
                         // Recurse if we're merging plain objects or arrays
-                        if ( deep && copy && ( res.isPlainObject(copy) || (copyIsArray = res.isArray(copy)) ) ) {
+                        if ( deep && copy && ( core.isPlainObject(copy) || (copyIsArray = core.isArray(copy)) ) ) {
                             if ( copyIsArray ) {
                                 copyIsArray = false;
-                                clone = src && res.isArray(src) ? src : [];
+                                clone = src && core.isArray(src) ? src : [];
 
                             } else {
-                                clone = src && res.isPlainObject(src) ? src : {};
+                                clone = src && core.isPlainObject(src) ? src : {};
                             }
 
                             // Never move original objects, clone them
-                            target[ name ] = res.extend( deep, clone, copy );
+                            target[ name ] = core.extend( deep, clone, copy );
 
                         // Don't bring in undefined values
                         } else if ( copy !== undefined ) {
@@ -527,5 +563,5 @@ define(["underscore"], function(underscore) {
             return target;
         };
 
-    return res;
+    return core;
 });

@@ -24,7 +24,7 @@ define(["core"], function(core) {
     };
 
     schema.errback = function(fn, sch, data) {
-        console.log(fn, sch, data);
+        // console.log(fn, sch, data);
         console.trace();
     };
 

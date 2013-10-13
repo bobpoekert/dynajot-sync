@@ -50,7 +50,7 @@ define([
         };
 
         outer_manifold.response.addReader(function(response) {
-            console.log(response);
+            // console.log(response);
             var id = response.id;
             var value = response.value;
             request_callbacks[id](value);
@@ -72,7 +72,7 @@ define([
 
         var connect_manifold = function (manifold) {
             return function (msg) {
-                console.log(msg);
+                // console.log(msg);
                 if (manifold[msg.kind]) {
                     manifold[msg.kind].write(msg.value);
                 }
@@ -108,7 +108,7 @@ define([
         }
 
         outer_manifold.document_state.addReader(core.once(function(message) {
-            console.log(message);
+            // console.log(message);
             document_timeline = timeline.make(document_id);
             if (message) {
                 var target = document.createElement('div');
@@ -156,7 +156,7 @@ define([
 
             var applier = enact.appliesDeltas(node, getNodeFromServer);
             inner_manifold.delta.addReader(function(message) {
-                //console.log('got_delta', message);
+                //// console.log('got_delta', message);
                 var id_string = serializeMessageId(message.message_id);
                 if (seen_message_ids[id_string]) {
                     return;
@@ -168,7 +168,7 @@ define([
 
 
             change.changes(node, document_id, function(delta) {
-                console.log('delta', delta);
+                // console.log('delta', delta);
                 if (core.isEmpty(delta)) return;
                 delta = core.clone(delta);
                 delta.message_id = ids.message_id(document_id);

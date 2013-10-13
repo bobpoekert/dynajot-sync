@@ -25,7 +25,7 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
         var $newCursor = $("div");
         $newCursor.html(newHTML);
         $("#"+cursors.id).append($newCursor);
-        console.log($newCursor);
+        // console.log($newCursor);
         return $newCursor;
     };
 
@@ -44,7 +44,7 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
     var participants = {};
 
     var sendMessage = function (msg) {
-        console.log(["Sending", msg]);
+        // console.log(["Sending", msg]);
         // channel.send(JSON.stringify(msg));
         cursors.send_fn(msg);
     };
@@ -53,7 +53,7 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
     cursors.init = function (send_fn) {
         cursors.send_fn = send_fn;
 
-        console.log("initted");
+        // console.log("initted");
         var djdiv = document.createElement("div");
         djdiv.id = cursors.id;
         djdiv.css = "position: absolute; top:0; left:0;";
@@ -66,7 +66,7 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
             'id': utils.generateUUID()
         };
 
-        console.log("[socket] Opened");
+        // console.log("[socket] Opened");
         // get all cursors in the channel and init their divs? not necessary
 
         var v = {'mouse_position': {'enter': true}, 'user': cursors.user};
@@ -74,14 +74,14 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
 
         $("body").on("mousemove", core.throttle(function (e) {
             var v = {'mouse_position': {'mousemove': {'coords': [e.pageX, e.pageY]}}, 'user': {'name': cursors.user.name, 'id': cursors.user.id}};
-            console.log("Sending ", v);
+            // console.log("Sending ", v);
             sendMessage({'kind': 'mouse_position', 'value':v});
         }, 75));
     };
 
     cursors.updateCursors = function (msgEvent) {
         var msg = JSON.parse(msgEvent.data);
-        console.log(msg);
+        // console.log(msg);
         var coords, posX, posY, msgv, $newCursor, $userMouse;
 
         if (msg.kind === 'mouse_position') {
@@ -90,24 +90,24 @@ define(["core", "ids", "dom"], function(core, ids, dom) {
 
             if (msgv.action.enter) {
                 //  another mouse to the document with their id
-                console.log("someone joined");
+                // console.log("someone joined");
                 $newCursor = ui.createCursor(msgv.user);
-                console.log(participants);
+                // console.log(participants);
                 participants[msgv.user.id] = $newCursor; // should retain a reference to the cursor
             }
             //   a person left the document
             if (msgv.action.leave) {
                 // remove the mouse from the document
-                console.log("elvis has left the building");
+                // console.log("elvis has left the building");
                 ui.removeUserCursor(msgv.user);
                 delete participants[msgv.user.id];
             }
             //   a person moved their mouse
                 // move the cursor div, with a closure'd fadeout
-            console.log("[Socket] message received!");
-            console.log(participants);
+            // console.log("[Socket] message received!");
+            // console.log(participants);
             if (msgv.action.mousemove) {
-                console.log(msgv.action);
+                // console.log(msgv.action);
                 // if the person isn't tracked yet add their cursor to the dom
                 coords = msgv.action.mousemove.coords;
                 posX = coords[0];

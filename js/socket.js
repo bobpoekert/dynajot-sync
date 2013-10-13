@@ -74,7 +74,7 @@ define(["load_swf", "core"], function(swf, core) {
             return {
                 send: function(data) {
                     var blob = JSON.stringify(data);
-                    console.log(blob);
+                    // console.log(blob);
                     if (closed) return false;
                     while(true) {
                         var e;

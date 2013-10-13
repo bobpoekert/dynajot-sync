@@ -17,6 +17,26 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
     };
 
+    dom.nodeCompare = function(a, b) {
+        if (a == b) return true;
+        if (a.nodeType != b.nodeType) return false;
+        if (a.nodeType == Node.TEXT_NODE) {
+            return a.data == b.data;
+        } else {
+            return false;
+        }
+    };
+
+    dom.stringifyNode = function(node) {
+        if (node.nodeType == Node.TEXT_NODE) {
+            return 't:'+node.data;
+        } else if (node.nodeType == Node.ELEMENT_NODE) {
+            return dom.get_node_id(node);
+        } else {
+            return '';
+        }
+    };
+
     dom.nodeParentIndex = function(node) {
         /* @t DOMNode -> [DOMNode, Number] */
         var parent = node.parentNode;
@@ -115,17 +135,16 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
     dom.removeAllChildren = function(node) {
         while(node.firstChild) {
-            var child = node.firstChild;
-            node.removeChild(child);
+            node.removeChild(node.firstChild);
         }
     };
 
-    dom.mergeChildren = function(node, children) { // actual merge later
+    dom.mergeChildren = function(node, children) {
+        var a_nodes = dom.getChildNodes(node);
+        var b_nodes = children;
+        var merged = core.arrayMerge(a_nodes, b_nodes, dom.stringifyNode);
         dom.removeAllChildren(node);
-        core.each(children, function(child) {
-            //console.log('adding child', child, child.nodeType);
-            node.appendChild(child);
-        });
+        node.appendChild(dom.toFragment(merged));
     };
 
     dom.spliceNodes = function(target, start, end, replacement) {

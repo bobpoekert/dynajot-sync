@@ -106,9 +106,9 @@ define(["dom", "core"], function(dom, core) {
         nodesEqual(children, copyNodes(divs.slice(1,3)), "Remove from beginning");
 
         children = dom.getChildNodes(root);
-        console.log('a');
+        // console.log('a');
         dom.spliceNodes(root, 0, 0, divs);
-        console.log('b');
+        // console.log('b');
         nodesEqual(dom.getChildNodes(root), copyNodes(divs.concat(children)), "Prepend");
 
         children = dom.getChildNodes(root);

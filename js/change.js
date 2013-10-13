@@ -42,11 +42,11 @@ define([
 
     change.serializeNode = function(root, node, document_id) {
         if (!node) {
-            console.log('no node');
+            // console.log('no node');
             return {};
         }
         if (!node.parentNode) {
-            //console.log('no parent');
+            //// console.log('no parent');
             // node is not in the dom
             return {};
         }
@@ -324,7 +324,7 @@ define([
                     delta_callback(cur_state);
                 }*/
                 if (!core.isEmpty(cur_state) && !core.isEqual(prev_state, cur_state)) {
-                    console.log(prev_state, cur_state);
+                    // console.log(prev_state, cur_state);
                     delta_callback(cur_state);
                 }
             } else {

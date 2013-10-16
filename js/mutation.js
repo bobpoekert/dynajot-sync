@@ -4,6 +4,17 @@ define(['dom', 'core'], function(dom, core) {
 
     var res = {};
 
+    res.throttledPoll = function(callback, min_interval) {
+        var interval = min_interval;
+        var runner = function() {
+            var start = Date.now();
+            callback();
+            var time_taken = Date.now() - start;
+            interval = Math.round((min_interval + time_taken*2) / 2);
+            setTimeout(runner, interval);
+        };
+    };
+
     res.onChange = function(node, callback, interval) {
         /* callback gets called with changed nodes in the subtree rooted at the given node.
         * NOTE: callback may be called when there isn't actually a change.
@@ -37,7 +48,8 @@ define(['dom', 'core'], function(dom, core) {
                 dom.traverse(evt.target || node, outer_callback);
             });
         }
-        setInterval(function() {
+
+        res.throttledPoll(function() {
             dom.traverse(node, callback);
         }, 500);
     };

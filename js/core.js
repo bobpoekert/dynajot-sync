@@ -22,6 +22,31 @@ define(["underscore"], function(underscore) {
 
     core.inherit = inherit;
 
+    var debug = false;
+
+    core.cl = function () {
+        if (debug) {
+            switch(arguments.length) {
+                case 0:
+                    console.log();
+                    return;
+                case 1:
+                    console.log(arguments[0]);
+                    return;
+                case 2:
+                    console.log(arguments[0], arguments[1]);
+                    return;
+                default:
+                    console.log(arguments[0], arguments[1], arguments[2]);
+                    return;
+            }
+        }
+    };
+
+    core.ct = function () {
+        if (debug) console.trace();
+    };
+
     core.isWindow = function(obj) {
         return obj != null && obj === obj.window;
     };
@@ -67,17 +92,23 @@ define(["underscore"], function(underscore) {
             b_dict[stringify(b[i])] = i;
         }
         var res = [];
-        for (i=0; i < a.lenth; i++) {
+        for (i=0; i < a.length; i++) {
             el = a[i];
             s = stringify(el);
             res.push(el);
             delete b_dict[s];
         }
+
+        var added_offset = a.length - b.length;
+        var splice_index;
         for (var k in b_dict) {
             if (!b_dict.hasOwnProperty(k)) continue;
             idx = b_dict[k];
             el = b[idx];
-            res.splice(idx, 0, el);
+            splice_index = Math.max(0, idx + added_offset);
+            //console.log(splice_index);
+            res.splice(splice_index, 0, el);
+            added_offset++;
         }
         return res;
     };
@@ -182,6 +213,7 @@ define(["underscore"], function(underscore) {
                 return true;
             }
         }
+        if (obj.nodeType) return true;
         return false;
     };
 

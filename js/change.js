@@ -42,11 +42,9 @@ define([
 
     change.serializeNode = function(root, node, document_id) {
         if (!node) {
-            // console.log('no node');
             return {};
         }
         if (!node.parentNode) {
-            //// console.log('no parent');
             // node is not in the dom
             return {};
         }
@@ -297,8 +295,7 @@ define([
                     delta_callback(cur_state);
                 }*/
                 if (!core.isEmpty(cur_state) && !core.isEqual(prev_state, cur_state)) {
-                    // console.log(prev_state, cur_state);
-                    delta_callback(cur_state);
+                    delta_callback(change.delta(prev_state, cur_state));
                 }
             } else {
                 delta_callback(cur_state);
@@ -306,7 +303,7 @@ define([
             data.set(node, 'state', cur_state);
             data.set(node, 'seen', true);
         };
-        mutation.onChange(tree, watcher);
+        mutation.onChange(tree, watcher, 200);
     };
 
     return change;

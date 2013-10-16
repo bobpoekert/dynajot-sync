@@ -246,47 +246,47 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
     // sentence diff not used
     // patch not used
 
-    test("rootDelta", function () {
-        var input_state = {
-            id: 'some_id',
-            name: 'div',
-            attrs: {
-                'id':'mynodeid',
-                'class':'foo'
-            },
-            children: [
-                {kind: 'text', value: 'some text'},
-                {kind: 'id', value: 'br_id'},
-                {kind: 'text', value: 'more text'}
-            ],
-            position: {
-                parent: '_root',
-                index: 0
-            }
-        };
+    // test("rootDelta", function () {
+    //     var input_state = {
+    //         id: 'some_id',
+    //         name: 'div',
+    //         attrs: {
+    //             'id':'mynodeid',
+    //             'class':'foo'
+    //         },
+    //         children: [
+    //             {kind: 'text', value: 'some text'},
+    //             {kind: 'id', value: 'br_id'},
+    //             {kind: 'text', value: 'more text'}
+    //         ],
+    //         position: {
+    //             parent: '_root',
+    //             index: 0
+    //         }
+    //     };
 
-        var expected_delta = {
-            id: 'some_id',
-            name: 'div',
-            attrs: {
-                '+': {
-                    "id": "mynodeid",
-                    "class": "foo"
-                },
-                '-': {}
-            },
-            children: [
-                    {kind: 'text', value: 'some text'},
-                    {kind: 'id', value: 'br_id'},
-                    {kind: 'text', value: 'more text'}],
-            position: {
-                parent: '_root',
-                index: 0
-            }
-        };
+    //     var expected_delta = {
+    //         id: 'some_id',
+    //         name: 'div',
+    //         attrs: {
+    //             '+': {
+    //                 "id": "mynodeid",
+    //                 "class": "foo"
+    //             },
+    //             '-': {}
+    //         },
+    //         children: [
+    //                 {kind: 'text', value: 'some text'},
+    //                 {kind: 'id', value: 'br_id'},
+    //                 {kind: 'text', value: 'more text'}],
+    //         position: {
+    //             parent: '_root',
+    //             index: 0
+    //         }
+    //     };
 
-        deepEqual(change.rootDelta(input_state), expected_delta);
-    });
+    //     deepEqual(change.rootDelta(input_state), expected_delta);
+    // });
 
     test("delta", function () {
         var before_state = {

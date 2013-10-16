@@ -61,7 +61,8 @@ $(function () {
         updateTodoCount();
     });
     
-    $("body").on("click", "#filters a", function () {
+    $("body").on("click", "#filters a", function (e) {
+        e.preventDefault();
         var $filters = $("#filters"),
             $todos = $("#todo-list"),
             $this = $(this),
@@ -70,18 +71,18 @@ $(function () {
         $filters.find("a").removeClass("selected");
         $this.addClass("selected");
          
-        $todos.find("li").removeClass("hidden");
-        if (selectedFilter === "active") {
-            $todos.find("li").filter(function() {
-                return $(this).find('input:checked').length > 0;
-            }).addClass('hidden');
-        } else if (selectedFilter === "completed") {
-            $todos.find("li").filter(function() {
-                return $(this).find('input:checked').length === 0;
-            }).addClass('hidden');
-        } else {}
+        // $todos.find("li").removeClass("hidden");
+        // if (selectedFilter === "active") {
+        //     $todos.find("li").filter(function() {
+        //         return $(this).find('input:checked').length > 0;
+        //     }).addClass('hidden');
+        // } else if (selectedFilter === "completed") {
+        //     $todos.find("li").filter(function() {
+        //         return $(this).find('input:checked').length === 0;
+        //     }).addClass('hidden');
+        // } else {}
 
-        updateTodoCount();
+        // updateTodoCount();
     });
 
 });

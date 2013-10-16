@@ -2,6 +2,7 @@ define(["dom", "core"], function(dom, core) {
     module('Dom (js/dom.js)');
 
     var test_html = '<header id="header">\n<h1>todos</h1>\n<input id="new-todo" placeholder="What needs to be done?" autofocus="">\n</header>\n<section style="display: block;" id="main">\n<input id="toggle-all" type="checkbox">\n<label for="toggle-all">Mark all as complete</label>\n<ul id="todo-list"><li data-id="1381355142223" class=""><div class="view"><input class="toggle" type="checkbox"><label>todo1</label><button class="destroy"></button></div></li><li data-id="1381355144846" class=""><div class="view"><input class="toggle" type="checkbox"><label>todo2</label><button class="destroy"></button></div></li></ul>\n</section>\n<footer style="display: block;" id="footer">\n<span id="todo-count"><strong>2</strong> items left</span>\n<ul id="filters">\n<li>\n<a class="selected" href="#/">All</a>\n</li>\n<li>\n<a href="#/active">Active</a>\n</li>\n<li>\n<a href="#/completed">Completed</a>\n</li>\n</ul>\n<button style="display: none;" id="clear-completed"></button>\n</footer>';
+    var inserted_test_html = '<header id="header"><div></div>\n<h1>todos</h1>\n<input id="new-todo" placeholder="What needs to be done?" autofocus="">\n</header>\n<section style="display: block;" id="main">\n<input id="toggle-all" type="checkbox">\n<label for="toggle-all">Mark all as complete</label>\n<ul id="todo-list"><li data-id="1381355142223" class=""><div class="view"><input class="toggle" type="checkbox"><label>todo1</label><button class="destroy"></button></div></li><li data-id="1381355144846" class=""><div class="view"><input class="toggle" type="checkbox"><label>todo2</label><button class="destroy"></button></div></li></ul>\n</section>\n<footer style="display: block;" id="footer">\n<span id="todo-count"><strong>2</strong> items left</span>\n<ul id="filters">\n<li>\n<a class="selected" href="#/">All</a>\n</li>\n<li>\n<a href="#/active">Active</a>\n</li>\n<li>\n<a href="#/completed">Completed</a>\n</li>\n</ul>\n<button style="display: none;" id="clear-completed"></button>\n</footer>';
     var test_tagnames = [
         'div', 'header', 'h1', 'input', 'section', 'input', 'label',
         'ul', 'li', 'div', 'input', 'label', 'button', 'li', 'div',
@@ -9,10 +10,34 @@ define(["dom", "core"], function(dom, core) {
         'li', 'a', 'li', 'a', 'li', 'a', 'button'
     ];
 
+    var dom_target = document.createElement('div');
+    dom_target.style.display = 'none';
+    document.body.appendChild(dom_target);
+
     var test_dom = (function() {
         var test = document.createElement('div');
         test.innerHTML = test_html;
+        return function(fn) {
+            var res = test.cloneNode(true);
+            dom_target.appendChild(res);
+            // fn(res);
+            // dom_target.removeChild(res);
+            return res;
+        };
+    }());
+
+    var test_dom2 = (function () {
+        var test = document.createElement('div');
+        test.innerHTML = inserted_test_html;
         return function() {
+            return test.cloneNode(true);
+        };
+    }());
+
+    var test_dom_text = (function () {
+        var test = document.createElement('div');
+        test.innerHTML = '<div>textnode1<input id="elem1">textnode2<section id="elem2">div2</section></div>';
+        return function () {
             return test.cloneNode(true);
         };
     }());
@@ -38,10 +63,10 @@ define(["dom", "core"], function(dom, core) {
     });
 
     test("elementParentIndex", function () {
-        var td = test_dom();
+        var td = test_dom2();
         deepEqual(
             dom.elementParentIndex(td.getElementsByTagName("input")[0]),
-            [td.getElementsByTagName("header")[0], 1]);
+            [td.getElementsByTagName("header")[0], 2]);
     });
 
     test("isTextNode", function () {
@@ -134,9 +159,14 @@ define(["dom", "core"], function(dom, core) {
     test("insertNodeAt", function () { // node, not element
         var td = test_dom();
         var newNode = document.createElement("div");
+        newNode.setAttribute('id', 'lookiehere');
+        console.log(td.childNodes[1]);
         dom.insertNodeAt(td, newNode, 1);
+        console.log(td.innerHTML);
         equal(newNode.parentNode, td);
         deepEqual(dom.elementParentIndex(newNode), [td, 1]);
+
+        // text nodes
     });
 
     test("isChildOf", function () {

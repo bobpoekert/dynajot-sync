@@ -81,9 +81,9 @@ define(["core", "Data", "ids"], function(core, data, ids) {
             seen_attrs.push(k);
         });
         core.each(new_attributes, function(v, k) {
-            if (core.indexOf(seen_attrs) == -1) {
+            //if (core.indexOf(seen_attrs) == -1) {
                 node.setAttribute(k, v);
-            }
+            //}
         });
         core.each(removed_attributes, function(v, k) {
             node.removeAttribute(k);
@@ -111,7 +111,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         var prev = node.getAttribute('class');
         var parts;
         if (prev) {
-            parts = core.filter(prev.split(), function(part) {
+            parts = core.filter(prev.split(/\s+/g), function(part) {
                 return !(/^dynajot-/.test(part));
             });
             res = parts.join(' ');
@@ -125,26 +125,57 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     dom.toFragment = function(arr) {
         /* @t [DOMNode, ...] -> DOMFragment */
         var res = document.createDocumentFragment();
-        core.each(arr, function(node) {
-            res.appendChild(node);
-        });
+        var i;
+        for (i=0; i < arr.length; i++) {
+            res.appendChild(arr[i]);
+        }
         return res;
     };
    
     dom.getChildNodes = function(node) {
         /* @t DOMNode -> [DOMNode, ...] */
-        return core.toArray(node.childNodes);
-    };
-
-    dom.removeAllChildren = function(node) {
-        while(node.firstChild) {
-            node.removeChild(node.firstChild);
+        if (node) {
+            return core.toArray(node.childNodes);
+        } else {
+            return [];
         }
     };
 
+    dom.removeAllChildren = function(node) {
+        /*while(node.firstChild) {
+            node.removeChild(node.firstChild);
+        }*/
+        node.innerHTML = '';
+    };
+
     dom.mergeChildren = function(node, children, removed_children) {
-        var a_nodes = dom.getChildNodes(node);
-        var removed_keys = {};
+        /*var a_nodes = dom.getChildNodes(node);
+        var cached_text_nodes = {};
+
+        core.each(a_nodes, function(node) {
+            if (node.nodeType == Node.TEXT_NODE) {
+                if (cached_text_nodes[node.data]) {
+                    cached_text_nodes[node.data].push(node);
+                } else {
+                    cached_text_nodes[node.data] = [node];
+                }
+            }
+        });
+
+        var restored_children = core.map(children, function(child) {
+            if (child.nodeType == Node.ELEMENT_NODE) return child;
+            if (cached_text_nodes.hasOwnProperty(child.data)) {
+                var arr = cached_text_nodes[child.data];
+                if (arr.length > 0) {
+                    var res = arr.shift();
+                    res.parentNode.removeChild(res);
+                    return res;
+                }
+            }
+            return child;
+        });*/
+
+        /*var removed_keys = {};
         core.each(removed_children, function(node) {
             var k = node.kind == 'text' ? 't:'+node.value : node.value; // stringifyNode
             removed_keys[k] = true;
@@ -152,11 +183,13 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
         var b_nodes = children;
         var merged = core.arrayMerge(a_nodes, b_nodes, dom.stringifyNode);
-        merged = core.filter(merged, function(el) {
+        */
+        /*merged = core.filter(merged, function(el) {
             return !(dom.stringifyNode(el) in removed_keys);
-        });
+        });*/
         dom.removeAllChildren(node);
-        node.appendChild(dom.toFragment(merged));
+        var frag = dom.toFragment(children);
+        node.appendChild(frag);
     };
 
     dom.spliceNodes = function(target, start, end, replacement) {
@@ -193,23 +226,38 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
     };
 
+    var bogus = 0;
     dom.insertNodeAt = function(parent, child, index) {
         /* @t DOMNode, DOMNode, Number -> null */
         //if (!parent) console.trace();
         //if (!parent.children) console.trace();
         var after = parent.childNodes[index];
 
+        // var parts = core.map(parent.childNodes, function(node) {
+        //     if (node.nodeType == Node.TEXT_NODE) {
+        //         return node.data;
+        //     } else {
+        //         return node.outerHTML;
+        //     }
+        // });
+        // parts.splice(index, 0, child.outerHTML);
+        // console.log(parts);
+        // parent.innerHTML = parts.join('');
+        // return;
+
         if (!after) {
             parent.appendChild(child);
         } else if (after.nodeType == Node.ELEMENT_NODE) {
+            // confirm("ready to accept change?");
             parent.insertBefore(child, after);
         } else {
             var fragment = document.createDocumentFragment();
             fragment.appendChild(child);
             while(after && after.nodeType != Node.ELEMENT_NODE) {
+                var nxt = after.nextSibling;
                 parent.removeChild(after);
                 fragment.appendChild(after);
-                after = after.nextSibling;
+                after = nxt;
             }
             if (after) {
                 parent.insertBefore(fragment, after);
@@ -229,6 +277,20 @@ define(["core", "Data", "ids"], function(core, data, ids) {
             accum = accum.parentNode;
         }
         return false;
+    };
+
+    dom.getNodeById = function(node) {
+        var d = data.get(node, "node_id");
+        if (d) {
+            return d;
+        } else {
+            var cls = node.getAttribute('class');
+            if (!cls) {
+                return null;
+            }
+            var ids = core.filter(cls.split(), core.reTester(/^dynajot-.*/));
+            return ids.length > 0 ? ids[0] : null;
+        }
     };
 
     dom.set_node_id = function(node, id) {
@@ -260,17 +322,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
     dom.get_node_id = function(node) {
         /* @t DOMNode -> String */
-        var d = data.get(node, "node_id");
-        if (d) {
-            return d;
-        } else {
-            var cls = node.getAttribute('class');
-            if (!cls) {
-                return null;
-            }
-            var ids = core.filter(cls.split(), core.reTester(/^dynajot-.*/));
-            return ids.length > 0 ? ids[0] : null;
-        }
+        return data.get(node, "node_id");
     };
 
     return dom;

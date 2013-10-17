@@ -1,1 +1,1 @@
-app: python server/parrot.py
+web: python server/parrot.py

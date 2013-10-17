@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="codemirror.css">
+    </head>
+    <body>
+        <div id="editor"></div>
+
+        <script src="jquery-1.10.2.min.js"></script>
+        <script src="codemirror.js"></script>
+        <script src="/js/require.js"></script>
+
+        <script>
+        var myCodeMirror = CodeMirror($("#editor")[0], {
+          value: "var yourEditor = function() { }\n",
+          mode:  "javascript",
+          lineNumbers: true,
+          lineWrapping: true
+        });
+        </script>
+
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["sync"], function(sync) {
+                sync.sync(document.getElementById('editor'));
+            });
+        </script>
+    </body>
+</html>

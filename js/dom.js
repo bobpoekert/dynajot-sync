@@ -142,10 +142,10 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     };
 
     dom.removeAllChildren = function(node) {
-        /*while(node.firstChild) {
+        while(node.firstChild) {
             node.removeChild(node.firstChild);
-        }*/
-        node.innerHTML = '';
+        }
+        //node.innerHTML = '';
     };
 
     dom.mergeChildren = function(node, children, removed_children) {
@@ -232,18 +232,6 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         //if (!parent) console.trace();
         //if (!parent.children) console.trace();
         var after = parent.childNodes[index];
-
-        // var parts = core.map(parent.childNodes, function(node) {
-        //     if (node.nodeType == Node.TEXT_NODE) {
-        //         return node.data;
-        //     } else {
-        //         return node.outerHTML;
-        //     }
-        // });
-        // parts.splice(index, 0, child.outerHTML);
-        // console.log(parts);
-        // parent.innerHTML = parts.join('');
-        // return;
 
         if (!after) {
             parent.appendChild(child);

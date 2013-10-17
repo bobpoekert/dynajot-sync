@@ -49,7 +49,7 @@ define(['dom', 'core'], function(dom, core) {
             });
         }
 
-        res.throttledPoll(function() {
+        setInterval(function() {
             dom.traverse(node, callback);
         }, 500);
     };

@@ -151,8 +151,13 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
 
         mergeDeltas(a, b);
         deepEqual(a.attrs, {
-            "+": {"height": "768", "width": "1024", "title": "largerEmptyImg"},
-            "-": {"alt": false, "src": false, "fooAttr": false}
+          "+": {
+            "height": "768",
+            "width": "1024"
+          },
+          "-": {
+            "fooAttr": false
+          }
         }, "attrs from a[+] and a[-] get overwritten and added by b");
 
 
@@ -171,7 +176,7 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
         mergeDeltas(a, b);
         deepEqual(a.attrs, {
             "+": {"height": "768", "width": "1024"},
-            "-": {"alt": false, "src": false, "fooAttr": false, "title": false}
+            "-": {"fooAttr": false, "title": false}
         }, "attrs removed by b are removed from a[+] and added to b[-]");
 
 
@@ -246,48 +251,6 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
     // sentence diff not used
     // patch not used
 
-    // test("rootDelta", function () {
-    //     var input_state = {
-    //         id: 'some_id',
-    //         name: 'div',
-    //         attrs: {
-    //             'id':'mynodeid',
-    //             'class':'foo'
-    //         },
-    //         children: [
-    //             {kind: 'text', value: 'some text'},
-    //             {kind: 'id', value: 'br_id'},
-    //             {kind: 'text', value: 'more text'}
-    //         ],
-    //         position: {
-    //             parent: '_root',
-    //             index: 0
-    //         }
-    //     };
-
-    //     var expected_delta = {
-    //         id: 'some_id',
-    //         name: 'div',
-    //         attrs: {
-    //             '+': {
-    //                 "id": "mynodeid",
-    //                 "class": "foo"
-    //             },
-    //             '-': {}
-    //         },
-    //         children: [
-    //                 {kind: 'text', value: 'some text'},
-    //                 {kind: 'id', value: 'br_id'},
-    //                 {kind: 'text', value: 'more text'}],
-    //         position: {
-    //             parent: '_root',
-    //             index: 0
-    //         }
-    //     };
-
-    //     deepEqual(change.rootDelta(input_state), expected_delta);
-    // });
-
     test("delta", function () {
         var before_state = {
             id: 'some_id',
@@ -326,17 +289,37 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
         };
 
         var expected_delta = {
-            id: 'some_id',
-            name: 'div',
-            attrs: {
-                '+': {
-                    "class": "bar"
-                },
-                '-': {}
+          "attrs": {
+            "class": "bar",
+            "id": "mynodeid"
+          },
+          "children": [
+            {
+              "kind": "text",
+              "value": "more text"
             },
-            children: [{kind: 'text', value: 'more text'},
-                {kind: 'id', value: 'br_id'},
-                {kind: 'text', value: 'more text'}]
+            {
+              "kind": "id",
+              "value": "br_id"
+            },
+            {
+              "kind": "text",
+              "value": "more text"
+            }
+          ],
+          "id": "some_id",
+          "name": "div",
+          "position": {
+            "index": 0,
+            "parent": "_root"
+          },
+          "removed_attrs": {},
+          "removed_children": [
+            {
+              "kind": "text",
+              "value": "some text"
+            }
+          ]
         };
 
         deepEqual(change.delta(before_state, after_state), expected_delta);
@@ -377,34 +360,35 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
             node.setAttribute("width", "1024");
         });
         expected_deltas.push({
-            id: 'new_id',
-            name: 'div',
-            attrs: {
-                '+': {
-                    "width": "1024"
-                },
-                '-': {}
-            },
-            "children": [],
-            "create": true,
-            "position": {
-                "index": 0,
-                "parent": "_root"
-            }
+          "attrs": {
+            "width": "1024"
+          },
+          "children": [],
+          "id": "new_id",
+          "name": "div",
+          "position": {
+            "index": 0,
+            "parent": "_root"
+          }
         });
 
         change_functions.push(function () {
             node.setAttribute("class", "foo");
         });
         expected_deltas.push({
-            id: 'new_id',
-            name: 'div',
-            attrs: {
-                '+': {
-                    "class": "foo"
-                },
-                '-': {}
-            }
+          "attrs": {
+            "class": "foo",
+            "width": "1024"
+          },
+          "children": [],
+          "id": "new_id",
+          "name": "div",
+          "position": {
+            "index": 0,
+            "parent": "_root"
+          },
+          "removed_attrs": {},
+          "removed_children": []
         });
 
         change_functions.push(function () {
@@ -412,9 +396,24 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
             node.appendChild(child);
         });
         expected_deltas.push({
-            id: 'new_id',
-            name: 'div',
-            children: [{kind: 'text', value: 'more text'}]
+          "attrs": {
+            "class": "foo",
+            "width": "1024"
+          },
+          "children": [
+            {
+              "kind": "text",
+              "value": "more text"
+            }
+          ],
+          "id": "new_id",
+          "name": "div",
+          "position": {
+            "index": 0,
+            "parent": "_root"
+          },
+          "removed_attrs": {},
+          "removed_children": []
         });
 
         var interval = setInterval(function() {

@@ -156,6 +156,66 @@ define(["dom", "core"], function(dom, core) {
         ok(!header.parentNode);
     });
 
+    var randomChoice = function(lst) {
+        return lst[Math.floor(Math.random() * lst.length)];
+    };
+
+    var randomString = function() {
+        var res = [];
+        var cnt = Math.random() * 20;
+        for (var i=0; i < cnt; i++) {
+            res.push(String.fromCharCode(Math.floor(Math.random() * 26 + 65)));
+        }
+        return res.join('');
+    };
+
+    var randomDict = function() {
+        var res = {};
+        var cnt = Math.random() * 20;
+        for (var i=0; i < cnt; i++) {
+            res[randomString().toLowerCase()] = randomString();
+        }
+        return res;
+    };
+
+    var repeatRandom = function(v) {
+        var cnt = Math.floor(Math.random() * 20);
+        var res = [];
+        for (var i=0; i < cnt; i++) {
+            res.push(v());
+        }
+        return res;
+    };
+
+
+    var newNode = function() {
+        var res = document.createElement(randomChoice(['div', 'span', 'label', 'input', 'li', 'pre']));
+        for (var i=Math.random() * 10; i > 0; i--) {
+            res.setAttribute(randomString().toLowerCase(), randomString());
+        }
+        for (i=Math.random() * 10; i > 0; i--) {
+            res.appendChild(document.createTextNode(randomString()));
+        }
+        return res;
+    };
+
+    test("insertNodeAt - stress", function () {
+        var root = document.createElement('div');
+        root.style.display = 'none';
+        document.body.appendChild(root);
+
+        var start_time = Date.now();
+        var nodes = [root];
+        while (Date.now() - start_time < 10) {
+            var node = newNode();
+            var parent = randomChoice(nodes);
+            var idx = Math.floor(Math.random() * dom.getChildNodes(parent).length);
+            dom.insertNodeAt(parent, node, idx);
+            equal(dom.nodeParentIndex(node)[1], idx);
+            nodes.push(node);
+        }
+    });
+
     test("insertNodeAt", function () { // node, not element
         var td = test_dom();
         var newNode = document.createElement("div");

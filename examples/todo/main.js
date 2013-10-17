@@ -10,12 +10,14 @@ $(function () {
         var $todoList = $("#todo-list"),
             numTodos = $todoList.find("li").length - $todoList.find(".completed").length,
             $todoCount = $("#todo-count");
-        $todoCount.find("strong").text(numTodos);
+        $("#t-count").text(numTodos);
+        var newHTML;
         if (numTodos === 1) {
-            $todoCount.html($todoCount.html().replace(/items\s/, "item "));
+            newHTML = $todoCount.html().replace(/items\s/, "item ");
         } else {
-            $todoCount.html($todoCount.html().replace(/item\s/, "items "));
+            newHTML = $todoCount.html().replace(/item\s/, "items ");
         }
+        $todoCount.html(newHTML); // breaks dynajot.
     };
 
     var updateClearCompleted = function () {

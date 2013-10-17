@@ -1,5 +1,5 @@
 define([
-    "core",
+    "core"
 ], function(core) {
 
 var rnotwhite = /\S/;

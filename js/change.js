@@ -3,7 +3,7 @@ define([
     "Data",
     "dom",
     "difflib",
-    "mutation",
+    "mutation"
 ], function(core, data, dom, difflib, mutation) {
 
     var change = {};

@@ -5,7 +5,7 @@ define(["core", "msgpack"], function(core, msgpack) {
         put: function(k, v) { localStorage.setItem(k, v); },
         del: function(k) { localStorage.removeItem(k); }
     };
-
+/*
     var storage = {};
 
     var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
@@ -152,5 +152,5 @@ define(["core", "msgpack"], function(core, msgpack) {
         storage.del = del;
     }
     
-    return storage;
+    return storage;*/
 });

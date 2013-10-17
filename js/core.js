@@ -1,5 +1,6 @@
 // https://github.com/jquery/jquery/blob/7877c4fa73120bc6d21a5fcd302a896f03b23876/src/core.js
 /** @license jQuery v1.10.2 | (c) 2005, 2013 jQuery Foundation, Inc. | jquery.org/license */
+
 define(["underscore"], function(underscore) {
 
     var inherit;

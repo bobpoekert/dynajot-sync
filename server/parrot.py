@@ -21,10 +21,14 @@ document_counters = {}
 class DocumentStateHandler(web.RequestHandler):
 
     def get(self, document_id):
-        try:
+        if document_id.endswith('.json'):
+            doc = document_id.split('.')[0]
+            self.write(dict((k, v.to_dict()) for k, v in document_trees[doc].nodes.iteritems()))
+        else:
+            #try:
             self.write(document_trees[document_id].to_html())
-        except KeyError:
-            self.send_error(404)
+            #except KeyError:
+            #    self.send_error(404)
 
 class ParrotHandler(websocket.WebSocketHandler):
 

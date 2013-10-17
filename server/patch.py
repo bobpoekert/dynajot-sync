@@ -48,7 +48,10 @@ def token_list(nodes, node, res=None, seen=None):
         if node.name not in unclosed_tags:
             for child in node.children:
                 if child['kind'] == 'id':
-                    token_list(nodes, nodes[child['value']], res, seen)
+                    try:
+                        token_list(nodes, nodes[child['value']], res, seen)
+                    except KeyError:
+                        pass
                 else:
                     res.append(child['value'])
             res.append('</')
@@ -57,7 +60,10 @@ def token_list(nodes, node, res=None, seen=None):
     else:
         for child in node.children:
             if child['kind'] == 'id':
-                token_list(nodes, nodes[child['value']], res, seen)
+                try:
+                    token_list(nodes, nodes[child['value']], res, seen)
+                except KeyError:
+                    pass
             else:
                 res.append(child['value'])
 
@@ -106,7 +112,7 @@ class Document(object):
         self.nodes = {}
 
     def apply_delta(self, delta):
-        print '((', delta
+        #print '((', delta
         node = self.nodes.get(delta['id'])
         if not node:
             node = Node(

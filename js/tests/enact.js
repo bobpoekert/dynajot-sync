@@ -99,13 +99,13 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
         var start_time = Date.now();
 
         var parent_index = 0;
-        while (Date.now() - start_time < 100) {
+        while (Date.now() - start_time < 1000) {
             var node = newNode();
             applier(node);
             var domnode = enact.getNode(root, node.id);
             ok(domnode);
             equal(domnode.parentNode, root);
-            deepEqual(change.serializeNode(root, domnode), node);
+            //deepEqual(change.serializeNode(root, domnode), node);
 
             var child_node = newNode();
             child_node.position.parent = node.id;
@@ -154,15 +154,48 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
         return fn(root, applier);
     };
 
-    /*test("appliesDeltas", function () {
-        harness(function (root, applier) {
-            var apply_deltas = action_log;
-            var check_change_functions = [];
-            var deltas_applied = 0;
+    asyncTest("appliesDeltas", function () {
+        expect(100);
+        var root = document.createElement('div');
+        root.style.display = 'none';
+        document.body.appendChild(root);
 
-            core.each(deltas, applier);
-
-             equal(root.innerHTML, action_result);
-        });
-    });*/
+        var applier = enact.appliesDeltas(root);
+        var id_ctr = 0;
+        var childlist = [];
+        var looper = function() {
+            var new_id = (id_ctr++).toString();
+            childlist.unshift({kind: 'text', value: randomString()});
+            childlist.unshift({kind: 'id', value: new_id});
+            var reference_delta = {
+                id: '_root',
+                name: 'div',
+                position: null,
+                children: childlist,
+                attrs: randomDict()
+            };
+            var create_delta = {
+                id: new_id,
+                name: 'strong',
+                position: {
+                    parent: '_root',
+                    index: 0
+                },
+                attrs: randomDict(),
+                children: [{kind: 'text', value: randomString()}]
+            };
+            applier(reference_delta);
+            
+            setTimeout(function() {
+                applier(create_delta);
+                equal(dom.get_node_id(root.firstChild), new_id);
+                if (id_ctr < 100) {
+                    setTimeout(looper, 100);
+                } else {
+                    start();
+                }
+            }, 100);
+        };
+        looper();
+    });
 });

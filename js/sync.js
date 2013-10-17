@@ -6,7 +6,7 @@ define([
 
     var sync = {};
 
-    sync.DEVELOP_MODE = false;
+    sync.DEVELOP_MODE = true;
 
     sync.sync = function(node, options) {
         options = options || {};
@@ -20,7 +20,7 @@ define([
        
         var url_prefix = 'ws://damp-cove-5558.herokuapp.com/doc/';
         if (sync.DEVELOP_MODE) {
-            url_prefix = 'ws://localhost:5000/doc';
+            url_prefix = 'ws://localhost:5000/doc/';
         }
         var document_timeline;
 

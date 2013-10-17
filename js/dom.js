@@ -108,6 +108,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
 
     dom.setIdClass = function(node, id) {
         /* @t DOMNode, String -> null */
+        if (node.nodeType != Node.ELEMENT_NODE) return;
         var prev = node.getAttribute('class');
         var parts;
         if (prev) {

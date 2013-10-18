@@ -1,0 +1,2719 @@
+[{
+   'kind':'delta',
+   'value':{
+      'id':'_root',
+      'position':None,
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-103'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-104'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-105'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+         },
+         {
+            'kind':'text',
+            'value':'\n        \n\n\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-107'
+         },
+         {
+            'kind':'text',
+            'value':'\n        '
+         }
+      ],
+      'attrs':{
+         'id':'todoapp'
+      },
+      'name':'div'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-103',
+      'position':{
+         'index':1,
+         'parent':'_root'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'todos'
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'h1'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-104',
+      'position':{
+         'index':3,
+         'parent':'_root'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-108'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-109'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         }
+      ],
+      'attrs':{
+         'id':'header'
+      },
+      'name':'header'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-108',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-104'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'todos'
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'h1'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-109',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-104'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'autofocus':'',
+         'placeholder':'What needs to be done?',
+         'id':'new-todo'
+      },
+      'name':'input'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-105',
+      'position':{
+         'index':5,
+         'parent':'_root'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-110'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         }
+      ],
+      'attrs':{
+         'style':         'display:block;',
+         'id':'main'
+      },
+      'name':'section'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-110',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-105'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'Mark all as complete'
+         }
+      ],
+      'attrs':{
+         'for':'toggle-all'
+      },
+      'name':'label'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-105'
+      },
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+         }
+      ],
+      'attrs':{
+         'id':'todo-list'
+      },
+      'name':'ul'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112',
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+         },
+         {
+            'kind':'text',
+            'value':'  \n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'li'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                        '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-115'
+         },
+         {
+            'kind':'text',
+            'value':'\n                        '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-116'
+         },
+         {
+            'kind':'text',
+            'value':'\n                        '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-117'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         }
+      ],
+      'attrs':{
+         'class':'view'
+      },
+      'name':'div'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-115',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'name':'input'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-116',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'lol'
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'label'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-117',
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'name':'button'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'class':'edit',
+         'value':'lol'
+      },
+      'name':'input'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106',
+      'position':{
+         'index':7,
+         'parent':'_root'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-119'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-120'
+         },
+         {
+            'kind':'text',
+            'value':'\n            \n        '
+         }
+      ],
+      'attrs':{
+         'style':         'display:block;',
+         'id':'footer'
+      },
+      'name':'footer'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+      },
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-121'
+         },
+         {
+            'kind':'text',
+            'value':' item left'
+         }
+      ],
+      'attrs':{
+         'id':'todo-count'
+      },
+      'name':'span'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-121',
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'1'
+         }
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'name':'strong'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-119',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-122'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-123'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-124'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         }
+      ],
+      'attrs':{
+         'id':'filters'
+      },
+      'name':'ul'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-122',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-119'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-125'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'li'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-125',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-122'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'All'
+         }
+      ],
+      'attrs':{
+         'href':'#/',
+         'class':'selected',
+         'data-filter-name':'all'
+      },
+      'name':'a'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-123',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-119'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-126'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'li'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-126',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-123'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'Active'
+         }
+      ],
+      'attrs':{
+         'href':'#',
+         'data-filter-name':'active'
+      },
+      'name':'a'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-124',
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-119'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-127'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'li'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-127',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-124'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'Completed'
+         }
+      ],
+      'attrs':{
+         'href':'#',
+         'data-filter-name':'completed'
+      },
+      'name':'a'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-120',
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'id':'clear-completed',
+         'class':'hidden'
+      },
+      'name':'button'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-107',
+      'position':{
+         'index':9,
+         'parent':'_root'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-128'
+         },
+         {
+            'kind':'text',
+            'value':'\n            '
+         }
+      ],
+      'attrs':{
+         'id':'templates'
+      },
+      'name':'div'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-128',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-107'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-129'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-130'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-131'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'name':'li'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-129',
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-128'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'name':'input'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-130',
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-128'
+      },
+      'children':[
+         {
+            'kind':'text',
+            'value':'lol'
+         }
+      ],
+      'attrs':{
+
+      },
+      'name':'label'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-131',
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-128'
+      },
+      'children':[
+
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'name':'button'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'ul',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         30
+      ],
+      'attrs':{
+         'id':'todo-list'
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-105'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'li',
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         31
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         32
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'ab'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         33
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         34
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+         },
+         {
+            'kind':'text',
+            'value':'  \n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         35
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'span',
+      'removed_children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-121'
+         },
+         {
+            'kind':'text',
+            'value':' item left'
+         }
+      ],
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-136'
+         },
+         {
+            'kind':'text',
+            'value':' items left'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         36
+      ],
+      'attrs':{
+         'id':'todo-count'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'2'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         37
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-136'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         38
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+         },
+         {
+            'kind':'text',
+            'value':'  \n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         39
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':2,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'span',
+      'removed_children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-136'
+         }
+      ],
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-137'
+         },
+         {
+            'kind':'text',
+            'value':' items left'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         40
+      ],
+      'attrs':{
+         'id':'todo-count'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'ul',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         41
+      ],
+      'attrs':{
+         'id':'todo-list'
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-105'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'li',
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-139'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-140'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-141'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         42
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         43
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-139'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'b'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         44
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-140'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         45
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-141'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'3'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         0,
+         '5651017678901553-819',
+         46
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-137'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         39,
+         '7013180544599891-216',
+         0
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         39,
+         '7013180544599891-216',
+         1
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'ab'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         39,
+         '7013180544599891-216',
+         2
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         39,
+         '7013180544599891-216',
+         3
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'2'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         39,
+         '7013180544599891-216',
+         4
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-136'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         46,
+         '7013180544599891-216',
+         5
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-139'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'b'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         46,
+         '7013180544599891-216',
+         6
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-140'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         46,
+         '7013180544599891-216',
+         7
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-141'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+         },
+         {
+            'kind':'text',
+            'value':'  \n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         46,
+         '7013180544599891-216',
+         8
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':2,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'3'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         46,
+         '7013180544599891-216',
+         9
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-137'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-139'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-140'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-141'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         47
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         48
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'li',
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-145'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-146'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-147'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         49
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819--142'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         50
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819--142'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-145'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'c'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         51
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819--142'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-146'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         52
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819--142'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-147'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'4'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         56,
+         '5651017678901553-819',
+         53
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819--144'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         60,
+         '7013180544599891-216',
+         10
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':2,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+         },
+         {
+            'kind':'text',
+            'value':'  \n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         60,
+         '7013180544599891-216',
+         11
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-139'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-140'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-141'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         60,
+         '7013180544599891-216',
+         12
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-138'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         60,
+         '7013180544599891-216',
+         13
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819--142'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-145'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'li',
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-149'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-150'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-151'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         54
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819--148'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         55
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819--148'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-149'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'ds'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         56
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819--148'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-150'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         57
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819--148'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-151'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-133'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-134'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-135'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         58
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':4,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-132'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'span',
+      'removed_children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819--144'
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819--143'
+         }
+      ],
+      'children':[
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-152'
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-153'
+         },
+         {
+            'kind':'text',
+            'value':' items left'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         59
+      ],
+      'attrs':{
+         'id':'todo-count'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-106'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'5'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         60
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-152'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'3'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         67,
+         '5651017678901553-819',
+         61
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-153'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'c'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         14
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819--142'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-146'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-145'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-146'
+         },
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-147'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         15
+      ],
+      'attrs':{
+         'class':'todo-item'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819--142'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'removed_attrs':{
+
+      },
+      'name':'li',
+      'removed_children':[
+
+      ],
+      'children':[
+         {
+            'kind':'text',
+            'value':'\n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-113'
+         },
+         {
+            'kind':'text',
+            'value':'  \n                    '
+         },
+         {
+            'kind':'id',
+            'value':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-114'
+         },
+         {
+            'kind':'text',
+            'value':'\n                '
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         16
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':2,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-111'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-112'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         17
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819--142'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-147'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'input',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         18
+      ],
+      'attrs':{
+         'type':'checkbox',
+         'class':'toggle'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819--148'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-149'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'label',
+      'children':[
+         {
+            'kind':'text',
+            'value':'ds'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         19
+      ],
+      'attrs':{
+
+      },
+      'position':{
+         'index':3,
+         'parent':'5651017678901553-819--148'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-150'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'button',
+      'children':[
+
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         20
+      ],
+      'attrs':{
+         'class':'destroy'
+      },
+      'position':{
+         'index':5,
+         'parent':'5651017678901553-819--148'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-151'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'5'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         21
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':0,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-152'
+   }
+},
+{
+   'kind':'delta',
+   'value':{
+      'name':'strong',
+      'children':[
+         {
+            'kind':'text',
+            'value':'3'
+         }
+      ],
+      'message_id':[
+         '79eed30b8d836a1868a0f5eab91b48ae906f0f34',
+         75,
+         '7013180544599891-216',
+         22
+      ],
+      'attrs':{
+         'id':'t-count'
+      },
+      'position':{
+         'index':1,
+         'parent':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-118'
+      },
+      'id':'5651017678901553-819-79eed30b8d836a1868a0f5eab91b48ae906f0f34-153'
+   }
+}]

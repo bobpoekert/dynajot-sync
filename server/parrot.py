@@ -4,6 +4,7 @@ from functools import partial
 
 import os, hashlib
 import json
+import time
 
 import patch
 
@@ -30,6 +31,32 @@ class DocumentStateHandler(web.RequestHandler):
             #except KeyError:
             #    self.send_error(404)
 
+
+class TestDeltasHandler(websocket.WebSocketHandler):
+
+    def open(self, document):
+        try:
+            with open(relpath('../static/todo_test_deltas.json')) as f:
+                messages = json.load(f)
+                time.sleep(1)
+                count = 0
+                max_deltas = 41
+                for message in messages:
+                    if message["kind"] == "document_state":
+                        self.write_message(message)
+                    else:
+                        self.write_message({'kind':'message', 'value':message})
+                    count += 1
+                    if count > max_deltas:
+                        print message
+                        break
+                print "sent deltas"
+        except:
+            print "failed"
+            self.close()
+
+
+
 class ParrotHandler(websocket.WebSocketHandler):
 
     def open(self, document):
@@ -41,6 +68,9 @@ class ParrotHandler(websocket.WebSocketHandler):
             self.write_message({'kind': 'document_id', 'value':document})
 
         if document in document_trees:
+            print {
+                'kind':'document_state',
+                'value': document_trees[document].to_html()}
             self.write_message({
                 'kind':'document_state',
                 'value': document_trees[document].to_html()})
@@ -109,6 +139,7 @@ class ParrotHandler(websocket.WebSocketHandler):
 app = web.Application([
     ('/doc/(.*)', ParrotHandler),
     ('/doc_state/(.*)', DocumentStateHandler),
+    ('/deltatest/(.*)', TestDeltasHandler),
     ('/(.*)', web.StaticFileHandler, {'path':relpath('..')})
 ], debug=True)
 

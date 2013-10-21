@@ -132,11 +132,21 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         }
         return res;
     };
+
+    dom.isValidNode = function(node) {
+        if (node.nodeType == Node.ELEMENT_NODE) {
+            return true;
+        } else if (node.nodeType == Node.TEXT_NODE) {
+            return !/^\s*$/.test(node.data);
+        } else {
+            return false;
+        }
+    };
    
     dom.getChildNodes = function(node) {
         /* @t DOMNode -> [DOMNode, ...] */
         if (node) {
-            return core.toArray(node.childNodes);
+            return core.filter(node.childNodes, dom.isValidNode);
         } else {
             return [];
         }

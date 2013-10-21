@@ -99,22 +99,25 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
         var start_time = Date.now();
 
         var parent_index = 0;
-        while (Date.now() - start_time < 1000) {
+        while (Date.now() - start_time < 5) {
             var node = newNode();
             applier(node);
             var domnode = enact.getNode(root, node.id);
-            ok(domnode);
-            equal(domnode.parentNode, root);
+            //ok(domnode);
+            //equal(domnode.parentNode, root);
             //deepEqual(change.serializeNode(root, domnode), node);
 
             var child_node = newNode();
             child_node.position.parent = node.id;
-            child_node.position.index = Math.floor(Math.random() * parent_index++);
+            var actual_index = Math.floor(Math.random() * parent_index++);
+            child_node.position.index = actual_index;
             applier(child_node);
             var dom_child = enact.getNode(root, child_node.id);
-            ok(dom_child);
-            equal(dom_child.parentNode, domnode);
-            deepEqual(change.serializeNode(root, dom_child), child_node);
+            //ok(dom_child);
+            //equal(dom_child.parentNode, domnode);
+            //equal(dom.get_node_id(dom_child.parentNode), child_node.position.parent);
+            equal(dom.nodeParentIndex(dom_child)[1], child_node.position.index);
+            //deepEqual(change.serializeNode(root, dom_child), child_node);
         }
     });
 

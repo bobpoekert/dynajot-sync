@@ -55,11 +55,50 @@ define(["dom", "core"], function(dom, core) {
         dom.traverse(test_dom(), checker);
     });
 
+    var tagnames = ['div', 'ul', 'table', 'li', 'span'];
+    var fillWithRandomCrap = function(parent) {
+        var n_children = Math.floor(Math.random() * 10);
+        while (n_children > 0) {
+            var new_child = document.createElement(randomChoice(tagnames));
+            if (Math.random() < 0.02) {
+                fillWithRandomCrap(new_child);
+            }
+            for (var i=Math.random() * 10; i > 0; i--) {
+                new_child.setAttribute(randomString().toLowerCase(), randomString());
+            }
+            parent.appendChild(new_child);
+            n_children--;
+        }
+    };
+
+    var randomNode = function() {
+        if (Math.random() > 0.5) {
+            var res = document.createElement(randomChoice(tagnames));
+            fillWithRandomCrap(res);
+            return res;
+        } else {
+            return document.createTextNode(randomString());
+        }
+    };
+
     test("nodeParentIndex", function () {
-        var td = test_dom();
-        deepEqual(
-            dom.nodeParentIndex(td.getElementsByTagName("input")[0]),
-            [td.getElementsByTagName("header")[0], 3]);
+        for (var i=0; i < 100; i++) {
+            var parent = document.createElement(randomChoice(tagnames));
+            var child = document.createElement(randomChoice(tagnames));
+            var actual_index = Math.floor(Math.random() * 10);
+            for (var j=0; j < actual_index; j++) {
+                parent.appendChild(randomNode());
+            }
+            parent.appendChild(child);
+            var extra_elements = Math.floor(Math.random() * 10);
+            while (extra_elements > 0) {
+                parent.appendChild(randomNode());
+                extra_elements--;
+            }
+            var res = dom.nodeParentIndex(child);
+            equal(res[0], parent);
+            equal(res[1], actual_index);
+        }
     });
 
     test("elementParentIndex", function () {
@@ -205,14 +244,15 @@ define(["dom", "core"], function(dom, core) {
         document.body.appendChild(root);
 
         var start_time = Date.now();
-        var nodes = [root];
-        while (Date.now() - start_time < 10) {
+        //var nodes = [root];
+        while (Date.now() - start_time < 1000) {
             var node = newNode();
-            var parent = randomChoice(nodes);
-            var idx = Math.floor(Math.random() * dom.getChildNodes(parent).length);
-            dom.insertNodeAt(parent, node, idx);
+            //fillWithRandomCrap(node);
+            //var parent = randomChoice(nodes);
+            var idx = Math.floor(Math.random() * dom.getChildNodes(root).length);
+            dom.insertNodeAt(root, node, idx);
             equal(dom.nodeParentIndex(node)[1], idx);
-            nodes.push(node);
+            //nodes.push(node);
         }
     });
 
@@ -220,9 +260,7 @@ define(["dom", "core"], function(dom, core) {
         var td = test_dom();
         var newNode = document.createElement("div");
         newNode.setAttribute('id', 'lookiehere');
-        console.log(td.childNodes[1]);
         dom.insertNodeAt(td, newNode, 1);
-        console.log(td.innerHTML);
         equal(newNode.parentNode, td);
         deepEqual(dom.elementParentIndex(newNode), [td, 1]);
 

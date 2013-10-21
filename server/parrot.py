@@ -40,7 +40,7 @@ class TestDeltasHandler(websocket.WebSocketHandler):
                 messages = json.load(f)
                 time.sleep(1)
                 count = 0
-                max_deltas = 41
+                max_deltas = 999
                 for message in messages:
                     if message["kind"] == "document_state":
                         self.write_message(message)

@@ -75,6 +75,7 @@
                         document_id = frag;
                     }
                    
+                    document_id = 'd052797b23223f009c553aa0a9bc74213b791968';
                     var url_prefix = 'ws://localhost:5000/deltatest/';
 
                     var document_timeline;
@@ -234,7 +235,7 @@
                             delta = core.clone(delta);
                             delta.message_id = ids.message_id(document_id);
                             seen_message_ids[serializeMessageId(delta.message_id)] = true;
-                            document_timeline.addDelta(delta);
+                            // document_timeline.addDelta(delta);
                             // conn.send({'kind':'delta', 'value':delta});
                         });
                     }));

@@ -6,7 +6,7 @@ define([
 
     var sync = {};
 
-    sync.DEVELOP_MODE = true;
+    sync.DEVELOP_MODE = false;
 
     sync.sync = function(node, options) {
         options = options || {};
@@ -18,7 +18,7 @@ define([
             document_id = frag;
         }
        
-        var url_prefix = 'ws://damp-cove-5558.herokuapp.com/doc/';
+        url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/'
         if (sync.DEVELOP_MODE) {
             url_prefix = 'ws://localhost:5000/doc/';
         }

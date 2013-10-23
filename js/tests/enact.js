@@ -109,7 +109,7 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
 
             var child_node = newNode();
             child_node.position.parent = node.id;
-            var actual_index = Math.floor(Math.random() * parent_index++);
+            var actual_index = Math.floor(Math.random() * parent_index);
             child_node.position.index = actual_index;
             applier(child_node);
             var dom_child = enact.getNode(root, child_node.id);

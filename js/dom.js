@@ -5,7 +5,9 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     dom.traverse = function(dom_tree, visitor) {
         /* @t DOMNode, (DOMNode -> null) -> null */
         if (!dom_tree) return;
-        if (dom_tree.nodeType == Node.ELEMENT_NODE) visitor(dom_tree);
+        if (dom_tree.nodeType == Node.ELEMENT_NODE) {
+            if (visitor(dom_tree) === false) return false;
+        }
         // apparently DocumentFragments don't have .children
         // and their .childNodes includes text nodes
         var children = dom.getChildNodes(dom_tree);
@@ -81,9 +83,9 @@ define(["core", "Data", "ids"], function(core, data, ids) {
             seen_attrs.push(k);
         });
         core.each(new_attributes, function(v, k) {
-            //if (core.indexOf(seen_attrs) == -1) {
+            if (core.indexOf(seen_attrs) == -1) {
                 node.setAttribute(k, v);
-            //}
+            }
         });
         core.each(removed_attributes, function(v, k) {
             node.removeAttribute(k);
@@ -242,6 +244,11 @@ define(["core", "Data", "ids"], function(core, data, ids) {
         /* @t DOMNode, DOMNode, Number -> null */
         //if (!parent) console.trace();
         //if (!parent.children) console.trace();
+        
+        if (!parent.firstChild) {
+            parent.appendChild(child);
+        }
+        
         var after = parent.childNodes[index];
 
         if (!after) {

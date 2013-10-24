@@ -71,15 +71,51 @@ define(["dom", "core"], function(dom, core) {
         }
     };
 
+    var randomElement = function() {
+        var res = document.createElement(randomChoice(tagnames));
+        fillWithRandomCrap(res);
+        return res;
+    };
+
     var randomNode = function() {
         if (Math.random() > 0.5) {
-            var res = document.createElement(randomChoice(tagnames));
-            fillWithRandomCrap(res);
-            return res;
+            return randomElement();
         } else {
             return document.createTextNode(randomString());
         }
     };
+    
+    var randomChoice = function(lst) {
+        return lst[Math.floor(Math.random() * lst.length)];
+    };
+
+    var randomString = function() {
+        var res = [];
+        var cnt = Math.random() * 20;
+        for (var i=0; i < cnt; i++) {
+            res.push(String.fromCharCode(Math.floor(Math.random() * 26 + 65)));
+        }
+        return res.join('');
+    };
+
+    var randomDict = function() {
+        var res = {};
+        var cnt = Math.random() * 20;
+        for (var i=0; i < cnt; i++) {
+            res[randomString().toLowerCase()] = randomString();
+        }
+        return res;
+    };
+
+    var repeatRandom = function(v) {
+        var cnt = Math.floor(Math.random() * 20);
+        var res = [];
+        for (var i=0; i < cnt; i++) {
+            res.push(v());
+        }
+        return res;
+    };
+
 
     test("nodeParentIndex", function () {
         for (var i=0; i < 100; i++) {
@@ -195,76 +231,16 @@ define(["dom", "core"], function(dom, core) {
         ok(!header.parentNode);
     });
 
-    var randomChoice = function(lst) {
-        return lst[Math.floor(Math.random() * lst.length)];
-    };
-
-    var randomString = function() {
-        var res = [];
-        var cnt = Math.random() * 20;
-        for (var i=0; i < cnt; i++) {
-            res.push(String.fromCharCode(Math.floor(Math.random() * 26 + 65)));
-        }
-        return res.join('');
-    };
-
-    var randomDict = function() {
-        var res = {};
-        var cnt = Math.random() * 20;
-        for (var i=0; i < cnt; i++) {
-            res[randomString().toLowerCase()] = randomString();
-        }
-        return res;
-    };
-
-    var repeatRandom = function(v) {
-        var cnt = Math.floor(Math.random() * 20);
-        var res = [];
-        for (var i=0; i < cnt; i++) {
-            res.push(v());
-        }
-        return res;
-    };
-
-
-    var newNode = function() {
-        var res = document.createElement(randomChoice(['div', 'span', 'label', 'input', 'li', 'pre']));
-        for (var i=Math.random() * 10; i > 0; i--) {
-            res.setAttribute(randomString().toLowerCase(), randomString());
-        }
-        for (i=Math.random() * 10; i > 0; i--) {
-            res.appendChild(document.createTextNode(randomString()));
-        }
-        return res;
-    };
-
-    test("insertNodeAt - stress", function () {
-        var root = document.createElement('div');
-        root.style.display = 'none';
-        document.body.appendChild(root);
-
-        var start_time = Date.now();
-        //var nodes = [root];
-        while (Date.now() - start_time < 1000) {
-            var node = newNode();
-            //fillWithRandomCrap(node);
-            //var parent = randomChoice(nodes);
-            var idx = Math.floor(Math.random() * dom.getChildNodes(root).length);
-            dom.insertNodeAt(root, node, idx);
-            equal(dom.nodeParentIndex(node)[1], idx);
-            //nodes.push(node);
-        }
-    });
-
     test("insertNodeAt", function () { // node, not element
-        var td = test_dom();
-        var newNode = document.createElement("div");
-        newNode.setAttribute('id', 'lookiehere');
-        dom.insertNodeAt(td, newNode, 1);
-        equal(newNode.parentNode, td);
-        deepEqual(dom.elementParentIndex(newNode), [td, 1]);
+        var parent = randomElement();
 
-        // text nodes
+        for (var i=0; i < 100; i++) {
+            var new_node = randomElement();
+            var idx = Math.floor(Math.random() * i);
+            dom.insertNodeAt(parent, new_node, idx);
+            var res = dom.elementParentIndex(new_node);
+            deepEqual(res, [parent, idx]);
+        }
     });
 
     test("isChildOf", function () {

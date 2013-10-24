@@ -44,10 +44,6 @@ define([
         if (!node) {
             return {};
         }
-        if (!node.parentNode) {
-            // node is not in the dom
-            return {};
-        }
         var res = {};
         if (dom.isTextNode(node)) {
             return change.serializeNode(root, node.parent, document_id);
@@ -73,32 +69,6 @@ define([
             }
             res.name = node.tagName.toLowerCase();
 
-            // var children = dom.getChildNodes(node);
-            // var prev_was_text = false;
-            // var is_text_node;
-            // var consec_text_nodes = [];
-
-            // * concat text nodes *
-            // for (var j=0; j < children.length; j++) {
-            //     cur_child = children[j];
-            //     is_text_node = dom.isTextNode(cur_child);
-            //     if (is_text_node) {
-            //         consec_text_nodes.push(cur_child);
-            //         prev_was_text = true;
-            //     } else {
-            //         if (prev_was_text && consec_text_nodes.length > 1) {
-            //             var new_text_node = document.createTextNode(core.map(consec_text_nodes, function (n) { return n.data; }).join(""));
-            //             core.each(consec_text_nodes, function(n) {
-            //                 node.removeChild(n);
-            //             });
-            //             node.insertBefore(new_text_node, cur_child);
-            //             console.log("concated text nodes");
-            //         }
-            //         prev_was_text = false;
-            //         consec_text_nodes = [];
-            //     }
-            // }
-
             res.children = core.map(dom.getChildNodes(node), function(inner) {
                 if (dom.isTextNode(inner)) {
                     return {
@@ -113,7 +83,7 @@ define([
                 }
             });
         }
-        if (node == root) {
+        if (node == root || !node.parentNode) {
             res.position = null;
         } else {
             res.position = {

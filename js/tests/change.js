@@ -1,4 +1,4 @@
-define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
+define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, core, dom, data, utils) {
     module("change (js/change.js)");
 
     var delta1, delta2, document_id, session_id;
@@ -39,6 +39,44 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
             children: delta.children.slice()
         };
     };
+
+    asyncTest("changes - adding child nodes", function() {
+        expect(6);
+        var root = utils.randomElement();
+
+        var new_node = document.createElement('div');
+        new_node.setAttribute('foo', 'bar');
+        dom.set_node_id(new_node, 'test');
+        var change_count = 0;
+        change.changes(root, 'document_id', function(delta) {
+            switch(change_count) {
+                case 0:
+                    deepEqual({'kind':'id', 'value':'test'}, delta.children[0]);
+                    break;
+                case 1:
+                    equal('test', delta.id);
+                    deepEqual({
+                        parent: '_root',
+                        index: 0
+                    }, delta.position);
+                    equal('div', delta.name);
+                    deepEqual([], delta.children);
+                    break;
+                case 2:
+                    deepEqual({
+                        parent: '_root',
+                        index: 1
+                    }, delta.position);
+                    start();
+                    break;
+            }
+            change_count++;
+        });
+
+        root.insertBefore(new_node, root.firstChild);
+
+    });
+
 
     test("serializeNode", function () {
         var node, root, serializeNode, document_id;

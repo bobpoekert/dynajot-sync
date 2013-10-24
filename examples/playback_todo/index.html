@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="main.css">
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-45018201-1', 'ec2-54-219-85-113.us-west-1.compute.amazonaws.com');
+          ga('send', 'pageview');
+
+        </script>
+    </head>
+    <body>
+        <div style="position:absolute; top:0; left:0; width: 100%; padding:10px; background:#83bf34;">
+            <span style="margin-left:10px; margin-top:5px; color: #fff; font-size:16px; line-height: 24px; text-shadow: 0 -1px 1px #4C9B48;">Share the URL above with a friend!</span>
+            <a href="http://www.dynajot.com"><img src="/examples/todo/power-dynajot.png" style="float:right; margin-right:30px;"></a>
+        </div>
+        <div style="margin-top: 60px;">
+            <div style="width: 540px; margin: 0 auto;">
+                <div id="slider"></div>
+            </div>
+        </div>
+        <div id="todoapp" style="margin-top: 180px;">
+            <h1>todos</h1>
+            <header id="header">
+                <h1>todos</h1>
+                <input id="new-todo" placeholder="What needs to be done?" autofocus="">
+            </header>
+            <section id="main" style="display: block;">
+                <label for="toggle-all">Mark all as complete</label>
+                <ul id="todo-list"><li>
+                    <div class="view">
+                        <input class="toggle" type="checkbox">
+                        <label>this the TodoMVC app made collaborative with Dynajot!</label>
+                        <button class="destroy"></button>
+                    </div>  
+                    <input class="edit" value="lol">
+                </li></ul>
+            </section>
+            <footer id="footer" style="display: block;">
+            <span id="todo-count"><strong id="t-count">1</strong> item left</span>
+            <ul id="filters">
+                <li>
+                    <a class="selected" href="#/" data-filter-name="all">All</a>
+                </li>
+                <li>
+                    <a href="#" data-filter-name="active">Active</a>
+                </li>
+                <li>
+                    <a href="#" data-filter-name="completed">Completed</a>
+                </li>
+            </ul>
+            <button id="clear-completed" class="hidden"></button>
+            
+        </footer>
+        </section>
+
+
+            <div id="templates">
+                <li class="todo-item">
+                    <input class="toggle" type="checkbox">
+                    <label>lol</label>
+                    <button class="destroy"></button>
+                </li>
+            </div>
+        </div>
+
+        <script src="jquery-1.10.2.min.js"></script>
+        <script src="main.js"></script>
+        <script src="/js/require.js"></script>
+        <script>
+            requirejs.config({
+                baseUrl: '/js'
+            });
+
+            requirejs(["playback"], function(playback) {
+                playback.init(document.getElementById('todoapp'));
+                setTimeout(playback.playAllDeltas, 100);
+            });
+        </script>
+
+
+
+
+
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <script>
+          $(function() {
+            $( "#slider" ).slider();
+          });
+        </script>
+    </body>
+</html>

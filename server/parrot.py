@@ -18,6 +18,7 @@ def random_id():
 document_connections = {}
 document_trees = {}
 document_counters = {}
+document_playback = {}
 
 class DocumentStateHandler(web.RequestHandler):
 
@@ -30,6 +31,15 @@ class DocumentStateHandler(web.RequestHandler):
             self.write(document_trees[document_id].to_html())
             #except KeyError:
             #    self.send_error(404)
+
+
+class GetDeltasHandler(web.RequestHandler):
+
+    def get(self, document_id):
+        if document_id:
+            self.write(document_playback)
+        else:
+            self.send_error(404)
 
 
 class TestDeltasHandler(websocket.WebSocketHandler):
@@ -65,6 +75,7 @@ class ParrotHandler(websocket.WebSocketHandler):
             while (not new_id) or (new_id in document_connections):
                 new_id = random_id()
             document = new_id
+            document_playback[document] = []
             self.write_message({'kind': 'document_id', 'value':document})
 
         if document in document_trees:
@@ -84,7 +95,6 @@ class ParrotHandler(websocket.WebSocketHandler):
             document_connections[document].add(self)
         else:
             document_connections[document] = set([self])
-
 
         self.document = document
 
@@ -122,6 +132,7 @@ class ParrotHandler(websocket.WebSocketHandler):
 
         message['global_timestamp'] = counter
 
+        document_playback[self.document].append({'kind':'message', 'value':message})
         for recipient in document_connections[self.document]:
             if recipient != self:
                 recipient.write_message({
@@ -139,6 +150,7 @@ class ParrotHandler(websocket.WebSocketHandler):
 app = web.Application([
     ('/doc/(.*)', ParrotHandler),
     ('/doc_state/(.*)', DocumentStateHandler),
+    ('/deltas/(.*)', GetDeltasHandler),
     ('/deltatest/(.*)', TestDeltasHandler),
     ('/(.*)', web.StaticFileHandler, {'path':relpath('..')})
 ], debug=True)

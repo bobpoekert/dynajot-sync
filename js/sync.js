@@ -7,6 +7,9 @@ define([
     var sync = {};
 
     sync.DEVELOP_MODE = false;
+    if (/localhost/.test(window.location.href)) {
+        sync.DEVELOP_MODE = true;
+    }
 
     sync.sync = function(node, options) {
         options = options || {};
@@ -18,7 +21,7 @@ define([
             document_id = frag;
         }
        
-        url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/'
+        url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/';
         if (sync.DEVELOP_MODE) {
             url_prefix = 'ws://localhost:5000/doc/';
         }
@@ -66,7 +69,7 @@ define([
             request('/nodes/'+node_id, function(response) {
                 if (response.kind == 'error' && response.value == 404) {
                     setTimeout(core.partial(getNodeFromServer, node_id, callback), 500);
-                }                
+                }
             });
         };
 

@@ -14,11 +14,9 @@
     </head>
     <body>
         <div style="position:absolute; top:0; left:0; width: 100%; padding:10px; background:#83bf34;">
-            <span style="margin-left:10px; margin-top:5px; color: #fff; font-size:16px; line-height: 24px; text-shadow: 0 -1px 1px #4C9B48;">Share the URL above with a friend!</span>
-            <a href="http://www.dynajot.com"><img src="/examples/todo/power-dynajot.png" style="float:right; margin-right:30px;"></a>
-        </div>
-        <div style="margin-top: 60px;">
-            <div style="width: 540px; margin: 0 auto;">
+            <a href="http://www.dynajot.com" style="float:right;"><img src="/examples/todo/power-dynajot.png" style="float:right; margin-right:30px;"></a>
+            <span style="margin-left:10px; margin-top:5px; float:left;"><a href="#" id="backlink" style="color: #fff; font-size:16px; line-height: 24px; text-shadow: 0 -1px 1px #4C9B48; text-decoration:none;">&laquo; Back to the App</a></span>
+            <div style="width: 520px; margin: 10px auto;">
                 <div id="slider"></div>
             </div>
         </div>
@@ -70,6 +68,9 @@
         <script src="jquery-1.10.2.min.js"></script>
         <script src="main.js"></script>
         <script src="/js/require.js"></script>
+        <script src="jquery-ui.js"></script>
+        <link rel="stylesheet" href="jquery-ui.css" />
+
         <script>
             requirejs.config({
                 baseUrl: '/js'
@@ -77,20 +78,13 @@
 
             requirejs(["playback"], function(playback) {
                 playback.init(document.getElementById('todoapp'));
-                setTimeout(playback.playAllDeltas, 100);
             });
-        </script>
 
-
-
-
-
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        <script>
-          $(function() {
-            $( "#slider" ).slider();
-          });
+            $(function() {
+                $("#slider").slider({
+                    range: "min"
+                });
+            });
         </script>
     </body>
 </html>

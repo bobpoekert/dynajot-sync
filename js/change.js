@@ -41,7 +41,7 @@ define([
     };
 
     change.serializeNode = function(root, node, document_id) {
-        if (!node) {
+        if (!node || (node != root && !node.parentNode)) {
             return {};
         }
         var res = {};

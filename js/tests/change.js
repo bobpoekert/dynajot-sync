@@ -43,6 +43,11 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
     asyncTest("changes - adding child nodes", function() {
         expect(6);
         var root = utils.randomElement();
+        root.appendChild(utils.randomElement());
+
+        dom.traverse(root, function(node) {
+            change.updateState(root, node, document_id);
+        });
 
         var new_node = document.createElement('div');
         new_node.setAttribute('foo', 'bar');
@@ -51,7 +56,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         change.changes(root, 'document_id', function(delta) {
             switch(change_count) {
                 case 0:
-                    deepEqual({'kind':'id', 'value':'test'}, delta.children[0]);
+                    deepEqual(delta.children[0], {'kind':'id', 'value':'test'});
                     break;
                 case 1:
                     equal('test', delta.id);
@@ -69,13 +74,30 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
                     }, delta.position);
                     start();
                     break;
+                default:
+                    if (change_count > root.children.length) {
+                        console.log(delta);
+                    }
             }
             change_count++;
         });
 
+        setTimeout(function() {
+            if (change_count < 3) {
+                start();
+            }
+        }, 1000);
+
         root.insertBefore(new_node, root.firstChild);
 
     });
+
+    /*asyncTest("changes - moving nodes", function() {
+
+        var root = utils.randomElement();
+
+        
+    });*/
 
 
     test("serializeNode", function () {

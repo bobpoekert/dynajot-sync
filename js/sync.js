@@ -20,7 +20,7 @@ define([
        
         url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/'
         if (sync.DEVELOP_MODE) {
-            url_prefix = 'ws://localhost:5000/doc/';
+            url_prefix = 'ws://'+window.location.host+'/doc/';
         }
         var document_timeline;
 
@@ -66,7 +66,9 @@ define([
             request('/nodes/'+node_id, function(response) {
                 if (response.kind == 'error' && response.value == 404) {
                     setTimeout(core.partial(getNodeFromServer, node_id, callback), 500);
-                }                
+                } else {
+                    callback(response);
+                }
             });
         };
 

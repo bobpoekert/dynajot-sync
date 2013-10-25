@@ -1,56 +1,9 @@
-define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_result_html"], function(enact, change, core, dom, action_log, action_result) {
+define(["enact", 'change', 'core', 'dom', "tests/action_log", "tests/action_result_html", 'tests/test_utils'], function(enact, change, core, dom, action_log, action_result, utils) {
     module("enact (tests/enact.js)");
 
     test("getNode", function () {
         ok(true);
     });
-
-    var randomChoice = function(lst) {
-        return lst[Math.floor(Math.random() * lst.length)];
-    };
-
-    var randomString = function() {
-        var res = [];
-        var cnt = Math.random() * 20;
-        for (var i=0; i < cnt; i++) {
-            res.push(String.fromCharCode(Math.floor(Math.random() * 26 + 65)));
-        }
-        return res.join('');
-    };
-
-    var randomDict = function() {
-        var res = {};
-        var cnt = Math.random() * 20;
-        for (var i=0; i < cnt; i++) {
-            res[randomString().toLowerCase()] = randomString();
-        }
-        return res;
-    };
-
-    var repeatRandom = function(v) {
-        var cnt = Math.floor(Math.random() * 20);
-        var res = [];
-        for (var i=0; i < cnt; i++) {
-            res.push(v());
-        }
-        return res;
-    };
-
-    var id_ctr = 0;
-    var newNode = function() {
-        return {
-            id: (id_ctr++).toString(),
-            children: repeatRandom(function() {
-                return {'kind':'text', 'value':randomString()};
-            }),
-            name: randomChoice(['div', 'input', 'span', 'button', 'pre', 'label']),
-            attrs: randomDict(),
-            position: {
-                parent: '_root',
-                index: id_ctr
-            }
-        };
-    };
 
     test("duplication", function() {
         var textDelta = function(text) {
@@ -76,7 +29,7 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
 
         var start_time = Date.now();
         while (Date.now() - start_time < 1000) {
-            var text = randomString();
+            var text = utils.randomString();
             second.innerHTML = second.innerHTML.replace(new RegExp('\<strong(.*?)\>.*?\</strong\>', 'g'), '<strong>'+text+'</strong>');
             //second.innerHTML = '<strong>'+text+'</strong>';
             var cont = change.serializeNode(root, second.firstChild);
@@ -100,14 +53,14 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
 
         var parent_index = 0;
         while (Date.now() - start_time < 5) {
-            var node = newNode();
+            var node = utils.newNode();
             applier(node);
             var domnode = enact.getNode(root, node.id);
             //ok(domnode);
             //equal(domnode.parentNode, root);
             //deepEqual(change.serializeNode(root, domnode), node);
 
-            var child_node = newNode();
+            var child_node = utils.newNode();
             child_node.position.parent = node.id;
             var actual_index = Math.floor(Math.random() * parent_index);
             child_node.position.index = actual_index;
@@ -121,17 +74,6 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
         }
     });
 
-   var newDomNode = function() {
-        var res = document.createElement(randomChoice(['div', 'span', 'label', 'input', 'li', 'pre']));
-        for (var i=Math.random() * 10; i > 0; i--) {
-            res.setAttribute(randomString().toLowerCase(), randomString());
-        }
-        for (i=Math.random() * 10; i > 0; i--) {
-            res.appendChild(document.createTextNode(randomString()));
-        }
-        return res;
-    };
-
     test("enact.insertChildNodeAt - stress", function () {
         var root = document.createElement('div');
         root.style.display = 'none';
@@ -140,8 +82,8 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
         var start_time = Date.now();
         var nodes = [root];
         while (Date.now() - start_time < 500) {
-            var node = newDomNode();
-            var parent = randomChoice(nodes);
+            var node = utils.newDomNode();
+            var parent = utils.randomChoice(nodes);
             var idx = Math.floor(Math.random() * dom.getChildNodes(parent).length);
             enact.insertChildNodeAt(parent, node, idx);
             equal(dom.nodeParentIndex(node)[1], idx);
@@ -168,14 +110,14 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
         var childlist = [];
         var looper = function() {
             var new_id = (id_ctr++).toString();
-            childlist.unshift({kind: 'text', value: randomString()});
+            childlist.unshift({kind: 'text', value: utils.randomString()});
             childlist.unshift({kind: 'id', value: new_id});
             var reference_delta = {
                 id: '_root',
                 name: 'div',
                 position: null,
                 children: childlist,
-                attrs: randomDict()
+                attrs: utils.randomDict()
             };
             var create_delta = {
                 id: new_id,
@@ -184,8 +126,8 @@ define(["enact",'change', 'core', 'dom', "tests/action_log", "tests/action_resul
                     parent: '_root',
                     index: 0
                 },
-                attrs: randomDict(),
-                children: [{kind: 'text', value: randomString()}]
+                attrs: utils.randomDict(),
+                children: [{kind: 'text', value: utils.randomString()}]
             };
             applier(reference_delta);
             

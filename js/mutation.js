@@ -22,16 +22,36 @@ define(['dom', 'core'], function(dom, core) {
         * Not checking before modifying the dom may result in infinite recursion!
         */
 
-        var inner_callback = core.uniqueDebounce(callback, interval);
+        var interval;
+        var observer;
+        var subtree_modified_callback;
+        var stopped = false;
+
+        var stop = function() {
+            if (stopped) return;
+            clearInterval(interval);
+            if (observer) {
+                observer.disconnect();
+            }
+            if (subtree_modified_callback) {
+                node.removeEventListener('DOMSubtreeModified', subtree_modified_callback);
+            }
+            stopped = true;
+        };
+        var inner_callback = core.uniqueDebounce(function(res) {
+            if (callback(res) === false) stop();   
+        }, interval);
 
         var outer_callback = function(target) {
+            if (stopped) return;
             if (!dom.isChildOf(target, node)) {
                 inner_callback(target);
             }
         };
 
         if (typeof(MutationObserver) !== 'undefined') {
-            var observer = new MutationObserver(function(changes) {
+            observer = new MutationObserver(function(changes) {
+                if (stopped) return;
                 for (var i=0; i < changes.length; i++) {
                     var change = changes[i];
                     dom.traverse(change.target, outer_callback);
@@ -44,14 +64,25 @@ define(['dom', 'core'], function(dom, core) {
                 'subtree':true
             });
         } else {
-            node.addEventListener('DOMSubtreeModified', function(evt) {
+            subtree_modified_callback = function(evt) {
+                if (stopped) return;
                 dom.traverse(evt.target || node, outer_callback);
-            });
+            };
+            node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
         }
 
-        setInterval(function() {
-            dom.traverse(node, callback);
-        }, 500);
+        var last_looper = Date.now();
+        var looper = function() {
+            if (stopped) {
+                return;
+            }
+            dom.traverse(node, outer_callback);
+            setTimeout(looper, (Date.now() - last_looper) * 2);
+            last_looper = Date.now();
+        };
+        setTimeout(looper, 100);
+
+        return {stop: stop};
     };
 
     return res;

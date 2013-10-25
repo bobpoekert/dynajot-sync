@@ -41,11 +41,7 @@ define([
     };
 
     change.serializeNode = function(root, node, document_id) {
-        if (!node) {
-            return {};
-        }
-        if (!node.parentNode) {
-            // node is not in the dom
+        if (!node || (node != root && !node.parentNode)) {
             return {};
         }
         var res = {};
@@ -73,32 +69,6 @@ define([
             }
             res.name = node.tagName.toLowerCase();
 
-            // var children = dom.getChildNodes(node);
-            // var prev_was_text = false;
-            // var is_text_node;
-            // var consec_text_nodes = [];
-
-            // * concat text nodes *
-            // for (var j=0; j < children.length; j++) {
-            //     cur_child = children[j];
-            //     is_text_node = dom.isTextNode(cur_child);
-            //     if (is_text_node) {
-            //         consec_text_nodes.push(cur_child);
-            //         prev_was_text = true;
-            //     } else {
-            //         if (prev_was_text && consec_text_nodes.length > 1) {
-            //             var new_text_node = document.createTextNode(core.map(consec_text_nodes, function (n) { return n.data; }).join(""));
-            //             core.each(consec_text_nodes, function(n) {
-            //                 node.removeChild(n);
-            //             });
-            //             node.insertBefore(new_text_node, cur_child);
-            //             console.log("concated text nodes");
-            //         }
-            //         prev_was_text = false;
-            //         consec_text_nodes = [];
-            //     }
-            // }
-
             res.children = core.map(dom.getChildNodes(node), function(inner) {
                 if (dom.isTextNode(inner)) {
                     return {
@@ -113,7 +83,7 @@ define([
                 }
             });
         }
-        if (node == root) {
+        if (node == root || !node.parentNode) {
             res.position = null;
         } else {
             res.position = {
@@ -303,6 +273,7 @@ define([
             return dom.assign_node_id(tree, node, document_id);
         };
         var watcher = function(node) {
+            var stopped = false;
             if (stop) return;
             if (dom.isTextNode(node)) {
                 node = node.parentNode;
@@ -312,25 +283,20 @@ define([
                 setTimeout(core.partial(watcher, node), 200);
                 return;
             }
-            var seen = !!data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
             var cur_state = change.serializeNode(tree, node, document_id);
             if (!core.truthiness(cur_state)) return;
             if (prev_state) {
-                /*var delta = change.delta(prev_state, cur_state);
-                if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
-                    delta_callback(cur_state);
-                }*/
-                if (!core.isEmpty(cur_state) && !core.isEqual(prev_state, cur_state)) {
-                    delta_callback(change.delta(prev_state, cur_state));
+                if (!core.isEqual(prev_state, cur_state)) {
+                    stopped = delta_callback(change.delta(prev_state, cur_state)) === false;
                 }
             } else {
-                delta_callback(cur_state);
+                stopped = delta_callback(cur_state) === false;
             }
             data.set(node, 'state', cur_state);
-            data.set(node, 'seen', true);
+            if (stopped) return false;
         };
-        mutation.onChange(tree, watcher, 200);
+        return mutation.onChange(tree, watcher, 200);
     };
 
     return change;

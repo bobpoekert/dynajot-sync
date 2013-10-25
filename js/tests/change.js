@@ -1,4 +1,4 @@
-define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
+define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, core, dom, data, utils) {
     module("change (js/change.js)");
 
     var delta1, delta2, document_id, session_id;
@@ -39,6 +39,115 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
             children: delta.children.slice()
         };
     };
+
+    var updateTreeState = function(root) {
+        dom.traverse(root, function(node) {
+            change.updateState(root, node, 'document_id');
+        });
+    };
+
+    asyncTest("changes - adding child nodes", function() {
+        expect(6);
+        var root = utils.randomElement();
+        root.appendChild(utils.randomElement());
+
+        updateTreeState(root);
+
+        var new_node = document.createElement('div');
+        new_node.setAttribute('foo', 'bar');
+        dom.set_node_id(new_node, 'test');
+        var change_count = 0;
+        change.changes(root, 'document_id', function(delta) {
+            switch(change_count) {
+                case 0:
+                    deepEqual(delta.children[0], {'kind':'id', 'value':'test'});
+                    break;
+                case 1:
+                    equal('test', delta.id);
+                    deepEqual({
+                        parent: '_root',
+                        index: 0
+                    }, delta.position);
+                    equal('div', delta.name);
+                    deepEqual([], delta.children);
+                    break;
+                case 2:
+                    deepEqual({
+                        parent: '_root',
+                        index: 1
+                    }, delta.position);
+                    start();
+                    break;
+                default:
+                    if (change_count > root.children.length) {
+                        console.log(delta);
+                    }
+            }
+            change_count++;
+        });
+
+        setTimeout(function() {
+            if (change_count < 3) {
+                start();
+            }
+        }, 1000);
+
+        root.insertBefore(new_node, root.firstChild);
+
+    });
+
+    var moveChildListTest =  function() {
+
+        var root = utils.randomElement();
+        root.appendChild(utils.randomElement());
+        var child = utils.randomElement();
+        var child_id = dom.assign_node_id(root, child, 'document_id');
+        root.appendChild(child);
+        expect(4 + root.children.length - 1);
+
+        updateTreeState(root);
+
+        var change_count = 0;
+        var finished = false;
+        var watcher = change.changes(root, 'document_id', function(delta) {
+            switch(change_count) {
+                case 0:
+                    equal('_root', delta.id);
+                    deepEqual({'kind':'id', 'value':child_id}, delta.children[0]);
+                    break;
+                case 1:
+                    equal(child_id, delta.id);
+                    deepEqual({
+                        parent: '_root',
+                        index: 0}, delta.position);
+                    break;
+                default:
+                    if (change_count <= root.children.length + 1) {
+                        equal(change_count - 1, delta.position.index);
+                    }
+                    if (change_count == root.children.length + 1 && !finished) {
+                        start();
+                        finished = true;
+                        console.log(root);
+                        return false;
+                    }
+            }
+            change_count++;
+        });
+        
+        root.removeChild(child);
+        dom.insertNodeAt(root, child, 0);
+
+        setTimeout(function() {
+            if (!finished) {
+                start();
+                finished = true;
+                watcher.stop();
+            }
+        }, 1000);
+
+    };
+    asyncTest("changes - moving nodes in child list", moveChildListTest);
 
     test("serializeNode", function () {
         var node, root, serializeNode, document_id;
@@ -394,6 +503,14 @@ define(["change", "core", "dom", "Data"], function(change, core, dom, data) {
         change_functions.push(function () {
             var child = document.createTextNode("more text");
             node.appendChild(child);
+        });
+        expected_deltas.push({
+            'attrs': {},
+            'children': [
+                {'kind':'id', 'value':'new_id'}],
+            'id':'_root',
+            'name':'div',
+            'position':null
         });
         expected_deltas.push({
           "attrs": {

@@ -77,7 +77,7 @@ define(['dom', 'core'], function(dom, core) {
                 return;
             }
             dom.traverse(node, outer_callback);
-            setTimeout(looper, (Date.now() - last_looper) * 2);
+            setTimeout(looper, Date.now() - last_looper);
             last_looper = Date.now();
         };
         setTimeout(looper, 100);

@@ -71,13 +71,16 @@ define(['dom', 'core'], function(dom, core) {
             node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
         }
 
-        interval = setInterval(function() {
+        var last_looper = Date.now();
+        var looper = function() {
             if (stopped) {
-                clearInterval(interval);
                 return;
             }
             dom.traverse(node, outer_callback);
-        }, 500);
+            setTimeout(looper, (Date.now() - last_looper) * 2);
+            last_looper = Date.now();
+        };
+        setTimeout(looper, 100);
 
         return {stop: stop};
     };

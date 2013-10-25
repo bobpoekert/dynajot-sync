@@ -147,11 +147,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         }, 1000);
 
     };
-
-    //for (var i=0; i < 100; i++) {
     asyncTest("changes - moving nodes in child list", moveChildListTest);
-    //}
-
 
     test("serializeNode", function () {
         var node, root, serializeNode, document_id;

@@ -155,9 +155,9 @@ define(["core"], function(core) {
         var test_data = [1, 2, 3, 4, 5, 5, 5, 5, 5];
         var debounced = core.uniqueDebounce(function(datum) {
             ok(true);
-        }); // default interval of 100ms
+        }, 100);
         core.each(test_data, debounced);
-        setTimeout(start, 101);
+        setTimeout(start, 201);
     });
 
     test("reTester", function() {

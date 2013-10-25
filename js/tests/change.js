@@ -112,29 +112,26 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         var watcher = change.changes(root, 'document_id', function(delta) {
             switch(change_count) {
                 case 0:
-                    equal('_root', delta.id);
-                    deepEqual({'kind':'id', 'value':child_id}, delta.children[0]);
+                    equal(delta.id, '_root', 'first delta is root');
+                    deepEqual(delta.children[0], {'kind':'id', 'value':child_id}, 'root has correct first child');
                     break;
                 case 1:
-                    equal(child_id, delta.id);
-                    deepEqual({
-                        parent: '_root',
-                        index: 0}, delta.position);
+                    equal(delta.id, child_id, 'second delta is target');
+                    deepEqual(delta.position, {parent: '_root', index: 0}, 'target has correct position');
                     break;
                 default:
                     if (change_count <= root.children.length + 1) {
-                        equal(change_count - 1, delta.position.index);
+                        equal(change_count - 1, delta.position.index, 'siblings of target are shifted over by one');
                     }
                     if (change_count == root.children.length + 1 && !finished) {
                         start();
                         finished = true;
-                        console.log(root);
                         return false;
                     }
             }
             change_count++;
         });
-        
+       
         root.removeChild(child);
         dom.insertNodeAt(root, child, 0);
 
@@ -148,6 +145,55 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
 
     };
     asyncTest("changes - moving nodes in child list", moveChildListTest);
+
+    asyncTest("changes - replacing node", function() {
+        var expected_updates = 100;
+        expect(expected_updates * 5);
+
+        var root = utils.randomElement();
+        var target = document.createElement('div');
+        var prev_target = null;
+        root.appendChild(target);
+
+        updateTreeState(root);
+        var finished = false;
+
+        var n_updates = 0;
+        var update = function() {
+            if (finished) return;
+            if (n_updates == expected_updates) {
+                finished = true;
+                start();
+            }
+            if (n_updates >= expected_updates) {
+                return;
+            }
+            var newnode = document.createElement('div');
+            root.replaceChild(newnode, target);
+            prev_target = target;
+            target = newnode;
+            n_updates++;
+        };
+
+        var first = true;
+        change.changes(root, 'document_id', function(delta) {
+            if (first) {
+                equal(delta.id, '_root');
+                equal(delta.children[delta.children.length-1].value,
+                     dom.get_node_id(target));
+                first = false;
+            } else {
+                equal(delta.id, dom.get_node_id(target));
+                equal(delta.position.parent, '_root');
+                equal(delta.position.index, root.childNodes.length-1);
+                update();
+                first = true;
+            }
+        });
+
+        update();
+
+    });
 
     test("serializeNode", function () {
         var node, root, serializeNode, document_id;

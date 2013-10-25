@@ -110,7 +110,7 @@ define([
 
 
     change.mergeDeltas = function(a, b) {
-        /* WARNING: b is assumed to be immutable */
+        b = core.clone(b);
         if (b.attrs) {
             if (!a.attrs) {
                 a.attrs = {};
@@ -261,12 +261,6 @@ define([
         data.set(node, 'dirty', false);
     };
 
-    var stop = false;
-
-    /*setTimeout(function() {
-        stop = true;
-    }, 5000);*/
-
     change.changes = function(tree, document_id, delta_callback) {
         /* @t DOMNode, String, (NodeDelta -> null) -> null */
         var node_id = function(node) {
@@ -274,7 +268,6 @@ define([
         };
         var watcher = function(node) {
             var stopped = false;
-            if (stop) return;
             if (dom.isTextNode(node)) {
                 node = node.parentNode;
             }

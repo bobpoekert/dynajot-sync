@@ -273,6 +273,7 @@ define([
             return dom.assign_node_id(tree, node, document_id);
         };
         var watcher = function(node) {
+            var stopped = false;
             if (stop) return;
             if (dom.isTextNode(node)) {
                 node = node.parentNode;
@@ -282,25 +283,20 @@ define([
                 setTimeout(core.partial(watcher, node), 200);
                 return;
             }
-            var seen = !!data.get(node, 'seen');
             var prev_state = data.get(node, 'state');
             var cur_state = change.serializeNode(tree, node, document_id);
             if (!core.truthiness(cur_state)) return;
             if (prev_state) {
-                /*var delta = change.delta(prev_state, cur_state);
-                if (core.truthiness(delta) && !core.hasOnlyKeys(delta, ['name', 'id'])) {
-                    delta_callback(cur_state);
-                }*/
                 if (!core.isEmpty(cur_state) && !core.isEqual(prev_state, cur_state)) {
-                    delta_callback(change.delta(prev_state, cur_state));
+                    stopped = delta_callback(change.delta(prev_state, cur_state)) === false;
                 }
             } else {
-                delta_callback(cur_state);
+                stopped = delta_callback(cur_state) === false;
             }
             data.set(node, 'state', cur_state);
-            data.set(node, 'seen', true);
+            if (stopped) return false;
         };
-        mutation.onChange(tree, watcher, 200);
+        return mutation.onChange(tree, watcher, 200);
     };
 
     return change;

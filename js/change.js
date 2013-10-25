@@ -287,7 +287,7 @@ define([
             var cur_state = change.serializeNode(tree, node, document_id);
             if (!core.truthiness(cur_state)) return;
             if (prev_state) {
-                if (!core.isEmpty(cur_state) && !core.isEqual(prev_state, cur_state)) {
+                if (!core.isEqual(prev_state, cur_state)) {
                     stopped = delta_callback(change.delta(prev_state, cur_state)) === false;
                 }
             } else {

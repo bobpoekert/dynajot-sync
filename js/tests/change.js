@@ -99,6 +99,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
     var moveChildListTest =  function() {
 
         var root = utils.randomElement();
+        root.appendChild(utils.randomElement());
         var child = utils.randomElement();
         var child_id = dom.assign_node_id(root, child, 'document_id');
         root.appendChild(child);
@@ -127,16 +128,15 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
                     if (change_count == root.children.length + 1 && !finished) {
                         start();
                         finished = true;
+                        console.log(root);
                         return false;
                     }
             }
             change_count++;
         });
         
-        setTimeout(function() {
-            root.removeChild(child);
-            dom.insertNodeAt(root, child, 0);
-        }, 100);
+        root.removeChild(child);
+        dom.insertNodeAt(root, child, 0);
 
         setTimeout(function() {
             if (!finished) {
@@ -148,9 +148,9 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
 
     };
 
-    for (var i=0; i < 100; i++) {
-        asyncTest("changes - moving nodes in child list", moveChildListTest);
-    }
+    //for (var i=0; i < 100; i++) {
+    asyncTest("changes - moving nodes in child list", moveChildListTest);
+    //}
 
 
     test("serializeNode", function () {

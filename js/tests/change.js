@@ -454,8 +454,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         ok(!data.get(node, 'dirty'));
     });
 
-
-    asyncTest("changes", function () {
+    /*asyncTest("changes", function () {
         var expected_deltas = [];
 
         var root = document.createElement("div");
@@ -552,6 +551,6 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         });
 
         expect(expected_deltas.length);
-    });
+    });*/
 
 });

@@ -40,18 +40,12 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         };
     };
 
-    var updateTreeState = function(root) {
-        dom.traverse(root, function(node) {
-            change.updateState(root, node, 'document_id');
-        });
-    };
-
     asyncTest("changes - adding child nodes", function() {
         expect(6);
         var root = utils.randomElement();
         root.appendChild(utils.randomElement());
 
-        updateTreeState(root);
+        utils.updateTreeState(root);
 
         var new_node = document.createElement('div');
         new_node.setAttribute('foo', 'bar');
@@ -105,7 +99,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         root.appendChild(child);
         expect(4 + root.children.length - 1);
 
-        updateTreeState(root);
+        utils.updateTreeState(root);
 
         var change_count = 0;
         var finished = false;
@@ -155,7 +149,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         var prev_target = null;
         root.appendChild(target);
 
-        updateTreeState(root);
+        utils.updateTreeState(root);
         var finished = false;
 
         var n_updates = 0;
@@ -271,7 +265,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
             }
         };
 
-        var returned_state = change.updateState(root, node);
+        var returned_state = change.updateState(root, node, 'document_id');
 
         deepEqual(returned_state, expected_result);
         deepEqual(data.get(node, 'state'), expected_result);
@@ -484,7 +478,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         var node = document.createElement("div");
         var root = document.createElement("div");
         root.appendChild(node);
-        change.nodeTransaction(root, node, function () {
+        change.nodeTransaction(root, node, 'document_id', function () {
             equal(data.get(node, 'dirty'), true);
         });
         ok(!data.get(node, 'dirty'));
@@ -494,7 +488,7 @@ define(["change", "core", "dom", "Data", "tests/test_utils"], function(change, c
         var node = document.createElement("div");
         var root = document.createElement("div");
         root.appendChild(node);
-        change.nodeTransactions(root, [node], function () {
+        change.nodeTransactions(root, [node], 'document_id', function () {
             equal(data.get(node, 'dirty'), true);
         });
         ok(!data.get(node, 'dirty'));

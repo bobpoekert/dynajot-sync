@@ -66,7 +66,7 @@ define(['dom', 'core'], function(dom, core) {
         } else {
             subtree_modified_callback = function(evt) {
                 if (stopped) return;
-                dom.traverse(node, outer_callback);
+                dom.traverse(evt.target || node, outer_callback);
             };
             //node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
         }

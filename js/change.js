@@ -237,19 +237,19 @@ define([
         return res;
     };
 
-    change.nodeTransactions = function(root, nodes, fn) {
+    change.nodeTransactions = function(root, nodes, document_id, fn) {
         /* @t DOMNode, [DOMNode, ...] (() -> null) -> null */
         core.each(nodes, function(node) {
             data.set(node, 'dirty', true);
         });
         fn();
         core.each(nodes, function(node) {
-            change.updateState(root, node);
+            change.updateState(root, node, document_id);
             data.set(node, 'dirty', false);
         });
     };
 
-    change.nodeTransaction = function(root, node, fn) {
+    change.nodeTransaction = function(root, node, document_id, fn) {
         /* @t DOMNode, DOMNode, (NodeState, DOMNode -> NodeState/null) -> null */
         if (!node.parentNode) { // node not in dom yet
             fn({}, node);
@@ -257,7 +257,7 @@ define([
         }
         data.set(node, 'dirty', true);
         fn(data.get(node, 'state'), node);
-        change.updateState(root, node);
+        change.updateState(root, node, document_id);
         data.set(node, 'dirty', false);
     };
 

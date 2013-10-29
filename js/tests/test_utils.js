@@ -1,9 +1,15 @@
-define(["dom"], function(dom) {
+define(["dom", "change"], function(dom, change) {
 
     var utils = {};
 
     utils.randomChoice = function(lst) {
         return lst[Math.floor(Math.random() * lst.length)];
+    };
+
+    utils.updateTreeState = function(root, document_id) {
+        dom.traverse(root, function(node) {
+            change.updateState(root, node, document_id || 'document_id');
+        });
     };
 
     utils.randomString = function() {

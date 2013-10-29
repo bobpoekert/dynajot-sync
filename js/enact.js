@@ -61,7 +61,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
         }
     };
 
-    enact.appliesDeltas = function(root, getNodeFromServer) {
+    enact.appliesDeltas = function(root, document_id, getNodeFromServer) {
         var applyDelta;
 
         var node_queues = {};
@@ -113,7 +113,7 @@ define(["core", "dom", "change", "Data", "schema"], function(core, dom, change, 
                 if (parent) {
                     nodes.push(parent);
                 }
-                change.nodeTransactions(root, nodes, function() {
+                change.nodeTransactions(root, nodes, document_id, function() {
                     if (existing_node) {
                         core.cl('existing');
                         if (parent && parent != root) {

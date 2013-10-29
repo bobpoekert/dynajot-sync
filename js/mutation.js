@@ -68,7 +68,7 @@ define(['dom', 'core'], function(dom, core) {
                 if (stopped) return;
                 dom.traverse(evt.target || node, outer_callback);
             };
-            node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
+            //node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
         }
 
         var last_looper = Date.now();

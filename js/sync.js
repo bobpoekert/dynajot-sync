@@ -7,20 +7,29 @@ define([
     var sync = {};
 
     sync.DEVELOP_MODE = false;
+    if (/localhost/.test(window.location.href)) {
+        sync.DEVELOP_MODE = true;
+    }
 
     sync.sync = function(node, options) {
         options = options || {};
 
         var document_id = options.document_id;
+        var id_callback = options.onDocumentId;
 
         var frag = window.location.hash.slice(1).trim();
         if (!document_id && core.truthiness(frag)) {
             document_id = frag;
         }
-       
-        url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/'
-        if (sync.DEVELOP_MODE) {
-            url_prefix = 'ws://'+window.location.host+'/doc/';
+     
+        var url_prefix;
+        if (sync.url_prefix) {
+            url_prefix = sync.url_prefix;
+        } else {
+            url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/';
+            if (sync.DEVELOP_MODE) {
+                url_prefix = 'ws://'+window.location.host+'/doc/';
+            }
         }
         var document_timeline;
 
@@ -102,8 +111,8 @@ define([
             if (message.global_timestamp) {
                 ids.global_timestamp(document_id, message.global_timestamp);
             }
-            if (typeof(prev_id) === 'function') {
-                prev_id(document_id);
+            if (typeof(id_callback) === 'function') {
+                id_callback(document_id);
             } else {
                 window.location.hash = document_id;
             }
@@ -161,9 +170,8 @@ define([
                 }).join('-');
             };
 
-            var applier = enact.appliesDeltas(node, getNodeFromServer);
+            var applier = enact.appliesDeltas(node, document_id, getNodeFromServer);
             inner_manifold.delta.addReader(function(message) {
-                //// console.log('got_delta', message);
                 var id_string = serializeMessageId(message.message_id);
                 if (seen_message_ids[id_string]) {
                     return;
@@ -171,6 +179,9 @@ define([
                 seen_message_ids[id_string] = true;
                 var changeset = document_timeline.changeset(message);
                 core.each(changeset, applier);
+                if (options.onDelta) {
+                    core.each(changeset, options.onDelta);
+                }
             });
 
 
@@ -183,6 +194,8 @@ define([
                 document_timeline.addDelta(delta);
                 conn.send({'kind':'delta', 'value':delta});
             });
+
+            if (typeof(options.onConnect) == 'function') options.onConnect();
         }));
     };
 

@@ -388,10 +388,10 @@ define(["underscore"], function(underscore) {
 
         return function(arg) {
             if (!locked) {
-                fn(arg);
                 locked = true;
                 setTimeout(debounceUnlock, interval);
-            } else if (!core.contains(arg_set, arg)) {
+            }
+            if (!core.contains(arg_set, arg)) {
                 arg_set.push(arg);
             }
         };

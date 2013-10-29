@@ -31,7 +31,37 @@ define([
                 url_prefix = 'ws://'+window.location.host+'/doc/';
             }
         }
-        var document_timeline;
+        var document_timeline = timeline.make(document_id);
+        
+        var output_pipe = core.pipe();
+        output_pipe.setLocked(true);
+        
+        var seen_message_ids = {};
+        var serializeMessageId = function(message_id) {
+            return core.map(message_id, function(e) {
+                return e.toString();
+            }).join('-');
+        };
+
+        var writeDelta = function(d) {
+            if (core.isEmpty(d)) return;
+            var delta = core.clone(d);
+            delta.message_id = ids.message_id(document_id);
+            seen_message_ids[serializeMessageId(delta.message_id)] = true;
+            document_timeline.addDelta(delta);
+            output_pipe.write(delta);
+        };
+       
+        // put current state in the buffer (in case we need it later)
+        dom.traverse(node, function(c) {
+            if (dom.isTextNode(c)) return;
+            var ser = change.serializeNode(node, c, document_id);
+            writeDelta(ser);
+        });
+
+        // start tracking changes
+        // (the pipe is still locked, so they queue for now)
+        change.changes(node, document_id, writeDelta);
 
         var conn = socket.connect(function() {
             if (document_id) {
@@ -39,6 +69,9 @@ define([
             } else {
                 return url_prefix;
             }
+        });
+        output_pipe.addReader(function(delta) {
+            conn.send({'kind':'delta', 'value':delta});
         });
 
         var outer_manifold = {
@@ -124,51 +157,40 @@ define([
         }
 
         outer_manifold.document_state.addReader(core.once(function(message) {
-            // console.log(message);
-            document_timeline = timeline.make(document_id);
-            if (message) {
+            //console.log(message);
+            if (message !== false) {
+                // document already exists, replace current browser state
                 var target = document.createElement('div');
                 target.innerHTML = message;
                 var new_root = target.firstChild;
-                dom.removeAllChildren(node);
-                while(true) {
-                    var new_node = new_root.firstChild;
-                    if (!new_node) break;
-                    new_root.removeChild(new_node);
-                    node.appendChild(new_node);
+                if (new_root) {
+                    dom.removeAllChildren(node);
+                    while(true) {
+                        var new_node = new_root.firstChild;
+                        if (!new_node) break;
+                        new_root.removeChild(new_node);
+                        node.appendChild(new_node);
+                    }
+                    dom.removeAllAttributes(node);
+                    dom.iterAttributes(new_root, function(k, v) {
+                        node.setAttribute(k, v);
+                    });
+                    dom.traverse(node, function(new_node) {
+                        var attr = new_node.getAttribute('data-dynajot-id');
+                        if (!attr) return;
+                        dom.set_node_id(new_node, attr);
+                        new_node.removeAttribute('data-id');
+                        change.updateState(node, new_node, document_id);
+                        data.set(new_node, 'seen', true);
+                    });
                 }
-                dom.removeAllAttributes(node);
-                dom.iterAttributes(new_root, function(k, v) {
-                    node.setAttribute(k, v);
-                });
-                dom.traverse(node, function(new_node) {
-                    var attr = new_node.getAttribute('data-id');
-                    if (!attr) return;
-                    dom.set_node_id(new_node, attr);
-                    new_node.removeAttribute('data-id');
-                    change.updateState(node, new_node, document_id);
-                    data.set(new_node, 'seen', true);
-                });
-            } else {
-                dom.traverse(node, function(c) {
-                    if (dom.isTextNode(c)) return;
-                    var ser = change.serializeNode(node, c, document_id);
-                    document_timeline.addDelta(ser);
-                    conn.send({'kind':'delta', 'value': ser});
-                });
+                // do not send old browser state to new document
+                core.clear(output_pipe.buffer);
             }
 
             dom.traverse(node, function(child) {
                 change.updateState(node, child, document_id);
             });
-
-            var seen_message_ids = {};
-
-            var serializeMessageId = function(message_id) {
-                return core.map(message_id, function(e) {
-                    return e.toString();
-                }).join('-');
-            };
 
             var applier = enact.appliesDeltas(node, document_id, getNodeFromServer);
             inner_manifold.delta.addReader(function(message) {
@@ -184,16 +206,7 @@ define([
                 }
             });
 
-
-            change.changes(node, document_id, function(delta) {
-                // console.log('delta', delta);
-                if (core.isEmpty(delta)) return;
-                delta = core.clone(delta);
-                delta.message_id = ids.message_id(document_id);
-                seen_message_ids[serializeMessageId(delta.message_id)] = true;
-                document_timeline.addDelta(delta);
-                conn.send({'kind':'delta', 'value':delta});
-            });
+            output_pipe.setLocked(false);
 
             if (typeof(options.onConnect) == 'function') options.onConnect();
         }));

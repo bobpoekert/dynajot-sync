@@ -23,10 +23,10 @@ define(["underscore"], function(underscore) {
 
     core.inherit = inherit;
 
-    var debug = false;
+    core.debug = false;
 
     core.cl = function () {
-        if (debug) {
+        if (core.debug) {
             switch(arguments.length) {
                 case 0:
                     console.log();
@@ -45,7 +45,7 @@ define(["underscore"], function(underscore) {
     };
 
     core.ct = function () {
-        if (debug) console.trace();
+        if (core.debug) console.trace();
     };
 
     core.isWindow = function(obj) {
@@ -159,6 +159,10 @@ define(["underscore"], function(underscore) {
         return function(o) {
             return o[k];
         };
+    };
+
+    core.clear = function(arr) {
+        while(arr.length > 0) arr.shift();
     };
 
     core.unsplat = function(arg_count, fn) {
@@ -339,13 +343,34 @@ define(["underscore"], function(underscore) {
 
         var buffer = [];
         var callbacks = [];
+        var locked = false;
+
+        var fireCallbacks = function(el) {
+            for (var i=0; i < callbacks.length; i++) {
+                var cb = callbacks[i];
+                if (cb) {
+                    cb(el);
+                }
+            }
+        };
 
         return {
+            setLocked: function(val) {
+                var prev = locked;
+                locked = val;
+                if (val && !prev && core.some(callbacks)) {
+                    while(buffer.length > 0) {
+                        fireCallbacks(buffer.shift());
+                    }
+                }
+            },
             addReader: function(fn) {
                 var idx = callbacks.length;
                 callbacks.push(fn);
-                while(buffer.length > 0) {
-                    fn(buffer.shift());
+                if (!locked) {
+                    while(buffer.length > 0) {
+                        fn(buffer.shift());
+                    }
                 }
                 return idx;
             },
@@ -354,13 +379,8 @@ define(["underscore"], function(underscore) {
                 callbacks[idx] = null;
             },
             write: function(datum) {
-                if (core.some(callbacks)) {
-                    for (var i=0; i < callbacks.length; i++) {
-                        var cb = callbacks[i];
-                        if (cb) {
-                            cb(datum);
-                        }
-                    }
+               if (!locked && core.some(callbacks)) {
+                    fireCallbacks(datum);
                 } else {
                     buffer.push(datum);
                 }

@@ -20,9 +20,14 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
         });
         return source_node;
     };
+
+    /*var connect = function(source_node, document_id, applied_delta, on_connect) {
+        change.changes(source_node, document_id, applied_delta);
+        on_connect();
+    };*/
     
     asyncTest("changes - replacing node", function() {
-        var expected_updates = 100;
+        var expected_updates = 10;
         expect(expected_updates * 5);
 
         var document_id = Math.floor(Math.random() * 1000000).toString();
@@ -57,7 +62,7 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
                 finished = true;
                 start();
             }
-        }, 5000);
+        }, 10000);
 
         var first = true;
         connect(root, document_id, function(delta) {

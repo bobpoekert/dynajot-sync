@@ -6,21 +6,6 @@ unclosed_tags = frozenset([
     'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen',
     'link', 'meta', 'param', 'source', 'trace', 'wbr'])
 
-def recursive(fn):
-
-    @wraps(fn)
-    def res(*args):
-        stack = [args]
-        def recur(*args):
-            stack.append(args)
-        retval = None
-        while stack:
-            retval = fn(recur, *stack.pop())
-        return retval
-
-    return res
-
-#@recursive
 def token_list(nodes, node, res=None, seen=None):
     if res is None:
         res = []
@@ -42,7 +27,7 @@ def token_list(nodes, node, res=None, seen=None):
             res.append(k.replace('=', ''))
             res.append('=')
             res.append(quoteattr(v))
-        res.append(' data-id="')
+        res.append(' data-dynajot-id="')
         res.append(node.id)
         res.append('">')
         if node.name not in unclosed_tags:

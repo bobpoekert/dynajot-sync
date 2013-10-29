@@ -6,13 +6,14 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
     sync.DEVELOP_MODE = true;
     sync.url_prefix = 'ws://localhost:5000/doc/';
 
-    var connect = function(source_node, applied_delta, on_connect) {
+    var connect = function(source_node, document_id, applied_delta, on_connect) {
         var target_node = document.createElement('div');
         sync.sync(source_node, {
-            onDocumentId: function(id) {
+            document_id: document_id,
+            onConnect: function() {
                 sync.sync(target_node, {
-                    document_id: id,
-                    onConnect: core.partial(on_connect, id),
+                    document_id: document_id,
+                    onConnect: core.partial(on_connect, document_id),
                     onDelta: applied_delta
                 });
             }
@@ -24,11 +25,14 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
         var expected_updates = 100;
         expect(expected_updates * 5);
 
-        var root = utils.randomElement();
+        var document_id = Math.floor(Math.random() * 1000000).toString();
+
+        var root = document.createElement('div');
         var target = document.createElement('div');
         var prev_target = null;
         root.appendChild(target);
 
+        utils.updateTreeState(root, document_id);
         var finished = false;
 
         var n_updates = 0;
@@ -53,10 +57,10 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
                 finished = true;
                 start();
             }
-        }, 2000);
+        }, 5000);
 
         var first = true;
-        connect(root, function(delta) {
+        connect(root, document_id, function(delta) {
             if (first) {
                 equal(delta.id, '_root');
                 equal(delta.children[delta.children.length-1].value,
@@ -69,11 +73,7 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
                 update();
                 first = true;
             }
-        }, function(id) {
-            utils.updateTreeState(root, id);
-            update();
-        });
-
+        }, update);
     });
 
 });

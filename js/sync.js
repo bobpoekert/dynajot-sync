@@ -172,7 +172,6 @@ define([
 
             var applier = enact.appliesDeltas(node, document_id, getNodeFromServer);
             inner_manifold.delta.addReader(function(message) {
-                //// console.log('got_delta', message);
                 var id_string = serializeMessageId(message.message_id);
                 if (seen_message_ids[id_string]) {
                     return;

@@ -417,6 +417,21 @@ define(["underscore"], function(underscore) {
         };
     };
 
+    core.awaiter = function(timeout, fn) {
+        // returns a function that returns functions
+        // that call fn when called, or after timeout, whichever comes first
+        return function() {
+            var fired = false;
+            var fire = function() {
+                if (fired) return;
+                fn.apply(this, arguments);
+                fired = true;
+            };
+            setTimeout(timeout, fire);
+            return fire;
+        };
+    };
+
     core.reTester = function(re) {
         /* @t RegExp -> (String -> Boolean) */
         return function(item) {
@@ -506,22 +521,49 @@ define(["underscore"], function(underscore) {
         return [res, offsets];
     };
 
+    core.withErrback = function(fn, errback) {
+        return function() {
+            var e;
+            try {
+                return fn.apply(this, arguments);
+            } catch(e) {
+                return errback.apply(e, arguments);
+            }
+        };
+    };
+
+    core.logError = function(context, exception, arguments) {
+        if (console) {
+            console.error(context, exception, arguments);
+        } 
+        // TODO: Set up a server to aggregate prod errors (socorro?)
+    };
+
     core.logsErrors = function(fn) {
         /* @t (?A, ?_... -> ?B) -> (?A, ?_... -> ?B) */
-        return fn;
-        if (console) {
-            return function() {
-                var e;
-                try {
-                    return fn.apply(this, arguments);
-                } catch(e) {
-                    console.error(e);
-                    throw e;
-                }
-            };
-        } else {
-            return fn;
+        return function() {
+            var e;
+            try {
+                return fn.apply(this, arguments);
+            } catch(e) {
+                core.logError(this, e, arguments);
+            }
+        };
+    };
+
+    core.errorizeParams = function(params) {
+        var res = {};
+        var v;
+        for (var k in params) {
+            if (!params.hasOwnProperty(k)) continue;
+            v = params[k];
+            if (typeof(v) == 'function') {
+                res[k] = core.logsErrors(v);
+            } else {
+                res[k] = v;
+            }
         }
+        return res;
     };
 
     core.throttle = function(func, wait, options) {

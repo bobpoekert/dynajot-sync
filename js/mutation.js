@@ -49,12 +49,22 @@ define(['dom', 'core'], function(dom, core) {
             }
         };
 
+        var walk = function(inp) {
+            var cur;
+            if (inp == node || !inp.parentNode) {
+                cur = inp;
+            } else {
+                cur = inp.parentNode;
+            }
+            dom.traverse(cur, outer_callback);
+        };
+
         if (typeof(MutationObserver) !== 'undefined') {
             observer = new MutationObserver(function(changes) {
                 if (stopped) return;
                 for (var i=0; i < changes.length; i++) {
                     var change = changes[i];
-                    dom.traverse(change.target, outer_callback);
+                    walk(change.target);
                 }
             });
             observer.observe(node, {
@@ -66,7 +76,7 @@ define(['dom', 'core'], function(dom, core) {
         } else {
             subtree_modified_callback = function(evt) {
                 if (stopped) return;
-                dom.traverse(evt.target || node, outer_callback);
+                walk(evt.target || node);
             };
             //node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
         }

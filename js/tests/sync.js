@@ -8,13 +8,18 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
 
     var connect = function(source_node, document_id, applied_delta, on_connect) {
         var target_node = document.createElement('div');
+        var message_ids = [];
+        var messages_received = 0;
         sync.sync(source_node, {
             document_id: document_id,
+            onChange: function(d) { message_ids.push(d.message_id);},
             onConnect: function() {
                 sync.sync(target_node, {
                     document_id: document_id,
                     onConnect: core.partial(on_connect, document_id),
-                    onDelta: applied_delta
+                    onDelta: function(d) {
+                        applied_delta(d, message_ids[messages_received++]);
+                    }
                 });
             }
         });
@@ -28,7 +33,7 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
     
     asyncTest("changes - replacing node", function() {
         var expected_updates = 10;
-        expect(expected_updates * 5);
+        expect(expected_updates * 7);
 
         var document_id = Math.floor(Math.random() * 1000000).toString();
 
@@ -65,20 +70,23 @@ define(["core", "sync", 'change', 'tests/test_utils', 'dom'],
         }, 10000);
 
         var first = true;
-        connect(root, document_id, function(delta) {
+        connect(root, document_id, function(delta, last_message_id) {
+            deepEqual(delta.message_id, last_message_id, 'message id is as expected');
             if (first) {
-                equal(delta.id, '_root');
+                equal(delta.id, '_root', 'first message is root change');
                 equal(delta.children[delta.children.length-1].value,
-                     dom.get_node_id(target));
+                     dom.get_node_id(target),
+                     'first message contains change in child list');
                 first = false;
             } else {
-                equal(delta.id, dom.get_node_id(target));
-                equal(delta.position.parent, '_root');
-                equal(delta.position.index, root.childNodes.length-1);
+                equal(delta.id, dom.get_node_id(target), 'second message is new node');
+                equal(delta.position.parent, '_root', 'new node parent is root');
+                equal(delta.position.index, Math.max(0, root.childNodes.length-1),
+                     'new node is at end');
                 update();
                 first = true;
             }
-        }, update);
+        }, core.once(update));
     });
 
 });

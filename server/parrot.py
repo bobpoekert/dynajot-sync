@@ -109,12 +109,12 @@ class ParrotHandler(websocket.WebSocketHandler):
 
     def on_message(self, blob):
         message = json.loads(blob)
-        print message
         counter = document_counters.get(self.document, 0)
         document_counters[self.document] = counter + 1
 
         if message["kind"] == "delta":
             document_trees[self.document].apply_delta(message["value"])
+            print message['value'].get('message_id') or message['value']
 
         if message['kind'] == 'request':
             self.process_request(message['value'])

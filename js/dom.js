@@ -66,6 +66,7 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     dom.iterAttributes = function(node, iterator) {
         for (var i=0; i < node.attributes.length; i++) {
             var attr = node.attributes[i];
+            if (i.name === undefined || i.value === undefined) continue;
             iterator(i.name, i.value);
         }
     };

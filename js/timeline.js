@@ -6,6 +6,7 @@ define(["ids", "core", "change"], function(ids, core, change) {
     timeline.make = function(document_id) {
 
         var sequence = [];
+        var last_message_id;
 
         var instance = {};
         instance._locals = {};
@@ -14,6 +15,10 @@ define(["ids", "core", "change"], function(ids, core, change) {
         var compareDeltas = function(a, b) {
             var am = a.message_id;
             var bm = b.message_id;
+            return compareIds(am, bm);
+        };
+
+        var compareIds = function(am, bm) {
             if (am[1] != bm[1]) {
                 return am[1] - bm[1]; // global timestamps
             }
@@ -77,7 +82,13 @@ define(["ids", "core", "change"], function(ids, core, change) {
             }
             var idx = insertionPoint(delta);
             sequence.splice(idx, 0, delta);
-            return sequence.slice(idx);
+            if (last_message_id && compareIds(last_message_id, delta.message_id) > 0) {
+                last_message_id = delta.message_id;
+                return [];
+            } else {
+                last_message_id = delta.message_id;
+                return sequence.slice(idx);
+            }
         };
 
         instance.changeset = function(delta) {

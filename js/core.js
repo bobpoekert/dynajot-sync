@@ -23,10 +23,10 @@ define(["underscore"], function(underscore) {
 
     core.inherit = inherit;
 
-    var debug = false;
+    core.debug = false;
 
     core.cl = function () {
-        if (debug) {
+        if (core.debug) {
             switch(arguments.length) {
                 case 0:
                     console.log();
@@ -45,7 +45,7 @@ define(["underscore"], function(underscore) {
     };
 
     core.ct = function () {
-        if (debug) console.trace();
+        if (core.debug) console.trace();
     };
 
     core.isWindow = function(obj) {
@@ -159,6 +159,10 @@ define(["underscore"], function(underscore) {
         return function(o) {
             return o[k];
         };
+    };
+
+    core.clear = function(arr) {
+        while(arr.length > 0) arr.shift();
     };
 
     core.unsplat = function(arg_count, fn) {
@@ -339,13 +343,34 @@ define(["underscore"], function(underscore) {
 
         var buffer = [];
         var callbacks = [];
+        var locked = false;
+
+        var fireCallbacks = function(el) {
+            for (var i=0; i < callbacks.length; i++) {
+                var cb = callbacks[i];
+                if (cb) {
+                    cb(el);
+                }
+            }
+        };
 
         return {
+            setLocked: function(val) {
+                var prev = locked;
+                locked = val;
+                if (val && !prev && core.some(callbacks)) {
+                    while(buffer.length > 0) {
+                        fireCallbacks(buffer.shift());
+                    }
+                }
+            },
             addReader: function(fn) {
                 var idx = callbacks.length;
                 callbacks.push(fn);
-                while(buffer.length > 0) {
-                    fn(buffer.shift());
+                if (!locked) {
+                    while(buffer.length > 0) {
+                        fn(buffer.shift());
+                    }
                 }
                 return idx;
             },
@@ -354,13 +379,8 @@ define(["underscore"], function(underscore) {
                 callbacks[idx] = null;
             },
             write: function(datum) {
-                if (core.some(callbacks)) {
-                    for (var i=0; i < callbacks.length; i++) {
-                        var cb = callbacks[i];
-                        if (cb) {
-                            cb(datum);
-                        }
-                    }
+               if (!locked && core.some(callbacks)) {
+                    fireCallbacks(datum);
                 } else {
                     buffer.push(datum);
                 }
@@ -394,6 +414,21 @@ define(["underscore"], function(underscore) {
             if (!core.contains(arg_set, arg)) {
                 arg_set.push(arg);
             }
+        };
+    };
+
+    core.awaiter = function(timeout, fn) {
+        // returns a function that returns functions
+        // that call fn when called, or after timeout, whichever comes first
+        return function() {
+            var fired = false;
+            var fire = function() {
+                if (fired) return;
+                fn.apply(this, arguments);
+                fired = true;
+            };
+            setTimeout(timeout, fire);
+            return fire;
         };
     };
 
@@ -486,22 +521,49 @@ define(["underscore"], function(underscore) {
         return [res, offsets];
     };
 
+    core.withErrback = function(fn, errback) {
+        return function() {
+            var e;
+            try {
+                return fn.apply(this, arguments);
+            } catch(e) {
+                return errback.apply(e, arguments);
+            }
+        };
+    };
+
+    core.logError = function(context, exception, arguments) {
+        if (console) {
+            console.error(context, exception, arguments);
+        } 
+        // TODO: Set up a server to aggregate prod errors (socorro?)
+    };
+
     core.logsErrors = function(fn) {
         /* @t (?A, ?_... -> ?B) -> (?A, ?_... -> ?B) */
-        return fn;
-        if (console) {
-            return function() {
-                var e;
-                try {
-                    return fn.apply(this, arguments);
-                } catch(e) {
-                    console.error(e);
-                    throw e;
-                }
-            };
-        } else {
-            return fn;
+        return function() {
+            var e;
+            try {
+                return fn.apply(this, arguments);
+            } catch(e) {
+                core.logError(this, e, arguments);
+            }
+        };
+    };
+
+    core.errorizeParams = function(params) {
+        var res = {};
+        var v;
+        for (var k in params) {
+            if (!params.hasOwnProperty(k)) continue;
+            v = params[k];
+            if (typeof(v) == 'function') {
+                res[k] = core.logsErrors(v);
+            } else {
+                res[k] = v;
+            }
         }
+        return res;
     };
 
     core.throttle = function(func, wait, options) {

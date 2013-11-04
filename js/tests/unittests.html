@@ -19,6 +19,7 @@
 
         // tests
         requirejs([
+            '../core.js',
             'enact.js',
             'timeline.js',
             'change.js',
@@ -26,7 +27,10 @@
             'ids.js',
             'dom.js',
             'sync.js'
-        ], function() { QUnit.start(); });
+        ], function(core) {
+            core.debug = true;
+            QUnit.start(); 
+        });
     </script>
 </body>
 </html>

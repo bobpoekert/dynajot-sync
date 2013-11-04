@@ -74,19 +74,11 @@ define(["load_swf", "core"], function(swf, core) {
             return {
                 send: function(data) {
                     var blob = JSON.stringify(data);
-                    // console.log(blob);
                     if (closed) return false;
-                    while(true) {
-                        var e;
-                        if (open && ws.readyState === 1) {
-                            try {
-                                ws.send(blob);
-                                break;
-                            } catch(e) {
-                            }
-                        }
+                    if (open && ws.readyState === 1) {
+                        ws.send(blob);
+                    } else {
                         send_buffer.push(data);
-                        break;
                     }
                 },
                 onOpen: open_callbacks,

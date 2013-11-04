@@ -12,7 +12,7 @@ define([
     }
 
     sync.sync = function(node, options) {
-        options = options || {};
+        options = core.errorizeParams(options || {});
 
         var document_id = options.document_id;
         var id_callback = options.onDocumentId;
@@ -88,7 +88,7 @@ define([
 
         var connect_manifold = function (manifold) {
             return function (msg) {
-                // console.log(msg);
+                console.log(JSON.stringify(msg));
                 if (manifold[msg.kind]) {
                     manifold[msg.kind].write(msg.value);
                 }
@@ -123,8 +123,9 @@ define([
             inner_manifold.mouse_position.addReader(cursors.updateCursors);
         }
 
+        // problem: Not sending child list changes over the wire?
+
         outer_manifold.document_state.addReader(core.once(function(message) {
-            // console.log(message);
             document_timeline = timeline.make(document_id);
             if (message) {
                 var target = document.createElement('div');
@@ -142,14 +143,15 @@ define([
                     node.setAttribute(k, v);
                 });
                 dom.traverse(node, function(new_node) {
-                    var attr = new_node.getAttribute('data-id');
+                    var attr = new_node.getAttribute('data-dynajot-id');
                     if (!attr) return;
                     dom.set_node_id(new_node, attr);
-                    new_node.removeAttribute('data-id');
+                    new_node.removeAttribute('data-dynajot-id');
                     change.updateState(node, new_node, document_id);
                     data.set(new_node, 'seen', true);
                 });
             } else {
+                // document does not exist; upload current browser state
                 dom.traverse(node, function(c) {
                     if (dom.isTextNode(c)) return;
                     var ser = change.serializeNode(node, c, document_id);
@@ -166,7 +168,12 @@ define([
 
             var serializeMessageId = function(message_id) {
                 return core.map(message_id, function(e) {
-                    return e.toString();
+                    var er;
+                    try {
+                        return e.toString();
+                    } catch(er) {
+                        console.log(e);
+                    }
                 }).join('-');
             };
 
@@ -184,7 +191,6 @@ define([
                 }
             });
 
-
             change.changes(node, document_id, function(delta) {
                 // console.log('delta', delta);
                 if (core.isEmpty(delta)) return;
@@ -192,6 +198,9 @@ define([
                 delta.message_id = ids.message_id(document_id);
                 seen_message_ids[serializeMessageId(delta.message_id)] = true;
                 document_timeline.addDelta(delta);
+                if (options.onChange) {
+                    options.onChange(delta);
+                }
                 conn.send({'kind':'delta', 'value':delta});
             });
 

@@ -4,8 +4,6 @@
 
 Use MutationObserver to get notified of change events from the browser (Chrome, Firefox)
 
-Mutation Observer is deprecated, but that's okay because we're not using it for actual content of changes, just notifications of change events.
-
 Dependencies / Browser Version Quirks:
 
 - Changes: Use polling in browsers that don't support MutationObserver (IE<9)

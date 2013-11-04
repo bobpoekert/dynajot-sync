@@ -34,7 +34,7 @@ jsdifflib v1.0. <http://snowtide.com/jsdifflib>
 
 ### dom.js
 
-    not sure what this is, interface to id from the dom and helper functions for common dom operations?
+    interface for dynajot id's to the dom and helper functions for dom manipulation
 
 ### enact.js
 Apply changes received to the user's dom nodes

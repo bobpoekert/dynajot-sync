@@ -532,9 +532,9 @@ define(["underscore"], function(underscore) {
         };
     };
 
-    core.logError = function(context, exception, arguments) {
+    core.logError = function(context, exception, args) {
         if (console) {
-            console.error(context, exception, arguments);
+            console.error(context, exception, args);
         } 
         // TODO: Set up a server to aggregate prod errors (socorro?)
     };

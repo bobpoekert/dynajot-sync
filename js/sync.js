@@ -26,10 +26,7 @@ define([
         if (sync.url_prefix) {
             url_prefix = sync.url_prefix;
         } else {
-            url_prefix = 'ws://ec2-184-169-204-24.us-west-1.compute.amazonaws.com:5000/doc/';
-            if (sync.DEVELOP_MODE) {
-                url_prefix = 'ws://'+window.location.host+'/doc/';
-            }
+            url_prefix = 'ws://'+window.location.host+'/doc/';
         }
         var document_timeline;
 

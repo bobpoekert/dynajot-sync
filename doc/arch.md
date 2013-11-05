@@ -1,7 +1,7 @@
 Architecture Overview
 =====
 
-Dynajot works by tracking changes in the dom (from [js/change.js](js.change.js)), sending those changes to other browsers, maintaining a copy of the state on the server, and maintaining a total ordering of all the changes that occurred (so different clients always converge on the same state, even if they got changes in the "wrong" order).
+Dynajot works by tracking changes in the dom (from [js/change.js](/js/change.js)), sending those changes to other browsers, maintaining a copy of the state on the server, and maintaining a total ordering of all the changes that occurred (so different clients always converge on the same state, even if they got changes in the "wrong" order).
 
 The path that a change takes from being created in one browser to being applied in another is:
 

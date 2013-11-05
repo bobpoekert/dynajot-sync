@@ -1,7 +1,7 @@
 Dynajot
 ======
 
-__NOTE: This is pre-release software. There are bugs (run js/tests/run_tests.sh to see the ones we have tests for). There are features that aren't built yet. You were warned.__
+__NOTE: This is pre-release software. There are bugs (run js/tests/run_tests.sh to see the ones we have tests for). There are features that aren't built yet (like persistence). You were warned.__
 
 
 Dynajot is a javascript library and server that syncs changes to the DOM. 

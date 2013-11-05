@@ -86,6 +86,7 @@ class ParrotHandler(websocket.WebSocketHandler):
                 'kind':'document_state',
                 'value': document_trees[document].to_html()})
         else:
+            document_playback[document] = []
             document_trees[document] = patch.Document()
             self.write_message({
                 'kind':'document_state',

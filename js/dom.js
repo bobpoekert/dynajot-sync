@@ -163,44 +163,6 @@ define(["core", "Data", "ids"], function(core, data, ids) {
     };
 
     dom.mergeChildren = function(node, children, removed_children) {
-        /*var a_nodes = dom.getChildNodes(node);
-        var cached_text_nodes = {};
-
-        core.each(a_nodes, function(node) {
-            if (node.nodeType == Node.TEXT_NODE) {
-                if (cached_text_nodes[node.data]) {
-                    cached_text_nodes[node.data].push(node);
-                } else {
-                    cached_text_nodes[node.data] = [node];
-                }
-            }
-        });
-
-        var restored_children = core.map(children, function(child) {
-            if (child.nodeType == Node.ELEMENT_NODE) return child;
-            if (cached_text_nodes.hasOwnProperty(child.data)) {
-                var arr = cached_text_nodes[child.data];
-                if (arr.length > 0) {
-                    var res = arr.shift();
-                    res.parentNode.removeChild(res);
-                    return res;
-                }
-            }
-            return child;
-        });*/
-
-        /*var removed_keys = {};
-        core.each(removed_children, function(node) {
-            var k = node.kind == 'text' ? 't:'+node.value : node.value; // stringifyNode
-            removed_keys[k] = true;
-        });
-
-        var b_nodes = children;
-        var merged = core.arrayMerge(a_nodes, b_nodes, dom.stringifyNode);
-        */
-        /*merged = core.filter(merged, function(el) {
-            return !(dom.stringifyNode(el) in removed_keys);
-        });*/
         dom.removeAllChildren(node);
         var frag = dom.toFragment(children);
         node.appendChild(frag);

@@ -189,7 +189,6 @@ define([
             });
 
             change.changes(node, document_id, function(delta) {
-                // console.log('delta', delta);
                 if (core.isEmpty(delta)) return;
                 delta = core.clone(delta);
                 delta.message_id = ids.message_id(document_id);

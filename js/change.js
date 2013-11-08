@@ -213,16 +213,6 @@ define([
         return res;
     };
 
-    /*change.rootDelta = function(state) {
-        var res = {};
-        res.name = state.name;
-        res.attrs = {'+':state.attrs, '-':{}};
-        res.children = state.children;
-        res.id = state.id;
-        res.position = state.position;
-        return res;
-    };*/
-
     change.delta = function(old, cur) {
         var res = core.clone(cur);
         res.removed_children = core.filter(old.children, function(child) {

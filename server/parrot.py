@@ -27,10 +27,7 @@ class DocumentStateHandler(web.RequestHandler):
             doc = document_id.split('.')[0]
             self.write(dict((k, v.to_dict()) for k, v in document_trees[doc].nodes.iteritems()))
         else:
-            #try:
             self.write(document_trees[document_id].to_html())
-            #except KeyError:
-            #    self.send_error(404)
 
 
 class GetDeltasHandler(web.RequestHandler):
@@ -42,6 +39,7 @@ class GetDeltasHandler(web.RequestHandler):
             self.send_error(404)
 
 
+# SocketHandler to Test Application of Deltas
 class TestDeltasHandler(websocket.WebSocketHandler):
 
     def open(self, document):
@@ -60,9 +58,7 @@ class TestDeltasHandler(websocket.WebSocketHandler):
                     if count > max_deltas:
                         print message
                         break
-                print "sent deltas"
         except:
-            print "failed"
             self.close()
 
 

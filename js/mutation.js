@@ -39,7 +39,7 @@ define(['dom', 'core'], function(dom, core) {
             stopped = true;
         };
         var inner_callback = core.uniqueDebounce(function(res) {
-            if (callback(res) === false) stop();   
+            if (callback(res) === false) stop();  
         }, interval);
 
         var outer_callback = function(target) {
@@ -78,7 +78,6 @@ define(['dom', 'core'], function(dom, core) {
                 if (stopped) return;
                 walk(evt.target || node);
             };
-            //node.addEventListener('DOMSubtreeModified', subtree_modified_callback);
         }
 
         var last_looper = Date.now();

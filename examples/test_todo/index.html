@@ -133,10 +133,6 @@
                     var connect_manifold = function (manifold) {
                         return function (msg) {
                             if (manifold[msg.kind]) {
-                                // if (msg.kind === 'delta') {
-                                    // console.log("got delta ", msg.value);
-                                    // console.log(manifold);
-                                // }
                                 manifold[msg.kind].write(msg.value);
                             }
                         };
@@ -195,14 +191,6 @@
                                 change.updateState(node, new_node, document_id);
                                 data.set(new_node, 'seen', true);
                             });
-                        } else {
-                            console.log("SHOULD NOT EXECUTE THIS BRANCH");
-                            // dom.traverse(node, function(c) {
-                            //     if (dom.isTextNode(c)) return;
-                            //     var ser = change.serializeNode(node, c, document_id);
-                            //     document_timeline.addDelta(ser);
-                            //     conn.send({'kind':'delta', 'value': ser});
-                            // });
                         }
 
                         dom.traverse(node, function(child) {
@@ -219,7 +207,6 @@
 
                         var applier = enact.appliesDeltas(node, getNodeFromServer);
                         inner_manifold.delta.addReader(function(message) {
-                            alert("check me out yo");
                             var id_string = serializeMessageId(message.message_id);
                             if (seen_message_ids[id_string]) {
                                 return;
@@ -235,8 +222,6 @@
                             delta = core.clone(delta);
                             delta.message_id = ids.message_id(document_id);
                             seen_message_ids[serializeMessageId(delta.message_id)] = true;
-                            // document_timeline.addDelta(delta);
-                            // conn.send({'kind':'delta', 'value':delta});
                         });
                     }));
                 };
